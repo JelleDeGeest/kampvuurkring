@@ -1,0 +1,23 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: pnpm run dev
+    # Remove restart policy for development
+    # Add more configuration as needed for future services 
+
+volumes:
+  data:
+  # pgdata:
+  node_modules:
