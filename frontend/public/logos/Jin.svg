@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-116.454,-113.938)">
+        <g id="Jin" transform="matrix(1,0,0,1,116.454,113.938)">
+            <rect x="0" y="0" width="100" height="100" style="fill:none;"/>
+            <g transform="matrix(1.45786,0,0,1.45786,50,62.7151)">
+                <g transform="matrix(1,0,0,1,-33,-41.25)">
+                    <g>
+                        <g>
+                            <path d="M54.921,23.284C44.415,15.692 34.441,22.845 39.777,32.502C49.829,42.724 36.983,52.583 38.234,59.464C39.43,66.046 49.004,66.785 51.415,59.972L53.353,54.497C55.088,47.262 55.216,43.601 58.421,35.448C58.462,35.343 58.502,35.239 58.542,35.135C60.166,30.825 58.654,25.981 54.921,23.284Z" style="fill-rule:nonzero;fill:currentColor;"/>
+                            <ellipse cx="40.291" cy="14.44" rx="4.012" ry="5.039" style="fill:currentColor;"/>
+                            <ellipse cx="47.797" cy="14.993" rx="2.513" ry="3.024" style="fill:currentColor;"/>
+                            <ellipse cx="53.07" cy="17.077" rx="1.997" ry="2.403" style="fill:currentColor;"/>
+                            <ellipse cx="57.37" cy="19.721" rx="1.803" ry="2.169" style="fill:currentColor;"/>
+                            <ellipse cx="60.468" cy="23.278" rx="1.498" ry="1.803" style="fill:currentColor;"/>
+                            <path d="M26.223,24.352C31.559,14.694 21.584,7.542 11.079,15.133C7.346,17.83 5.834,22.675 7.458,26.984C7.498,27.088 7.538,27.192 7.579,27.297C10.799,35.489 10.935,39.207 12.647,46.346L14.585,51.822C15.185,53.517 16.354,54.988 17.954,55.808C23.723,58.765 29.878,53.392 27.243,47.195C25.32,41.143 17.91,32.804 26.223,24.352Z" style="fill-rule:nonzero;fill:currentColor;"/>
+                            <ellipse cx="25.709" cy="6.289" rx="4.012" ry="5.039" style="fill:currentColor;"/>
+                            <ellipse cx="18.203" cy="6.843" rx="2.513" ry="3.024" style="fill:currentColor;"/>
+                            <ellipse cx="12.93" cy="8.926" rx="1.997" ry="2.403" style="fill:currentColor;"/>
+                            <ellipse cx="8.63" cy="11.57" rx="1.803" ry="2.169" style="fill:currentColor;"/>
+                            <ellipse cx="5.532" cy="15.127" rx="1.498" ry="1.803" style="fill:currentColor;"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

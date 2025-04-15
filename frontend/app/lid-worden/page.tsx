@@ -1,69 +1,51 @@
-import type React from "react"
+"use client"
+
+import Header from "@/components/header"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import Header from "@/components/header"
 
-export default function JoinPage() {
+export default function LidWordenPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-[color:var(--secondary-color)]/20">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl text-[color:var(--primary-color)]">
-                Word Lid
-              </h1>
-              <div className="w-20 h-1 mx-auto my-4 bg-[color:var(--secondary-color)]"></div>
-              <p className="max-w-[900px] text-[color:var(--text-color)]/80 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Sluit je aan bij onze scoutingfamilie
-              </p>
-            </div>
-          </div>
-          <div className="mx-auto max-w-2xl py-12">
-            <Card className="bg-[color:var(--background-color)]">
+      <main className="flex-1">
+        <div className="container mx-auto px-4 py-8 md:py-12">
+          <h1 className="text-4xl font-bold text-primary mb-8">
+            Word Lid van Scouts Sint-Johannes
+          </h1>
+          <div className="w-full h-1 bg-secondary mb-8" />
+          <div className="max-w-2xl mx-auto">
+            <Card>
               <CardHeader>
-                <CardTitle className="text-[color:var(--text-color)]">Word Lid van Onze Groep</CardTitle>
-                <CardDescription className="text-[color:var(--text-color)]/80">
-                  Vul het onderstaande formulier in om je scoutingreis te beginnen.
-                </CardDescription>
+                <CardTitle className="text-foreground">Aanmeldingsformulier</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                <form className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-[color:var(--text-color)]">Voornaam</Label>
-                      <Input id="firstName" placeholder="Vul je voornaam in" />
+                      <Label htmlFor="voornaam" className="text-foreground">Voornaam</Label>
+                      <Input id="voornaam" placeholder="Voornaam" className="border-border" />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-[color:var(--text-color)]">Achternaam</Label>
-                      <Input id="lastName" placeholder="Vul je achternaam in" />
+                      <Label htmlFor="achternaam" className="text-foreground">Achternaam</Label>
+                      <Input id="achternaam" placeholder="Achternaam" className="border-border" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="text-foreground">E-mail</Label>
+                      <Input id="email" type="email" placeholder="E-mail" className="border-border" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="telefoon" className="text-foreground">Telefoonnummer</Label>
+                      <Input id="telefoon" type="tel" placeholder="Telefoonnummer" className="border-border" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-[color:var(--text-color)]">E-mail</Label>
-                    <Input id="email" type="email" placeholder="Vul je e-mailadres in" />
+                    <Label htmlFor="geboortedatum" className="text-foreground">Geboortedatum</Label>
+                    <Input id="geboortedatum" type="date" className="border-border" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-[color:var(--text-color)]">Telefoonnummer</Label>
-                    <Input id="phone" type="tel" placeholder="Vul je telefoonnummer in" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="age" className="text-[color:var(--text-color)]">Leeftijd</Label>
-                    <Input id="age" type="number" placeholder="Vul je leeftijd in" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="experience" className="text-[color:var(--text-color)]">Eerdere Scoutingervaring</Label>
-                    <Textarea id="experience" placeholder="Vertel ons over je eerdere scoutingervaring (indien van toepassing)" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="interests" className="text-[color:var(--text-color)]">Interesses</Label>
-                    <Textarea id="interests" placeholder="Welke activiteiten interesseren je het meest?" />
-                  </div>
-                  <Button type="submit" className="w-full bg-[color:var(--primary-color)] hover:bg-[color:var(--primary-color)]/90 text-white">
+                  <Button type="submit" className="w-full">
                     Verstuur Aanmelding
                   </Button>
                 </form>
@@ -71,7 +53,13 @@ export default function JoinPage() {
             </Card>
           </div>
         </div>
-      </section>
+      </main>
+      <footer className="w-full border-t border-border bg-background mt-12">
+        <div className="w-full h-2 bg-secondary"></div>
+        <div className="container py-6 text-center text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} Scouts Sint-Johannes. Alle rechten voorbehouden.</p>
+        </div>
+      </footer>
     </div>
   )
 } 

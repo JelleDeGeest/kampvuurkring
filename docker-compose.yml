@@ -11,7 +11,6 @@ services:
       - WATCHPACK_POLLING=true
     volumes:
       - ./frontend:/app
-      - /app/node_modules
       - /app/.next
     command: pnpm run dev
     # Remove restart policy for development

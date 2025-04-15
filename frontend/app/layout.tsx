@@ -1,13 +1,10 @@
-import type React from "react"
-import './globals.css'
+"use client"
+
+import "./globals.css"
+import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 
-export const metadata = {
-  title: "Scouts Sint-Johannes",
-  description:
-    "Bouw karakter, leer vaardigheden en creëer levenslange herinneringen door buitenavonturen en gemeenschapsdienst.",
-  generator: 'v0.dev'
-}
+const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({
   children,
@@ -16,16 +13,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="nl" suppressHydrationWarning>
-      <body style={
-        {
-          "--text-color": "#070807",
-          "--background-color": "#f7f8f6",
-          "--primary-color": "#527b3d",
-          "--secondary-color": "#b2d2a2",
-          "--accent-color": "#98cd7e",
-        } as React.CSSProperties
-      }>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+      <head>
+        <title>Scouts Sint-Johannes</title>
+        <meta
+          name="description"
+          content="Welkom bij Scouts Sint-Johannes, waar avontuur en vriendschap samenkomen."
+        />
+      </head>
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
         </ThemeProvider>
       </body>
