@@ -29,6 +29,7 @@ import WoutersLogo from "@/public/logos/Wouters.svg"
 import JonggiversLogo from "@/public/logos/Jonggivers.svg"
 import GiversLogo from "@/public/logos/Givers.svg"
 import JinLogo from "@/public/logos/Jin.svg"
+import { EventCarousel } from "@/components/event-carousel"
 
 export default function Home() {
   const [selectedTabs, setSelectedTabs] = useState<string[]>(["Alles"])
@@ -62,26 +63,11 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="container mx-auto px-4 md:px-6 py-8">
-          <div className="relative w-full h-[450px] md:h-[550px] lg:h-[600px] rounded-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-gray-300" />
-            <div className="absolute top-1/2 right-4 md:right-8 lg:right-16 transform -translate-y-1/2 z-10">
-              <div className="bg-background/95 p-4 md:p-6 rounded-lg shadow-lg max-w-xs md:max-w-sm border border-border/50">
-                <h2 className="text-lg md:text-xl font-bold text-primary mb-2 md:mb-3">
-                  Spaghettiweekend 2025
-                </h2>
-                <p className="text-sm md:text-base text-muted-foreground mb-3 md:mb-4">
-                  Klik hier om in te schrijven!
-                </p>
-                <Button className="w-full">
-                  Inschrijvingen <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
+        <section className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8">
+          <EventCarousel />
         </section>
 
-        <section className="container mx-auto px-4 md:px-6 py-8 md:py-12">
+        <section className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 md:py-12">
           <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-2 border-b border-border mb-6">
             {tabs.map((tab) => (
               <button
@@ -147,7 +133,7 @@ export default function Home() {
       </main>
       <footer className="w-full border-t border-border bg-background mt-12">
         <div className="w-full h-2 bg-secondary"></div>
-        <div className="container py-6 text-center text-sm text-muted-foreground">
+        <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-6 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Scouts Sint-Johannes. Alle rechten voorbehouden.</p>
         </div>
       </footer>

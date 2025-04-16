@@ -7,7 +7,7 @@ export default function OverPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-8 md:py-12">
+        <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 md:py-12">
           <h1 className="text-4xl font-bold text-primary mb-8">
             Over Scouts Sint-Johannes
           </h1>
@@ -63,7 +63,7 @@ export default function OverPage() {
       </main>
       <footer className="w-full border-t border-border bg-background mt-12">
         <div className="w-full h-2 bg-secondary"></div>
-        <div className="container py-6 text-center text-sm text-muted-foreground">
+        <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-6 text-center text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Scouts Sint-Johannes. Alle rechten voorbehouden.</p>
         </div>
       </footer>
