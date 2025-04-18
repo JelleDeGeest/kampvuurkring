@@ -1,27 +1,28 @@
-# Development stage
-FROM node:20-alpine
+FROM node:18-alpine
+
+# Install dependencies needed to build sharp
+RUN apk add --no-cache \
+  python3 \
+  make \
+  g++ \
+  vips-dev
 
 WORKDIR /app
 
-# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install pnpm
+# Install pnpm and enable it
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install dependencies including Next.js
+# 👇 This will now allow sharp to be built from source
 RUN pnpm install
 
-# Copy the rest of the application
 COPY . .
 
-# Set environment variables
 ENV NODE_ENV=development
 ENV PORT=3000
 ENV PATH="/app/node_modules/.bin:${PATH}"
 
-# Expose the port
 EXPOSE 3000
 
-# Start the application in development mode
-CMD ["pnpm", "dev"] 
+CMD ["pnpm", "dev"]

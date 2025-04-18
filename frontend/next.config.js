@@ -8,6 +8,9 @@ const __dirname = path.dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ['payload', 'localhost'],
+  },
   // Your existing Next.js config, including webpack customization
   webpack(config) {
     config.module.rules.push({

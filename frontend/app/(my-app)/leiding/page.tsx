@@ -1,7 +1,35 @@
 import Header from "@/components/header"
 import Image from "next/image"
 
-export default function LeidingPage() {
+interface Leider {
+  id: string
+  name: string
+  totem: string
+  image?: {
+    url: string
+  }
+}
+
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3000';
+
+async function fetchLeidersByTak(tak: string) {
+  const res = await fetch(
+    // NOTE the added &depth=1
+    `${PAYLOAD_URL}/api/leiders?where[takken][in]=${tak}&depth=1`,
+    { cache: 'no-store' }
+  );
+  const data = await res.json();
+  return data.docs;
+}
+
+export default async function LeidingPage() {
+  const kapoenenLeiders = await fetchLeidersByTak('kapoenen');
+  const woutersLeiders  = await fetchLeidersByTak('wouters');
+  const jonggiversLeiders = await fetchLeidersByTak('jonggivers');
+  const giversLeiders   = await fetchLeidersByTak('givers');
+  const jinLeiders      = await fetchLeidersByTak('jin');
+  const groepsLeiders   = await fetchLeidersByTak('groepsleiding');
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -23,14 +51,25 @@ export default function LeidingPage() {
               </span>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={`kapoenen-${i}`} className="flex flex-col">
+              {kapoenenLeiders.map((leider: Leider) => (
+                console.log(leider),
+                <div key={`kapoenen-${leider.id}`} className="flex flex-col">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
-                    <div className="absolute inset-0 bg-gray-300" />
+                    {leider.image?.url ? (
+                      <Image
+                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                        alt={leider.name}
+                        width={160}
+                        height={160}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">Naam Leiding {i}</h3>
-                    <p className="text-sm text-gray-600">Vrolijke Eekhoorn</p>
+                    <h3 className="font-semibold">{leider.name}</h3>
+                    <p className="text-sm text-gray-600">{leider.totem}</p>
                   </div>
                 </div>
               ))}
@@ -53,14 +92,24 @@ export default function LeidingPage() {
               </span>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={`wouters-${i}`} className="flex flex-col">
+              {woutersLeiders.map((leider: Leider) => (
+                <div key={`wouters-${leider.id}`} className="flex flex-col">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
-                    <div className="absolute inset-0 bg-gray-300" />
+                    {leider.image?.url ? (
+                      <Image
+                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                        alt={leider.name}
+                        width={160}
+                        height={160}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">Naam Leiding {i}</h3>
-                    <p className="text-sm text-gray-600">Wijze Uil</p>
+                    <h3 className="font-semibold">{leider.name}</h3>
+                    <p className="text-sm text-gray-600">{leider.totem}</p>
                   </div>
                 </div>
               ))}
@@ -83,14 +132,24 @@ export default function LeidingPage() {
               </span>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={`jonggivers-${i}`} className="flex flex-col">
+              {jonggiversLeiders.map((leider: Leider) => (
+                <div key={`jonggivers-${leider.id}`} className="flex flex-col">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
-                    <div className="absolute inset-0 bg-gray-300" />
+                    {leider.image?.url ? (
+                      <Image
+                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                        alt={leider.name}
+                        width={160}
+                        height={160}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">Naam Leiding {i}</h3>
-                    <p className="text-sm text-gray-600">Slimme Vos</p>
+                    <h3 className="font-semibold">{leider.name}</h3>
+                    <p className="text-sm text-gray-600">{leider.totem}</p>
                   </div>
                 </div>
               ))}
@@ -113,14 +172,24 @@ export default function LeidingPage() {
               </span>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={`givers-${i}`} className="flex flex-col">
+              {giversLeiders.map((leider: Leider) => (
+                <div key={`givers-${leider.id}`} className="flex flex-col">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
-                    <div className="absolute inset-0 bg-gray-300" />
+                    {leider.image?.url ? (
+                      <Image
+                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                        alt={leider.name}
+                        width={160}
+                        height={160}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">Naam Leiding {i}</h3>
-                    <p className="text-sm text-gray-600">Dappere Beer</p>
+                    <h3 className="font-semibold">{leider.name}</h3>
+                    <p className="text-sm text-gray-600">{leider.totem}</p>
                   </div>
                 </div>
               ))}
@@ -143,14 +212,24 @@ export default function LeidingPage() {
               </span>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
-              {[1, 2].map((i) => (
-                <div key={`jin-${i}`} className="flex flex-col">
+              {jinLeiders.map((leider: Leider) => (
+                <div key={`jin-${leider.id}`} className="flex flex-col">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
-                    <div className="absolute inset-0 bg-gray-300" />
+                    {leider.image?.url ? (
+                      <Image
+                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                        alt={leider.name}
+                        width={160}
+                        height={160}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">Naam Leiding {i}</h3>
-                    <p className="text-sm text-gray-600">Energieke Panda</p>
+                    <h3 className="font-semibold">{leider.name}</h3>
+                    <p className="text-sm text-gray-600">{leider.totem}</p>
                   </div>
                 </div>
               ))}
@@ -173,14 +252,24 @@ export default function LeidingPage() {
               </span>
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
-              {[1, 2].map((i) => (
-                <div key={`groepsleiding-${i}`} className="flex flex-col">
+              {groepsLeiders.map((leider: Leider) => (
+                <div key={`groepsleiding-${leider.id}`} className="flex flex-col">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
-                    <div className="absolute inset-0 bg-gray-300" />
+                    {leider.image?.url ? (
+                      <Image
+                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                        alt={leider.name}
+                        width={160}
+                        height={160}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gray-300" />
+                    )}
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">Naam Leiding {i}</h3>
-                    <p className="text-sm text-gray-600">Wijze Raadgever</p>
+                    <h3 className="font-semibold">{leider.name}</h3>
+                    <p className="text-sm text-gray-600">{leider.totem}</p>
                   </div>
                 </div>
               ))}
@@ -191,7 +280,7 @@ export default function LeidingPage() {
       <footer className="w-full border-t border-border bg-background mt-12">
         <div className="w-full h-2 bg-secondary"></div>
         <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-6 text-center text-sm text-muted-foreground">
-          // ... existing code ...
+          Footer
         </div>
       </footer>
     </div>
