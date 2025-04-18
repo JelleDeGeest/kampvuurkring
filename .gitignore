@@ -6,6 +6,10 @@
 /coverage
 **/coverage/
 
+# media folder
+/frontend/media/*
+
+
 # next.js
 .next/
 **/.next/

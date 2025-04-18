@@ -12,11 +12,25 @@ services:
     volumes:
       - ./frontend:/app
       - /app/.next
+    env_file:
+      - .env
     command: pnpm run dev
-    # Remove restart policy for development
-    # Add more configuration as needed for future services 
+    depends_on:
+      - db  # Ensures the database is ready before starting
+
+  db:
+    container_name: postgres
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: payload
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
   data:
-  # pgdata:
   node_modules:
+  pgdata:
