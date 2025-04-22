@@ -18,6 +18,7 @@
     "@typescript-eslint/parser": "^8.30.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "date-fns": "^4.1.0",
     "graphql": "^16.10.0",
     "lucide-react": "^0.331.0",
     "next": "^15.3.0",
@@ -47,6 +48,8 @@
       "react": "19.0.0-rc-65a56d0e-20241020",
       "react-dom": "19.0.0-rc-65a56d0e-20241020"
     },
-    "onlyBuiltDependencies": ["sharp"]
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

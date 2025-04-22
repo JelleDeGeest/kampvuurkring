@@ -14,8 +14,17 @@ COPY package.json pnpm-lock.yaml ./
 # Install pnpm and enable it
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
+# Set sharp install options to build from source with musl
+ENV npm_config_platform=linux \
+    npm_config_arch=arm64 \
+    npm_config_libc=musl \
+    SHARP_IGNORE_GLOBAL_LIBVIPS=true
+
 # 👇 This will now allow sharp to be built from source
 RUN pnpm install
+
+# Explicitly rebuild sharp for the correct architecture
+RUN npm rebuild sharp --platform=linux --arch=arm64 --libc=musl
 
 COPY . .
 
