@@ -54,12 +54,6 @@ export default function LidWordenPage() {
           </div>
         </div>
       </main>
-      <footer className="w-full border-t border-border bg-background mt-12">
-        <div className="w-full h-2 bg-secondary"></div>
-        <div className="container py-6 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Scouts Sint-Johannes. Alle rechten voorbehouden.</p>
-        </div>
-      </footer>
     </div>
   )
 } 

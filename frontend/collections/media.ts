@@ -1,12 +1,11 @@
 // collections/media.ts
 import type { CollectionConfig } from 'payload'
 import path from 'path'
-import fs from 'fs/promises'
 
 export const Media: CollectionConfig = {
   slug: 'media',
   upload: {
-    staticDir: path.resolve(__dirname, '../media'),
+    staticDir: path.resolve(process.cwd(), 'media'),
     mimeTypes: ['image/*'],
   },
   admin: {
