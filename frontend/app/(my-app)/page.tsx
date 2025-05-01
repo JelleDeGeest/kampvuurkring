@@ -1,165 +1,130 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { format } from "date-fns"
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Compass,
-  MapPin,
-  Users,
-  Calendar,
-  ArrowRight,
-  Tent,
-  Mountain,
-  TreePine,
-  CaravanIcon as Campground,
-  LogIn,
-  CalendarDays,
-  Crown,
-  Rabbit,
-  Bike,
-  Sailboat,
-  Sparkles,
-  Loader2,
-} from "lucide-react"
+import { Loader2 } from "lucide-react"
 import Header from "@/components/header"
-import KapoenenLogo from "@/public/logos/Kapoenen.svg"
-import WoutersLogo from "@/public/logos/Wouters.svg"
-import JonggiversLogo from "@/public/logos/Jonggivers.svg"
-import GiversLogo from "@/public/logos/Givers.svg"
-import JinLogo from "@/public/logos/Jin.svg"
 import { EventCarousel } from "@/components/event-carousel"
 import PayloadRichText from "@/components/PayloadRichText"
 
+// Import our new components and hooks
+import { CategoryFilter, categoryTabs } from "@/components/CategoryFilter"
+import { useActivitiesFilter, Activity } from "@/hooks/useActivitiesFilter"
+import { useCategorySelection, CategoryValue } from "@/hooks/CategorySelectionContext"
+
+// Matching fade duration with the hook
+const TRANSITION_DURATION = 200; // ms
+const INITIAL_FADE_IN_DURATION = 200; // ms - longer, smoother fade for initial content
+
 export default function Home() {
-  const tabs = [
-    { name: "Alles",      value: "__all__", icon: Users,          color: "var(--primary-color)", isImage: false },
-    { name: "Kapoenen",   value: "kapoenen",   icon: KapoenenLogo,   color: "hsl(var(--kapoenen))",   isImage: true },
-    { name: "Wouters",    value: "wouters",    icon: WoutersLogo,    color: "hsl(var(--wouters))",    isImage: true },
-    { name: "Jonggivers", value: "jonggivers", icon: JonggiversLogo, color: "hsl(var(--jonggivers))", isImage: true },
-    { name: "Givers",     value: "givers",     icon: GiversLogo,     color: "hsl(var(--givers))",     isImage: true },
-    { name: "Jin",        value: "jin",        icon: JinLogo,        color: "hsl(var(--jin))",        isImage: true },
-  ] as const
-  type TabValue = typeof tabs[number]['value']
-  const ALL: TabValue = '__all__'
+  // Use our custom hooks
+  const { 
+    filteredActivities, 
+    isLoading: isLoadingActivities, 
+    fadeState, 
+    filterActivities,
+    initialFetchDone,
+    isFirstFilter
+  } = useActivitiesFilter();
+  
+  const { selectedCategories, isInitialized: isCategoriesInitialized } = useCategorySelection();
+  const [prevSelectedCategories, setPrevSelectedCategories] = useState<CategoryValue[]>([]);
+  const isInitialPageLoad = useRef(true);
+  
+  // Track fade-in for initial content load
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+  const [initialFadeIn, setInitialFadeIn] = useState(false);
+  
+  // Track if we've checked for empty results
+  const [hasCheckedEmpty, setHasCheckedEmpty] = useState(false);
 
-  // ---- selection state ----------------------------------------------------
-  const readStorage = (): TabValue[] => {
-    if (typeof window === 'undefined') return [ALL]
-    try {
-      const raw = window.localStorage.getItem('selectedTabs')
-      const parsed: unknown = raw ? JSON.parse(raw) : null
-      return Array.isArray(parsed)
-        ? parsed.filter((v): v is TabValue => v === ALL || tabs.some(t => t.value === v))
-        : [ALL]
-    } catch {
-      return [ALL]
-    }
-  }
-
-  const [selectedTabs, setSelectedTabs] = useState<TabValue[]>([])
-  useEffect(() => setSelectedTabs(readStorage()), [])
-
-  const tabMap = Object.fromEntries(tabs.map(t => [t.name, t]))
-  const [activities, setActivities] = useState<Activity[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [initialLoaded, setInitialLoaded] = useState(false)
-  const [fadeState, setFadeState] = useState<'in' | 'out'>('in')
-
-  // Fetch activities whenever selectedTabs change
+  // Apply filters as soon as activities are fetched and categories are initialized
   useEffect(() => {
-    const controller = new AbortController()
-    
-    // First load or tab change
-    const handleLoad = async () => {
-      try {
-        // Start fade out if not initial load
-        if (initialLoaded) {
-          setFadeState('out')
-          
-          // Wait for fade out transition
-          await new Promise(resolve => setTimeout(resolve, 300))
-        }
-        
-        setIsLoading(true)
-        
-        // Build query for selected divisions
-        const divs = selectedTabs.includes(ALL) ? [] : selectedTabs
-        const query = divs.length
-          ? `?where[division][in]=${divs.join(",")}&sort=startDate`
-          : "?sort=startDate"
-        
-        // Fetch data
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten${query}`,
-          { signal: controller.signal, cache: "no-store" }
-        )
-        
-        const data = await res.json()
-        setActivities(data?.docs ?? [])
-        
-        // Small delay before showing new content
-        await new Promise(resolve => setTimeout(resolve, 50))
-        
-        // Show new content
-        setIsLoading(false)
-        setFadeState('in')
-        setInitialLoaded(true)
-      } catch (err: any) {
-        if (err.name !== "AbortError") console.error(err)
-        setIsLoading(false)
-        setFadeState('in')
-        setInitialLoaded(true)
+    if (initialFetchDone && isCategoriesInitialized) {
+      // Apply the filters - this will turn off loading in the hook
+      filterActivities(selectedCategories);
+      // Save this selection for comparison
+      setPrevSelectedCategories([...selectedCategories]);
+    }
+  }, [initialFetchDone, isCategoriesInitialized, filterActivities, selectedCategories]);
+
+  // Filter activities when categories change
+  useEffect(() => {
+    // Only handle changes after initial filtering (when isFirstFilter is false)
+    if (!isFirstFilter && initialFetchDone && isCategoriesInitialized && prevSelectedCategories.length > 0) {
+      // Check if selection actually changed
+      const hasChanged = 
+        prevSelectedCategories.length !== selectedCategories.length ||
+        prevSelectedCategories.some(cat => !selectedCategories.includes(cat));
+      
+      if (hasChanged) {
+        // Apply the filter with transition
+        filterActivities(selectedCategories);
+        // Update previous selection
+        setPrevSelectedCategories([...selectedCategories]);
+        // Reset empty check when selection changes
+        setHasCheckedEmpty(false);
       }
     }
-    
-    handleLoad()
-    
-    return () => controller.abort()
-  }, [selectedTabs])
+  }, [selectedCategories, filterActivities, initialFetchDone, isCategoriesInitialized, prevSelectedCategories, isFirstFilter]);
 
-  // Add CSS for transitions
-  const fadeStyle = {
-    opacity: fadeState === 'in' ? 1 : 0,
-    transition: 'opacity 300ms ease-in-out',
-  }
-
-  interface Activity {
-    id: string
-    title: string
-    division: string
-    startDate: string
-    endDate: string
-    description: { root: any } // lexical JSON; render simple text excerpt
-  }
-
-  const handleTabClick = (value: TabValue) => {
-    if (value === ALL) {
-      setSelectedTabs([ALL])
-      return
-    }
-    setSelectedTabs(prev => {
-      let next: TabValue[]
-      if (prev.includes(value)) {
-        next = prev.filter(v => v !== value)
-        if (next.length === 0) next = [ALL]
-      } else {
-        next = [...prev.filter(v => v !== ALL), value]
-      }
-      return next
-    })
-  }
-
+  // Handle initial content fade-in after loading
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem('selectedTabs', JSON.stringify(selectedTabs))
+    if (!isLoadingActivities && !initialLoadComplete && initialFetchDone) {
+      setInitialLoadComplete(true);
+      
+      // Trigger the fade-in effect after a tiny delay to ensure DOM is ready
+      setTimeout(() => {
+        setInitialFadeIn(true);
+        
+        // Mark that we've checked for empty results
+        setHasCheckedEmpty(true);
+      }, 50);
     }
-  }, [selectedTabs])
+  }, [isLoadingActivities, initialLoadComplete, initialFetchDone]);
+
+  // Reset initial page load flag after initial fade completes
+  useEffect(() => {
+    if (initialFadeIn && isInitialPageLoad.current) {
+      const timer = setTimeout(() => {
+        isInitialPageLoad.current = false;
+      }, INITIAL_FADE_IN_DURATION);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [initialFadeIn]);
+
+  // Different styling for initial load vs category changes
+  const getContentStyle = () => {
+    // If we're on initial load
+    if (isInitialPageLoad.current) {
+      return {
+        opacity: initialFadeIn ? 1 : 0,
+        transition: `opacity ${INITIAL_FADE_IN_DURATION}ms ease-in-out`,
+        willChange: 'opacity',
+      };
+    }
+    
+    // For subsequent category changes
+    return {
+      opacity: fadeState === 'in' ? 1 : 0,
+      transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
+      willChange: 'opacity',
+    };
+  };
+
+  // Check if we should show the no activities message
+  const showNoActivitiesMessage = initialLoadComplete && 
+    filteredActivities.length === 0 && 
+    !isLoadingActivities &&
+    (hasCheckedEmpty || initialFadeIn);
+
+  // For debugging - remove in production
+  const activityCount = filteredActivities.length;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -173,47 +138,27 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Activities Section - 2/3 width */}
             <div className="w-full lg:w-2/3">
-              <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-2 border-b border-border mb-6">
-                {tabs.map(tab => {
-                  const isAllSelected = selectedTabs.includes(ALL);
-                  const isActive = isAllSelected || selectedTabs.includes(tab.value as TabValue);
-
-                  return (
-                  <button
-                    key={tab.name}
-                    onClick={() => handleTabClick(tab.value as TabValue)}
-                    className={`flex items-center gap-2 pb-2 px-1 text-sm md:text-base font-medium transition-colors duration-200 ${
-                      isActive
-                        ? "border-b-2"
-                        : "text-muted-foreground hover:text-primary"
-                    }`}
-                    style={isActive ? { color: tab.color, borderBottomColor: tab.color } : {}}
-                  >
-                    {tab.value === ALL ? (
-                      <tab.icon className="h-4 w-4 md:h-5 md:w-5" />
-                    ) : (
-                      <tab.icon 
-                        className="h-5 w-5" 
-                        style={{ color: isActive ? tab.color : 'currentColor' }} 
-                      />
-                    )}
-                    {tab.name}
-                  </button>
-                )})}
-              </div>
+              {/* Category filter component */}
+              <CategoryFilter />
+              
+              {/* Debug info - can be removed in production */}
+              {/* <div className="text-xs text-muted-foreground mb-4">
+                Selected: {selectedCategories.join(', ')} | Activities: {activityCount} |
+                Load Complete: {String(initialLoadComplete)} | Fade In: {String(initialFadeIn)} | 
+                Empty Check: {String(hasCheckedEmpty)}
+              </div> */}
 
               <div>
-                {isLoading && !initialLoaded ? (
-                  // Loading wheel for initial page load only
-                  <div className="flex justify-center items-center py-20">
-                    <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                  </div>
-                ) : (
-                  // Actual content with fade transition
-                  <div style={fadeStyle}>
-                    {(() => {
+                {/* Always show content container, but it will be empty and invisible while loading */}
+                <div style={getContentStyle()}>
+                  {showNoActivitiesMessage ? (
+                    <div className="py-20 text-center text-muted-foreground">
+                      Geen activiteiten gevonden voor de geselecteerde categorieën.
+                    </div>
+                  ) : (
+                    filteredActivities.length > 0 && (() => {
                       // Group activities by date (ignoring time)
-                      const dateGroups = activities.reduce((groups: Record<string, Activity[]>, activity) => {
+                      const dateGroups = filteredActivities.reduce((groups: Record<string, Activity[]>, activity) => {
                         const date = new Date(activity.startDate);
                         const dateStr = format(date, 'yyyy-MM-dd');
                         
@@ -238,7 +183,7 @@ export default function Home() {
                               </h3>
                               <div className="space-y-6">
                                 {activitiesForDate.map(act => {
-                                  const tabMeta = tabs.find(t => t.value === act.division);
+                                  const tabMeta = categoryTabs.find(t => t.value === act.division);
                                   if (!tabMeta) return null;
 
                                   return (
@@ -289,10 +234,10 @@ export default function Home() {
                               </div>
                             </div>
                           );
-                        });
-                    })()}
-                  </div>
-                )}
+                        })
+                    })()
+                  )}
+                </div>
               </div>
             </div>
 
@@ -351,5 +296,5 @@ export default function Home() {
         </section>
       </main>
     </div>
-  )
+  );
 }

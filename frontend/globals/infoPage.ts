@@ -38,7 +38,6 @@ export const InfoPage: GlobalConfig = {
     {
       name: 'pillars',
       type: 'array',
-      minRows: 3,
       fields: [
         { name: 'heading', type: 'text',     required: true },
         { name: 'body',    type: 'textarea', required: true },
@@ -52,10 +51,5 @@ export const InfoPage: GlobalConfig = {
       required: true,
     },
 
-    {
-      name: 'footerText',
-      type: 'text',
-      defaultValue: `© ${new Date().getFullYear()} Scouts Sint-Johannes. Alle rechten voorbehouden.`,
-    },
   ],
 }

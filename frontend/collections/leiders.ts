@@ -50,8 +50,8 @@ export const Leiders: CollectionConfig = {
     },
     { name: 'description', label: 'Beschrijving', type: 'textarea' },
 
-    // photo field still points at your Media collection:
-    { name: 'image', label: 'Foto', type: 'upload', relationTo: 'media' },
+    // photo field now points to media-leiding collection:
+    { name: 'image', label: 'Foto', type: 'upload', relationTo: 'media-leiding' },
 
     { name: 'phoneNumber', label: 'Telefoonnummer', type: 'text', required: true },
     { name: 'email',       label: 'E-mailadres',      type: 'email', required: true },

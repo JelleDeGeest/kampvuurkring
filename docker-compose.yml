@@ -10,12 +10,15 @@ services:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
     volumes:
-      - ./frontend:/app
-      - ./frontend/media:/app/media
-      - /app/.next
+      - ./frontend:/usr/src/app
+      - ./frontend/media:/usr/src/app/media
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+      - /usr/src/app/media-leiding
     env_file:
       - .env
-    command: pnpm run dev
+    entrypoint: []  # Override the entrypoint
+    command: ["npm", "run", "dev"]
     depends_on:
       - db  # Ensures the database is ready before starting
 
@@ -33,5 +36,4 @@ services:
 
 volumes:
   data:
-  node_modules:
   pgdata:

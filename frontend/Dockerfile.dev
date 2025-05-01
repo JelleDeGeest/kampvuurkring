@@ -1,37 +1,48 @@
-FROM node:18-alpine
+# ──────────────────────────────────────────────────────────────
+# 1. Base image: Debian Bullseye, Node 18 (ARM64 on M-series Macs)
+# ──────────────────────────────────────────────────────────────
+FROM node:18-bullseye-slim
 
-# Install dependencies needed to build sharp
-RUN apk add --no-cache \
-  python3 \
-  make \
-  g++ \
-  vips-dev
+# ──────────────────────────────────────────────────────────────
+# 2. Build dependencies (native addons) & cleanup
+# ──────────────────────────────────────────────────────────────
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        python3 \
+        git \
+        dumb-init \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-
-COPY package.json pnpm-lock.yaml ./
-
-# Install pnpm and enable it
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-# Set sharp install options to build from source with musl
-ENV npm_config_platform=linux \
-    npm_config_arch=arm64 \
-    npm_config_libc=musl \
-    SHARP_IGNORE_GLOBAL_LIBVIPS=true
-
-# 👇 This will now allow sharp to be built from source
-RUN pnpm install
-
-# Explicitly rebuild sharp for the correct architecture
-RUN npm rebuild sharp --platform=linux --arch=arm64 --libc=musl
-
-COPY . .
-
+# ──────────────────────────────────────────────────────────────
+# 3. Prevent sharp from using a random system libvips
+# ──────────────────────────────────────────────────────────────
+ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 ENV NODE_ENV=development
-ENV PORT=3000
-ENV PATH="/app/node_modules/.bin:${PATH}"
 
+# ──────────────────────────────────────────────────────────────
+# 4. Install Node deps with npm (pulls sharp's prebuilt ARM64 binary)
+# ──────────────────────────────────────────────────────────────
+WORKDIR /usr/src/app
+COPY package*.json ./
+
+# First install all dependencies
+RUN npm ci --omit=optional --legacy-peer-deps
+
+# Then explicitly install sharp with proper platform flags
+RUN npm uninstall sharp || true && \
+    npm install --platform=linux --arch=arm64 sharp@0.34.1 --legacy-peer-deps --force
+
+# ──────────────────────────────────────────────────────────────
+# 5. Copy the application & (optionally) build Next.js
+# ──────────────────────────────────────────────────────────────
+COPY . .
+# If you transpile TypeScript or build Next:
+# RUN npm run build
+
+# ──────────────────────────────────────────────────────────────
+# 6. Expose & start
+# ──────────────────────────────────────────────────────────────
 EXPOSE 3000
-
-CMD ["pnpm", "dev"]
+ENTRYPOINT ["dumb-init", "--"]     # clean PID 1 handling
+CMD ["npm", "start"]               # must exist in package.json

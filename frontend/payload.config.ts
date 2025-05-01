@@ -1,44 +1,37 @@
-// payload.config.ts
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { postgresAdapter } from '@payloadcms/db-postgres'
-import { buildConfig } from 'payload'
+import { buildConfig } from 'payload';
+import { postgresAdapter } from '@payloadcms/db-postgres';
+import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import sharp from 'sharp';
 
-// collections
-import { Media }        from './collections/media'
-import { Leiders }      from './collections/leiders'
-import { Activiteiten } from './collections/activiteiten'
-
-// globals
-import { InfoPage }     from './globals/infoPage'
+// Import your collections and globals
+// If these imports fail, you'll need to create these files
+import { Activiteiten } from './collections/activiteiten';
+import { MediaLeiding } from './collections/medialeiding';
+import { Leiders } from './collections/leiders';
+import { Media } from './collections/media';
+import { InfoPage } from './globals/infoPage';
 
 export default buildConfig({
-  editor: lexicalEditor(),
-
-  collections: [Media, Leiders, Activiteiten],
-
-  globals: [InfoPage],
-
-  /** 👇 NEW: root-level live-preview settings */
-  admin: {
-    livePreview: {
-      // base iframe URL (relative is fine)
-      url: ({ globalConfig }) => globalConfig ? `/${globalConfig.slug}` : '/',
-
-      // enable for these globals
-      globals: ['infoPage'],
-
-      // default toolbar breakpoints (can be overridden per-global)
-      breakpoints: [
-        { label: 'Mobile',  name: 'mobile',  width: 375,  height: 667 },
-        { label: 'Tablet',  name: 'tablet',  width: 768,  height: 1024 },
-        { label: 'Desktop', name: 'desktop', width: 1280, height: 800 },
-      ],
-    },
-  },
-
-  secret: process.env.PAYLOAD_SECRET || '',
-
+  collections: [
+    Activiteiten, MediaLeiding, Leiders, Media
+    // Add other collections here
+  ],
+  globals: [
+    InfoPage
+    // Add globals here
+  ],
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URI || '' },
+    pool: {
+      connectionString: process.env.DATABASE_URI,
+    },
   }),
-})
+  secret: process.env.PAYLOAD_SECRET || 'YOUR_SECRET_KEY',
+  editor: lexicalEditor({}),
+  admin: {
+    // Remove user reference until you have a users collection
+  },
+  typescript: {
+    outputFile: 'types.d.ts',
+  },
+  sharp,
+}); 
