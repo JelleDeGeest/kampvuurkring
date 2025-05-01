@@ -130,11 +130,11 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
       <main className="flex-1">
-        <section className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8">
+        <section className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-3">
           <EventCarousel />
         </section>
 
-        <section className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 md:py-12">
+        <section className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-4 md:py-6">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Activities Section - 2/3 width */}
             <div className="w-full lg:w-2/3">
