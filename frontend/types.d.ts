@@ -68,9 +68,11 @@ export interface Config {
   blocks: {};
   collections: {
     activiteiten: Activiteiten;
-    'media-leiding': MediaLeiding;
     leiders: Leider;
-    media: Media;
+    'leiders-foto': LeidersFoto;
+    'random-afbeeldingen': RandomAfbeeldingen;
+    'homepage-hero-images': HomepageHeroImage;
+    'homepage-heros': HomepageHero;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -79,9 +81,11 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     activiteiten: ActiviteitenSelect<false> | ActiviteitenSelect<true>;
-    'media-leiding': MediaLeidingSelect<false> | MediaLeidingSelect<true>;
     leiders: LeidersSelect<false> | LeidersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
+    'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
+    'random-afbeeldingen': RandomAfbeeldingenSelect<false> | RandomAfbeeldingenSelect<true>;
+    'homepage-hero-images': HomepageHeroImagesSelect<false> | HomepageHeroImagesSelect<true>;
+    'homepage-heros': HomepageHerosSelect<false> | HomepageHerosSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -153,25 +157,6 @@ export interface Activiteiten {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media-leiding".
- */
-export interface MediaLeiding {
-  id: number;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leiders".
  */
 export interface Leider {
@@ -189,7 +174,7 @@ export interface Leider {
   totem?: string | null;
   totemBeschrijving?: string | null;
   description?: string | null;
-  image?: (number | null) | MediaLeiding;
+  image?: (number | null) | LeidersFoto;
   phoneNumber: string;
   email: string;
   kapoenenNaam?: string | null;
@@ -199,9 +184,9 @@ export interface Leider {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "leiders-foto".
  */
-export interface Media {
+export interface LeidersFoto {
   id: number;
   updatedAt: string;
   createdAt: string;
@@ -214,6 +199,78 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "random-afbeeldingen".
+ */
+export interface RandomAfbeeldingen {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-hero-images".
+ */
+export interface HomepageHeroImage {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-heros".
+ */
+export interface HomepageHero {
+  id: number;
+  name: string;
+  /**
+   * Used for ordering/priority (lower numbers appear first)
+   */
+  presence: number;
+  homeHeroImage: number | HomepageHeroImage;
+  /**
+   * If one of Title, Description, or Button is filled in, all must be filled in
+   */
+  title?: string | null;
+  /**
+   * If one of Title, Description, or Button is filled in, all must be filled in
+   */
+  description?: string | null;
+  /**
+   * If one of Title, Description, or Button is filled in, all must be filled in
+   */
+  button?: {
+    text?: string | null;
+    /**
+     * URL where the button should link to
+     */
+    link?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -244,16 +301,24 @@ export interface PayloadLockedDocument {
         value: number | Activiteiten;
       } | null)
     | ({
-        relationTo: 'media-leiding';
-        value: number | MediaLeiding;
-      } | null)
-    | ({
         relationTo: 'leiders';
         value: number | Leider;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
+        relationTo: 'leiders-foto';
+        value: number | LeidersFoto;
+      } | null)
+    | ({
+        relationTo: 'random-afbeeldingen';
+        value: number | RandomAfbeeldingen;
+      } | null)
+    | ({
+        relationTo: 'homepage-hero-images';
+        value: number | HomepageHeroImage;
+      } | null)
+    | ({
+        relationTo: 'homepage-heros';
+        value: number | HomepageHero;
       } | null)
     | ({
         relationTo: 'users';
@@ -316,24 +381,6 @@ export interface ActiviteitenSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media-leiding_select".
- */
-export interface MediaLeidingSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?: T | {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leiders_select".
  */
 export interface LeidersSelect<T extends boolean = true> {
@@ -354,9 +401,9 @@ export interface LeidersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
+ * via the `definition` "leiders-foto_select".
  */
-export interface MediaSelect<T extends boolean = true> {
+export interface LeidersFotoSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -368,6 +415,62 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?: T | {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "random-afbeeldingen_select".
+ */
+export interface RandomAfbeeldingenSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?: T | {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-hero-images_select".
+ */
+export interface HomepageHeroImagesSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?: T | {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-heros_select".
+ */
+export interface HomepageHerosSelect<T extends boolean = true> {
+  name?: T;
+  presence?: T;
+  homeHeroImage?: T;
+  title?: T;
+  description?: T;
+  button?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -431,7 +534,7 @@ export interface InfoPage {
         id?: string | null;
       }[]
     | null;
-  heroImage: number | Media;
+  heroImage: number | RandomAfbeeldingen;
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
   createdAt?: string | null;

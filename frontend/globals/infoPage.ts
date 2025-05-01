@@ -47,7 +47,7 @@ export const InfoPage: GlobalConfig = {
     {
       name: 'heroImage',
       type: 'upload',
-      relationTo: 'media',
+      relationTo: 'random-afbeeldingen',
       required: true,
     },
 

@@ -17,8 +17,8 @@ import { useActivitiesFilter, Activity } from "@/hooks/useActivitiesFilter"
 import { useCategorySelection, CategoryValue } from "@/hooks/CategorySelectionContext"
 
 // Matching fade duration with the hook
-const TRANSITION_DURATION = 200; // ms
-const INITIAL_FADE_IN_DURATION = 200; // ms - longer, smoother fade for initial content
+const TRANSITION_DURATION = 300; // ms
+const INITIAL_FADE_IN_DURATION = 300; // ms - longer, smoother fade for initial content
 
 export default function Home() {
   // Use our custom hooks
