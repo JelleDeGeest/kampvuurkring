@@ -73,6 +73,9 @@ export interface Config {
     'random-afbeeldingen': RandomAfbeeldingen;
     'homepage-hero-images': HomepageHeroImage;
     'homepage-heros': HomepageHero;
+    events: Event;
+    weekends: Weekend;
+    camps: Camp;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +89,9 @@ export interface Config {
     'random-afbeeldingen': RandomAfbeeldingenSelect<false> | RandomAfbeeldingenSelect<true>;
     'homepage-hero-images': HomepageHeroImagesSelect<false> | HomepageHeroImagesSelect<true>;
     'homepage-heros': HomepageHerosSelect<false> | HomepageHerosSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    weekends: WeekendsSelect<false> | WeekendsSelect<true>;
+    camps: CampsSelect<false> | CampsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -274,6 +280,44 @@ export interface HomepageHero {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weekends".
+ */
+export interface Weekend {
+  id: number;
+  title: string;
+  division: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin';
+  startDate: string;
+  endDate: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "camps".
+ */
+export interface Camp {
+  id: number;
+  title: string;
+  division: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin';
+  startDate: string;
+  endDate: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -319,6 +363,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'homepage-heros';
         value: number | HomepageHero;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'weekends';
+        value: number | Weekend;
+      } | null)
+    | ({
+        relationTo: 'camps';
+        value: number | Camp;
       } | null)
     | ({
         relationTo: 'users';
@@ -469,6 +525,41 @@ export interface HomepageHerosSelect<T extends boolean = true> {
         text?: T;
         link?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  startDate?: T;
+  endDate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weekends_select".
+ */
+export interface WeekendsSelect<T extends boolean = true> {
+  title?: T;
+  division?: T;
+  startDate?: T;
+  endDate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "camps_select".
+ */
+export interface CampsSelect<T extends boolean = true> {
+  title?: T;
+  division?: T;
+  startDate?: T;
+  endDate?: T;
   updatedAt?: T;
   createdAt?: T;
 }

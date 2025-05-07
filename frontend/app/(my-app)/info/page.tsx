@@ -1,10 +1,11 @@
-import Header        from '@/components/header'
-import Image         from 'next/image'
-import { draftMode, cookies } from 'next/headers'
-import getPayload    from '@/lib/getPayload'
-import RefreshOnSave from '@/components/RefreshOnSave'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+// app/info/page.tsx  (server component)
+export const dynamic = 'force-dynamic'   // voorkom static caching
+
+import Header            from '@/components/header'
+import Image             from 'next/image'
+import { draftMode }     from 'next/headers'
+import getPayload        from '@/lib/getPayload'
+import PreviewControls   from '@/components/PreviewControls'
 
 interface Pillar {
   heading: string
@@ -13,11 +14,9 @@ interface Pillar {
 
 export default async function InfoPage() {
   const { isEnabled: inDraftMode } = await draftMode()
-  const cookieStore = await cookies()
-  const hasPreviewCookie = Boolean(cookieStore.get('payload-token'))
-  
-  const payload = await getPayload()
 
+  // ── Payload draft ophalen ──
+  const payload = await getPayload()
   let data
   try {
     data = await payload.findGlobal({
@@ -27,41 +26,28 @@ export default async function InfoPage() {
   } catch (error) {
     console.error('Error fetching info page data:', error)
     data = {
-      title: 'Information Page',
-      intro: 'Welcome to our information page.',
+      title:   'Information Page',
+      intro:   'Welcome to our information page.',
       pillars: [],
-      heroImage: null
+      heroImage: null,
     }
   }
 
-  // Default values for missing data
-  const title = data?.title || 'Information Page'
-  const intro = data?.intro || 'Welcome to our information page.'
-  const pillars = data?.pillars || []
+  const title   = data?.title   ?? 'Information Page'
+  const intro   = data?.intro   ?? 'Welcome to our information page.'
+  const pillars = data?.pillars ?? []
 
   return (
     <>
-      {hasPreviewCookie && <RefreshOnSave />}
-
-      {inDraftMode && (
-        <div className="bg-primary text-primary-foreground p-3 text-center w-full">
-          <span className="mr-3 font-medium">Preview Mode Active</span>
-          <Link href="/api/disable-draft?path=/info" prefetch={false}>
-            <Button variant="secondary" size="sm">
-              Exit Preview
-            </Button>
-          </Link>
-        </div>
-      )}
+      {/* universele banner + Refresh‑on‑save */}
+      <PreviewControls />
 
       <div className="flex min-h-screen flex-col bg-background">
         <Header />
 
         <main className="flex-1">
-          <div className="container px-4 sm:px-6 md:px-8 lg:px-12 py-8 md:py-12">
-            <h1 className="text-4xl font-bold text-primary mb-8">
-              {title}
-            </h1>
+          <div className="container px-4 lg:px-12 py-8 md:py-12">
+            <h1 className="text-4xl font-bold text-primary mb-8">{title}</h1>
 
             <div className="w-full h-1 bg-secondary mb-8" />
 
@@ -81,8 +67,12 @@ export default async function InfoPage() {
             <div className="mt-12 rounded-lg overflow-hidden">
               {data?.heroImage ? (
                 <Image
-                  src={typeof data.heroImage !== 'number' ? data.heroImage.url || '' : ''}
-                  alt={typeof data.heroImage !== 'number' ? 'Hero' : 'Hero'}
+                  src={
+                    typeof data.heroImage !== 'number'
+                      ? data.heroImage.url || ''
+                      : ''
+                  }
+                  alt="Hero"
                   width={1920}
                   height={1080}
                   className="w-full h-auto"

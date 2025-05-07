@@ -12,11 +12,21 @@ import { LeidersFoto } from './collections/LeidersFoto';
 import { RandomAfbeeldingen } from './collections/RandomAfbeeldingen';
 import { HomepageHeroImages } from './collections/HomepageHeroImages';
 import { HomepageHeros } from './collections/HomepageHeros';
-
+import { Events }   from './collections/Events'
+import { Weekends } from './collections/Weekends'
+import { Camps }    from './collections/Camps'
 
 export default buildConfig({
   collections: [
-    Activiteiten, Leiders, LeidersFoto, RandomAfbeeldingen, HomepageHeroImages, HomepageHeros
+    Activiteiten,
+    Leiders,
+    LeidersFoto,
+    RandomAfbeeldingen,
+    HomepageHeroImages,
+    HomepageHeros,
+    Events,
+    Weekends,
+    Camps
     // Add other collections here
   ],
   globals: [
