@@ -39,7 +39,7 @@ export function useActivitiesFilter() {
       
       if (!categories.includes(ALL_CATEGORIES)) {
         filtered = allActivities.filter(activity => 
-          categories.includes(activity.division as CategoryValue)
+          categories.includes(activity.division as CategoryValue) || activity.division === 'event'
         );
       }
       
@@ -61,7 +61,7 @@ export function useActivitiesFilter() {
         
         if (!categories.includes(ALL_CATEGORIES)) {
           filtered = allActivities.filter(activity => 
-            categories.includes(activity.division as CategoryValue)
+            categories.includes(activity.division as CategoryValue) || activity.division === 'event'
           );
         }
         
@@ -124,6 +124,7 @@ export function useActivitiesFilter() {
 
   return {
     allActivities,
+    setAllActivities,
     filteredActivities,
     isLoading,
     fadeState,

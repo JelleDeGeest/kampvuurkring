@@ -5,17 +5,27 @@ import WoutersLogo from "@/public/logos/Wouters.svg";
 import JonggiversLogo from "@/public/logos/Jonggivers.svg";
 import GiversLogo from "@/public/logos/Givers.svg";
 import JinLogo from "@/public/logos/Jin.svg";
+import EventLogo from "@/public/logos/Event.svg";
 import { CategoryValue, ALL_CATEGORIES, useCategorySelection } from '@/hooks/CategorySelectionContext';
 
 // Define all the category tabs with their metadata
 export const categoryTabs = [
-  { name: "Alles",      value: ALL_CATEGORIES, icon: Users,          color: "var(--primary-color)", isImage: false },
+  { name: "Alles",      value: ALL_CATEGORIES, icon: Users,          color: "hsl(var(--primary))", isImage: false },
   { name: "Kapoenen",   value: "kapoenen",   icon: KapoenenLogo,   color: "hsl(var(--kapoenen))",   isImage: true },
   { name: "Wouters",    value: "wouters",    icon: WoutersLogo,    color: "hsl(var(--wouters))",    isImage: true },
   { name: "Jonggivers", value: "jonggivers", icon: JonggiversLogo, color: "hsl(var(--jonggivers))", isImage: true },
   { name: "Givers",     value: "givers",     icon: GiversLogo,     color: "hsl(var(--givers))",     isImage: true },
   { name: "Jin",        value: "jin",        icon: JinLogo,        color: "hsl(var(--jin))",        isImage: true },
 ] as const;
+
+// Separate icon definition for events that's not included in selectable tabs
+export const eventIcon = {
+  name: "Evenement",
+  value: "event",
+  icon: EventLogo,
+  color: "hsl(var(--primary))",
+  isImage: true
+};
 
 interface CategoryFilterProps {
   onSelectionChange?: (selectedCategories: CategoryValue[]) => void;

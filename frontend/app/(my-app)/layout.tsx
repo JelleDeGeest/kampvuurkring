@@ -1,12 +1,10 @@
 "use client"
 
 import "./globals.css"
-import { Inter } from "next/font/google"
+import { primaryFont, secondaryFont, headingFont } from "@/fonts"
 import { ThemeProvider } from "@/components/theme-provider"
 import Footer from "./components/Footer"
 import { CategorySelectionProvider } from "@/hooks/CategorySelectionContext"
-
-const inter = Inter({ subsets: ["latin"] })
 
 export default function RootLayout({
   children,
@@ -14,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="nl" suppressHydrationWarning>
+    <html lang="nl" suppressHydrationWarning className={`${primaryFont.variable} ${secondaryFont.variable} ${headingFont.variable}`}>
       <head>
         <title>Scouts Sint-Johannes</title>
         <meta
@@ -22,7 +20,7 @@ export default function RootLayout({
           content="Welkom bij Scouts Sint-Johannes, waar avontuur en vriendschap samenkomen."
         />
       </head>
-      <body className={inter.className}>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

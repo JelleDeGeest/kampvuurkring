@@ -38,7 +38,7 @@ export function EventCarousel() {
   if (isLoading) {
     return (
       <div className="relative w-full h-[300px] md:h-[367px] lg:h-[400px] rounded-2xl overflow-hidden bg-gray-200 flex items-center justify-center">
-        <div className="animate-pulse">Loading...</div>
+        <div className="animate-pulse">Laden...</div>
       </div>
     )
   }
