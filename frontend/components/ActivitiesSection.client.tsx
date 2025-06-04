@@ -140,31 +140,99 @@ export default function ActivitiesSection() {
           endDate:   e.endDate || e.startDate, 
           division:  'event',
           description: { root: { children: [] } },
+          button:    e.button
         }))
 
-      const weekendItems: Activity[] =
-        importantDates.weekends.map((w: PeriodItem) => ({
-          id:        `weekend-${w.startDate}-${w.division}`,
-          title:     w.title,
-          startDate: w.startDate,
-          endDate:   w.endDate || w.startDate,
-          division:  w.division,
-          description: { root: { children: [] } },
-        }))
+      // For weekends with multiple divisions, create separate items for each
+      const weekendItems: Activity[] = [];
+      importantDates.weekends.forEach((w: PeriodItem) => {
+        if (Array.isArray(w.division)) {
+          // Create a separate activity for each division
+          w.division.forEach((div, index) => {
+            weekendItems.push({
+              id:         `weekend-${w.startDate}-${div}-${index}`,
+              originalId: w.id, // Keep the original database ID
+              title:      w.title,
+              startDate:  w.startDate,
+              endDate:    w.endDate || w.startDate,
+              division:   div, // Single division for this card
+              description: { root: { children: [] } },
+              button:     w.button,
+              enrollmentSettings: w.enrollmentSettings
+            });
+          });
+        } else {
+          // Single division, just add it directly
+          weekendItems.push({
+            id:         `weekend-${w.startDate}-${w.division}`,
+            originalId: w.id, // Keep the original database ID
+            title:      w.title,
+            startDate:  w.startDate,
+            endDate:    w.endDate || w.startDate,
+            division:   w.division,
+            description: { root: { children: [] } },
+            button:     w.button,
+            enrollmentSettings: w.enrollmentSettings
+          });
+        }
+      });
 
-      const campItems: Activity[] =
-        importantDates.camps.map((c: PeriodItem) => ({
-          id:         `camp-${c.startDate}-${c.division}`,
-          title:      c.title,
-          startDate:  c.startDate,
-          endDate:    c.endDate || c.startDate,
-          division:   c.division,
-          description: { root: { children: [] } },
-        }))
+      // For camps with multiple divisions, create separate items for each
+      const campItems: Activity[] = [];
+      importantDates.camps.forEach((c: PeriodItem) => {
+        if (Array.isArray(c.division)) {
+          // Create a separate activity for each division
+          c.division.forEach((div, index) => {
+            campItems.push({
+              id:         `camp-${c.startDate}-${div}-${index}`,
+              originalId: c.id, // Keep the original database ID
+              title:      c.title,
+              startDate:  c.startDate,
+              endDate:    c.endDate || c.startDate,
+              division:   div, // Single division for this card
+              description: { root: { children: [] } },
+              button:     c.button,
+              enrollmentSettings: c.enrollmentSettings
+            });
+          });
+        } else {
+          // Single division, just add it directly
+          campItems.push({
+            id:         `camp-${c.startDate}-${c.division}`,
+            originalId: c.id, // Keep the original database ID
+            title:      c.title,
+            startDate:  c.startDate,
+            endDate:    c.endDate || c.startDate,
+            division:   c.division,
+            description: { root: { children: [] } },
+            button:     c.button,
+            enrollmentSettings: c.enrollmentSettings
+          });
+        }
+      });
+
+      // Now process activities
+      const processedActivities = allActivities.flatMap(activity => {
+        // Check if this activity has multiple divisions
+        if (Array.isArray(activity.division)) {
+          // Create separate activity objects for each division
+          return activity.division.map((div, index) => ({
+            ...activity,
+            id: `${activity.id}-${div}-${index}`, // Create unique ID for each
+            originalId: activity.id, // Keep the original database ID
+            division: div // Single division for this card
+          }));
+        }
+        // If it's a single division, return as is
+        return [{
+          ...activity,
+          originalId: activity.id // Keep the original database ID
+        }];
+      });
       
       // Combine all activities
       const mergedActivities = [
-        ...allActivities,
+        ...processedActivities,
         ...eventItems,
         ...weekendItems,
         ...campItems
@@ -264,6 +332,32 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         <div className="text-muted-foreground leading-relaxed">
                           <PayloadRichText content={act.description} />
                         </div>
+                        
+                        {/* Add enrollment button if enrollments are enabled */}
+                        {act.enrollmentSettings?.enabled && act.enrollmentSettings?.enrollmentLink && (
+                          <div className="mt-3">
+                            <a
+                              href={act.enrollmentSettings.enrollmentLink}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            >
+                              Info/Inschrijven
+                            </a>
+                          </div>
+                        )}
+                        
+                        {/* Add button if available (for other types of buttons) */}
+                        {((act.button?.text && act.button?.url) || (act.buttonText && act.buttonUrl)) && (
+                          <div className="mt-3">
+                            <a
+                              href={act.button?.url || act.buttonUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            >
+                              {act.button?.text || act.buttonText}
+                            </a>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   )
@@ -328,6 +422,32 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                       <div className="text-muted-foreground leading-relaxed">
                         <PayloadRichText content={act.description} />
                       </div>
+                      
+                      {/* Add enrollment button if enrollments are enabled */}
+                      {act.enrollmentSettings?.enabled && act.enrollmentSettings?.enrollmentLink && (
+                        <div className="mt-3">
+                          <a
+                            href={act.enrollmentSettings.enrollmentLink}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                          >
+                            Info/Inschrijven
+                          </a>
+                        </div>
+                      )}
+                      
+                      {/* Add button if available (for other types of buttons) */}
+                      {((act.button?.text && act.button?.url) || (act.buttonText && act.buttonUrl)) && (
+                        <div className="mt-3">
+                          <a
+                            href={act.button?.url || act.buttonUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                          >
+                            {act.button?.text || act.buttonText}
+                          </a>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 )

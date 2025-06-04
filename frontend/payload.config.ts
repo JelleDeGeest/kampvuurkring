@@ -15,9 +15,12 @@ import { HomepageHeros } from './collections/HomepageHeros';
 import { Events }   from './collections/Events'
 import { Weekends } from './collections/Weekends'
 import { Camps }    from './collections/Camps'
+import { Enrollments } from './collections/Enrollments'
+import { Media } from './collections/media'
 
 export default buildConfig({
   collections: [
+    Media, // Add Media first since other collections reference it
     Activiteiten,
     Leiders,
     LeidersFoto,
@@ -26,12 +29,16 @@ export default buildConfig({
     HomepageHeros,
     Events,
     Weekends,
-    Camps
+    Camps,
+    Enrollments
     // Add other collections here
   ],
   globals: [
     InfoPage
     // Add globals here
+  ],
+  plugins: [
+    // Removed form builder plugin
   ],
   db: postgresAdapter({
     pool: {

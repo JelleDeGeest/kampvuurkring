@@ -4,11 +4,21 @@ import { CategoryValue, ALL_CATEGORIES } from './CategorySelectionContext';
 // Activity interface
 export interface Activity {
   id: string;
+  originalId?: string; // Keep track of the original database ID
   title: string;
-  division: string;
+  division: string | string[];
   startDate: string;
   endDate: string;
   description: { root: any };
+  button?: {
+    text?: string;
+    url?: string;
+  };
+  enrollmentSettings?: {
+    enabled?: boolean;
+    enrollmentLink?: string;
+    formPage?: string | number;
+  };
 }
 
 // Longer fade durations for smoother transitions
@@ -39,7 +49,9 @@ export function useActivitiesFilter() {
       
       if (!categories.includes(ALL_CATEGORIES)) {
         filtered = allActivities.filter(activity => 
-          categories.includes(activity.division as CategoryValue) || activity.division === 'event'
+          categories.includes(activity.division as CategoryValue) || 
+          (Array.isArray(activity.division) && activity.division.some(div => categories.includes(div as CategoryValue))) || 
+          activity.division === 'event'
         );
       }
       
@@ -61,7 +73,9 @@ export function useActivitiesFilter() {
         
         if (!categories.includes(ALL_CATEGORIES)) {
           filtered = allActivities.filter(activity => 
-            categories.includes(activity.division as CategoryValue) || activity.division === 'event'
+            categories.includes(activity.division as CategoryValue) || 
+            (Array.isArray(activity.division) && activity.division.some(div => categories.includes(div as CategoryValue))) || 
+            activity.division === 'event'
           );
         }
         

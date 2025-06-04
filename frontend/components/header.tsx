@@ -11,7 +11,6 @@ export default function Header() {
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link href="/info" className="transition-colors hover:text-primary">Info</Link>
-            <Link href="/activiteiten" className="transition-colors hover:text-primary">Activiteiten</Link>
             <Link href="/leiding" className="transition-colors hover:text-primary">Leiding</Link>
             <Link href="/fotos" className="transition-colors hover:text-primary">Foto's</Link>
             <Link href="/verhuur-lokaal" className="transition-colors hover:text-primary">Verhuur Lokaal</Link>

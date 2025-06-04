@@ -67,6 +67,7 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    media: Media;
     activiteiten: Activiteiten;
     leiders: Leider;
     'leiders-foto': LeidersFoto;
@@ -76,6 +77,7 @@ export interface Config {
     events: Event;
     weekends: Weekend;
     camps: Camp;
+    enrollments: Enrollment;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -83,6 +85,7 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    media: MediaSelect<false> | MediaSelect<true>;
     activiteiten: ActiviteitenSelect<false> | ActiviteitenSelect<true>;
     leiders: LeidersSelect<false> | LeidersSelect<true>;
     'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
@@ -92,6 +95,7 @@ export interface Config {
     events: EventsSelect<false> | EventsSelect<true>;
     weekends: WeekendsSelect<false> | WeekendsSelect<true>;
     camps: CampsSelect<false> | CampsSelect<true>;
+    enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -135,12 +139,34 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Beschrijving van de afbeelding voor toegankelijkheid
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activiteiten".
  */
 export interface Activiteiten {
   id: number;
   title: string;
-  division: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin';
+  division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
   description?: {
@@ -158,6 +184,72 @@ export interface Activiteiten {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Beheer inschrijvingen voor deze activiteit
+   */
+  enrollmentSettings?: {
+    /**
+     * Schakel dit in om inschrijvingen toe te staan voor deze activiteit
+     */
+    enabled?: boolean | null;
+    /**
+     * Sluit de inschrijvingen handmatig (toont aangepast bericht)
+     */
+    closed?: boolean | null;
+    /**
+     * Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn
+     */
+    closedMessage?: string | null;
+    /**
+     * Deze link wordt automatisch gegenereerd
+     */
+    enrollmentLink?: string | null;
+    enrollmentCount?: string | null;
+    /**
+     * Upload een PDF document met extra informatie over de activiteit
+     */
+    infoDocument?: (number | null) | Media;
+    /**
+     * Sta toe dat ouders meerdere kinderen tegelijk inschrijven
+     */
+    allowMultipleChildren?: boolean | null;
+    /**
+     * Voeg extra tekstvragen toe aan het inschrijfformulier
+     */
+    customQuestions?:
+      | {
+          /**
+           * Bijvoorbeeld: "Heeft uw kind allergieën?"
+           */
+          question: string;
+          /**
+           * Is deze vraag verplicht om in te vullen?
+           */
+          required?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Na deze datum zijn geen inschrijvingen meer mogelijk
+     */
+    enrollmentDeadline?: string | null;
+    /**
+     * Dit bericht wordt getoond nadat het formulier is verstuurd
+     */
+    customMessage?: string | null;
+    /**
+     * Is dit een betalende activiteit?
+     */
+    isPaid?: boolean | null;
+    /**
+     * Prijs in euro per kind
+     */
+    pricePerChild?: number | null;
+    /**
+     * Instructies voor betaling (bijv. rekeningnummer, mededeling)
+     */
+    paymentInstructions?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -287,6 +379,25 @@ export interface Event {
   title: string;
   startDate: string;
   endDate?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Bijvoorbeeld: "Inschrijven", "Meer info", "Aanmelden"
+   */
+  buttonText?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -297,9 +408,74 @@ export interface Event {
 export interface Weekend {
   id: number;
   title: string;
-  division: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin';
+  division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
+  /**
+   * Beheer inschrijvingen voor dit weekend
+   */
+  enrollmentSettings?: {
+    /**
+     * Schakel dit in om inschrijvingen toe te staan voor dit weekend
+     */
+    enabled?: boolean | null;
+    /**
+     * Sluit de inschrijvingen handmatig (toont aangepast bericht)
+     */
+    closed?: boolean | null;
+    /**
+     * Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn
+     */
+    closedMessage?: string | null;
+    /**
+     * Deze link wordt automatisch gegenereerd
+     */
+    enrollmentLink?: string | null;
+    /**
+     * Upload een PDF document met extra informatie over het weekend
+     */
+    infoDocument?: (number | null) | Media;
+    /**
+     * Sta toe dat ouders meerdere kinderen tegelijk inschrijven
+     */
+    allowMultipleChildren?: boolean | null;
+    /**
+     * Voeg extra tekstvragen toe aan het inschrijfformulier
+     */
+    customQuestions?:
+      | {
+          /**
+           * Bijvoorbeeld: "Heeft uw kind allergieën?"
+           */
+          question: string;
+          /**
+           * Is deze vraag verplicht om in te vullen?
+           */
+          required?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Na deze datum zijn geen inschrijvingen meer mogelijk
+     */
+    enrollmentDeadline?: string | null;
+    /**
+     * Dit bericht wordt getoond nadat het formulier is verstuurd
+     */
+    customMessage?: string | null;
+    /**
+     * Is dit een betalend weekend?
+     */
+    isPaid?: boolean | null;
+    /**
+     * Prijs in euro per kind
+     */
+    pricePerChild?: number | null;
+    /**
+     * Instructies voor betaling (bijv. rekeningnummer, mededeling)
+     */
+    paymentInstructions?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -310,9 +486,133 @@ export interface Weekend {
 export interface Camp {
   id: number;
   title: string;
-  division: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin';
+  division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
+  /**
+   * Beheer inschrijvingen voor dit kamp
+   */
+  enrollmentSettings?: {
+    /**
+     * Schakel dit in om inschrijvingen toe te staan voor dit kamp
+     */
+    enabled?: boolean | null;
+    /**
+     * Sluit de inschrijvingen handmatig (toont aangepast bericht)
+     */
+    closed?: boolean | null;
+    /**
+     * Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn
+     */
+    closedMessage?: string | null;
+    /**
+     * Deze link wordt automatisch gegenereerd
+     */
+    enrollmentLink?: string | null;
+    /**
+     * Upload een PDF document met extra informatie over het kamp
+     */
+    infoDocument?: (number | null) | Media;
+    /**
+     * Sta toe dat ouders meerdere kinderen tegelijk inschrijven
+     */
+    allowMultipleChildren?: boolean | null;
+    /**
+     * Voeg extra tekstvragen toe aan het inschrijfformulier
+     */
+    customQuestions?:
+      | {
+          /**
+           * Bijvoorbeeld: "Heeft uw kind allergieën?"
+           */
+          question: string;
+          /**
+           * Is deze vraag verplicht om in te vullen?
+           */
+          required?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Na deze datum zijn geen inschrijvingen meer mogelijk
+     */
+    enrollmentDeadline?: string | null;
+    /**
+     * Dit bericht wordt getoond nadat het formulier is verstuurd
+     */
+    customMessage?: string | null;
+    /**
+     * Is dit een betalend kamp?
+     */
+    isPaid?: boolean | null;
+    /**
+     * Prijs in euro per kind
+     */
+    pricePerChild?: number | null;
+    /**
+     * Instructies voor betaling (bijv. rekeningnummer, mededeling)
+     */
+    paymentInstructions?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Inschrijvingen voor activiteiten, weekends en kampen
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrollments".
+ */
+export interface Enrollment {
+  id: number;
+  /**
+   * Automatisch ingevuld uit contact informatie
+   */
+  participantEmail?: string | null;
+  targetType: 'activiteiten' | 'weekends' | 'camps';
+  targetId: string;
+  /**
+   * Titel van de activiteit/weekend/kamp
+   */
+  targetTitle?: string | null;
+  /**
+   * Automatisch berekend
+   */
+  numberOfChildren?: number | null;
+  children: {
+    participantInfo: {
+      firstName: string;
+      lastName: string;
+    };
+    id?: string | null;
+  }[];
+  contactInfo: {
+    email: string;
+  };
+  additionalOptions?: {
+    /**
+     * Extra opmerkingen of vragen
+     */
+    comments?: string | null;
+    /**
+     * Antwoorden op extra vragen
+     */
+    customAnswers?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  /**
+   * Totaal te betalen bedrag
+   */
+  totalPrice?: number | null;
+  submittedAt?: string | null;
+  status?: ('pending' | 'confirmed' | 'cancelled' | 'paid') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -340,6 +640,10 @@ export interface User {
 export interface PayloadLockedDocument {
   id: number;
   document?:
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
     | ({
         relationTo: 'activiteiten';
         value: number | Activiteiten;
@@ -375,6 +679,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'camps';
         value: number | Camp;
+      } | null)
+    | ({
+        relationTo: 'enrollments';
+        value: number | Enrollment;
       } | null)
     | ({
         relationTo: 'users';
@@ -424,6 +732,24 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activiteiten_select".
  */
 export interface ActiviteitenSelect<T extends boolean = true> {
@@ -432,6 +758,29 @@ export interface ActiviteitenSelect<T extends boolean = true> {
   startDate?: T;
   endDate?: T;
   description?: T;
+  enrollmentSettings?:
+    | T
+    | {
+        enabled?: T;
+        closed?: T;
+        closedMessage?: T;
+        enrollmentLink?: T;
+        enrollmentCount?: T;
+        infoDocument?: T;
+        allowMultipleChildren?: T;
+        customQuestions?:
+          | T
+          | {
+              question?: T;
+              required?: T;
+              id?: T;
+            };
+        enrollmentDeadline?: T;
+        customMessage?: T;
+        isPaid?: T;
+        pricePerChild?: T;
+        paymentInstructions?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -536,6 +885,9 @@ export interface EventsSelect<T extends boolean = true> {
   title?: T;
   startDate?: T;
   endDate?: T;
+  description?: T;
+  buttonText?: T;
+  buttonUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -548,6 +900,29 @@ export interface WeekendsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  enrollmentSettings?:
+    | T
+    | {
+        enabled?: T;
+        closed?: T;
+        closedMessage?: T;
+        enrollmentLink?: T;
+        enrollmentCount?: T;
+        infoDocument?: T;
+        allowMultipleChildren?: T;
+        customQuestions?:
+          | T
+          | {
+              question?: T;
+              required?: T;
+              id?: T;
+            };
+        enrollmentDeadline?: T;
+        customMessage?: T;
+        isPaid?: T;
+        pricePerChild?: T;
+        paymentInstructions?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -560,6 +935,67 @@ export interface CampsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  enrollmentSettings?:
+    | T
+    | {
+        enabled?: T;
+        closed?: T;
+        closedMessage?: T;
+        enrollmentLink?: T;
+        enrollmentCount?: T;
+        infoDocument?: T;
+        allowMultipleChildren?: T;
+        customQuestions?:
+          | T
+          | {
+              question?: T;
+              required?: T;
+              id?: T;
+            };
+        enrollmentDeadline?: T;
+        customMessage?: T;
+        isPaid?: T;
+        pricePerChild?: T;
+        paymentInstructions?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrollments_select".
+ */
+export interface EnrollmentsSelect<T extends boolean = true> {
+  participantEmail?: T;
+  targetType?: T;
+  targetId?: T;
+  targetTitle?: T;
+  numberOfChildren?: T;
+  children?:
+    | T
+    | {
+        participantInfo?:
+          | T
+          | {
+              firstName?: T;
+              lastName?: T;
+            };
+        id?: T;
+      };
+  contactInfo?:
+    | T
+    | {
+        email?: T;
+      };
+  additionalOptions?:
+    | T
+    | {
+        comments?: T;
+        customAnswers?: T;
+      };
+  totalPrice?: T;
+  submittedAt?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
