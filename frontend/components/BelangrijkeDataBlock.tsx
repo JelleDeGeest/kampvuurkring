@@ -154,8 +154,10 @@ function Section({
                   </div>
                   <div className="font-bold text-gray-700 font-heading text-lg">{it.title}</div>
                   
-                  {/* Add enrollment button if enrollments are enabled */}
-                  {it.enrollmentSettings?.enabled && it.enrollmentSettings?.enrollmentLink && (
+                  {/* Add enrollment button if enrollments are enabled and button not hidden */}
+                  {it.enrollmentSettings?.enabled && 
+                   !it.enrollmentSettings?.hideButton && 
+                   it.enrollmentSettings?.enrollmentLink && (
                     <div className="mt-2">
                       <a
                         href={it.enrollmentSettings.enrollmentLink}
@@ -223,8 +225,10 @@ function PeriodRow({ item }: { item: PeriodItem }) {
           {meta?.name ?? item.division}
         </div>
 
-        {/* Add enrollment button if enrollments are enabled */}
-        {item.enrollmentSettings?.enabled && item.enrollmentSettings?.enrollmentLink && (
+        {/* Add enrollment button if enrollments are enabled and button not hidden */}
+        {item.enrollmentSettings?.enabled && 
+         !item.enrollmentSettings?.hideButton && 
+         item.enrollmentSettings?.enrollmentLink && (
           <div className="mt-2">
             <a
               href={item.enrollmentSettings.enrollmentLink}

@@ -85,11 +85,12 @@ export const Activiteiten: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: 'Schakel dit in om inschrijvingen toe te staan voor deze activiteit',
+            condition: (data, siblingData) => !siblingData?.enabled, // Hide once enabled
           },
         },
         {
           name: 'closed',
-          label: 'Inschrijvingen gesloten',
+          label: 'Inschrijvingen sluiten',
           type: 'checkbox',
           defaultValue: false,
           admin: {
@@ -98,35 +99,13 @@ export const Activiteiten: CollectionConfig = {
           },
         },
         {
-          name: 'closedMessage',
-          label: 'Bericht wanneer gesloten',
-          type: 'textarea',
+          name: 'hideButton',
+          label: 'Inschrijfknop deactiveren',
+          type: 'checkbox',
+          defaultValue: false,
           admin: {
             condition: (data, siblingData) => siblingData?.enabled,
-            description: 'Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn',
-          },
-          defaultValue: 'De inschrijvingen voor deze activiteit zijn helaas gesloten.',
-        },
-        {
-          name: 'enrollmentLink',
-          label: 'Inschrijf Link',
-          type: 'text',
-          admin: {
-            condition: (data, siblingData) => siblingData?.enabled,
-            readOnly: true,
-            description: 'Deze link wordt automatisch gegenereerd',
-          },
-        },
-        {
-          name: 'enrollmentCount',
-          label: 'Aantal Inschrijvingen',
-          type: 'text',
-          admin: {
-            condition: (data, siblingData) => siblingData?.enabled,
-            readOnly: true,
-            components: {
-              Field: '/components/EnrollmentCount#EnrollmentCountField',
-            },
+            description: 'Verberg de inschrijfknop op de website zonder inschrijvingen te sluiten',
           },
         },
         {
@@ -141,6 +120,23 @@ export const Activiteiten: CollectionConfig = {
           },
         },
         {
+          name: 'closedMessage',
+          label: 'Bericht wanneer gesloten',
+          type: 'textarea',
+          admin: {
+            condition: (data, siblingData) => siblingData?.enabled,
+            description: 'Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn',
+          },
+          defaultValue: 'De inschrijvingen voor deze activiteit zijn helaas gesloten.',
+        },
+        {
+          name: 'enrollmentLink',
+          type: 'text',
+          admin: {
+            hidden: true, // Hide this field from the UI
+          },
+        },
+        {
           name: 'infoDocument',
           label: 'Info Document (PDF)',
           type: 'upload',
@@ -151,17 +147,6 @@ export const Activiteiten: CollectionConfig = {
           },
           filterOptions: {
             mimeType: { contains: 'pdf' },
-          },
-        },
-        // Copy relevant settings from FormPages
-        {
-          name: 'allowMultipleChildren',
-          label: 'Meerdere kinderen toestaan',
-          type: 'checkbox',
-          defaultValue: true,
-          admin: {
-            condition: (data, siblingData) => siblingData?.enabled,
-            description: 'Sta toe dat ouders meerdere kinderen tegelijk inschrijven',
           },
         },
         {

@@ -20,7 +20,7 @@ export default function Home() {
           </section>
 
           <section className="container px-4 lg:px-12 py-8 md:py-12">
-            <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex flex-col-reverse lg:flex-row gap-6">
               <ActivitiesSection />
 
               <div className="w-full lg:w-1/3">

@@ -197,22 +197,18 @@ export interface Activiteiten {
      */
     closed?: boolean | null;
     /**
+     * Verberg de inschrijfknop op de website zonder inschrijvingen te sluiten
+     */
+    hideButton?: boolean | null;
+    /**
      * Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn
      */
     closedMessage?: string | null;
-    /**
-     * Deze link wordt automatisch gegenereerd
-     */
     enrollmentLink?: string | null;
-    enrollmentCount?: string | null;
     /**
      * Upload een PDF document met extra informatie over de activiteit
      */
     infoDocument?: (number | null) | Media;
-    /**
-     * Sta toe dat ouders meerdere kinderen tegelijk inschrijven
-     */
-    allowMultipleChildren?: boolean | null;
     /**
      * Voeg extra tekstvragen toe aan het inschrijfformulier
      */
@@ -411,6 +407,21 @@ export interface Weekend {
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Beheer inschrijvingen voor dit weekend
    */
@@ -424,21 +435,18 @@ export interface Weekend {
      */
     closed?: boolean | null;
     /**
+     * Verberg de inschrijfknop op de website zonder inschrijvingen te sluiten
+     */
+    hideButton?: boolean | null;
+    /**
      * Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn
      */
     closedMessage?: string | null;
-    /**
-     * Deze link wordt automatisch gegenereerd
-     */
     enrollmentLink?: string | null;
     /**
      * Upload een PDF document met extra informatie over het weekend
      */
     infoDocument?: (number | null) | Media;
-    /**
-     * Sta toe dat ouders meerdere kinderen tegelijk inschrijven
-     */
-    allowMultipleChildren?: boolean | null;
     /**
      * Voeg extra tekstvragen toe aan het inschrijfformulier
      */
@@ -489,6 +497,21 @@ export interface Camp {
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Beheer inschrijvingen voor dit kamp
    */
@@ -502,21 +525,18 @@ export interface Camp {
      */
     closed?: boolean | null;
     /**
+     * Verberg de inschrijfknop op de website zonder inschrijvingen te sluiten
+     */
+    hideButton?: boolean | null;
+    /**
      * Dit bericht wordt getoond wanneer inschrijvingen gesloten zijn
      */
     closedMessage?: string | null;
-    /**
-     * Deze link wordt automatisch gegenereerd
-     */
     enrollmentLink?: string | null;
     /**
      * Upload een PDF document met extra informatie over het kamp
      */
     infoDocument?: (number | null) | Media;
-    /**
-     * Sta toe dat ouders meerdere kinderen tegelijk inschrijven
-     */
-    allowMultipleChildren?: boolean | null;
     /**
      * Voeg extra tekstvragen toe aan het inschrijfformulier
      */
@@ -763,11 +783,10 @@ export interface ActiviteitenSelect<T extends boolean = true> {
     | {
         enabled?: T;
         closed?: T;
+        hideButton?: T;
         closedMessage?: T;
         enrollmentLink?: T;
-        enrollmentCount?: T;
         infoDocument?: T;
-        allowMultipleChildren?: T;
         customQuestions?:
           | T
           | {
@@ -900,16 +919,16 @@ export interface WeekendsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  description?: T;
   enrollmentSettings?:
     | T
     | {
         enabled?: T;
         closed?: T;
+        hideButton?: T;
         closedMessage?: T;
         enrollmentLink?: T;
-        enrollmentCount?: T;
         infoDocument?: T;
-        allowMultipleChildren?: T;
         customQuestions?:
           | T
           | {
@@ -935,16 +954,16 @@ export interface CampsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  description?: T;
   enrollmentSettings?:
     | T
     | {
         enabled?: T;
         closed?: T;
+        hideButton?: T;
         closedMessage?: T;
         enrollmentLink?: T;
-        enrollmentCount?: T;
         infoDocument?: T;
-        allowMultipleChildren?: T;
         customQuestions?:
           | T
           | {

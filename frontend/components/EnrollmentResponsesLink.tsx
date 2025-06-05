@@ -33,14 +33,6 @@ export const EnrollmentResponsesLinkField: React.FC<any> = (props: any) => {
   
   const collection = window.location.pathname.split('/')[3] // Get collection name from URL (adjusted index)
   
-  // Debug logging
-  console.log('EnrollmentResponsesLink - props:', props)
-  console.log('EnrollmentResponsesLink - formData:', formData)
-  console.log('collection from URL:', collection)
-  console.log('enrollmentSettings:', formData?.enrollmentSettings)
-  console.log('window.location.pathname:', window.location.pathname)
-  console.log('URL path parts:', window.location.pathname.split('/'))
-  
   // Map collection to route type
   const typeMap: Record<string, string> = {
     'activiteiten': 'activiteiten',
@@ -51,11 +43,8 @@ export const EnrollmentResponsesLinkField: React.FC<any> = (props: any) => {
   const targetType = typeMap[collection] || 'activiteiten'
   const enabled = formData?.enrollmentSettings?.enabled
 
-  console.log('targetType:', targetType, 'docId:', docId, 'enabled:', enabled)
-
   // Don't show button if we can't get the document ID
   if (!docId) {
-    console.log('No docId available, not showing button')
     return (
       <div className="pt-2">
         <div className="text-xs text-red-500">
@@ -67,12 +56,11 @@ export const EnrollmentResponsesLinkField: React.FC<any> = (props: any) => {
 
   const handleClick = () => {
     const url = `/admin/inschrijvingen/${targetType}/${docId}`
-    console.log('Opening URL:', url)
     window.open(url, '_blank')
   }
 
   return (
-    <div className="pt-2">
+    <div className="pt-2" style={{ marginBottom: '2rem' }}>
       <Button 
         onClick={handleClick}
         size="sm"
@@ -81,9 +69,6 @@ export const EnrollmentResponsesLinkField: React.FC<any> = (props: any) => {
       >
         📊 Bekijk Inschrijvingen
       </Button>
-      <div className="text-xs text-gray-500 mt-1">
-        Component loaded: {targetType}/{docId}
-      </div>
     </div>
   )
 }

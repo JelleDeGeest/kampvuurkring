@@ -21,7 +21,6 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { EnrollmentCountField as EnrollmentCountField_58c678d4312f22520899fa65678b231e } from '../../../components/EnrollmentCount'
 import { EnrollmentResponsesLinkField as EnrollmentResponsesLinkField_d8c4ae29cc2231ba73781d7658c93774 } from '../../../components/EnrollmentResponsesLink'
 
 export const importMap = {
@@ -48,6 +47,5 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
-  "/components/EnrollmentCount#EnrollmentCountField": EnrollmentCountField_58c678d4312f22520899fa65678b231e,
   "/components/EnrollmentResponsesLink#EnrollmentResponsesLinkField": EnrollmentResponsesLinkField_d8c4ae29cc2231ba73781d7658c93774
 }

@@ -73,7 +73,6 @@ export default async function EnrollmentPage({ params }: Props) {
             </p>
           </div>
         </main>
-        <Footer />
       </div>
     )
   }
@@ -105,7 +104,7 @@ export default async function EnrollmentPage({ params }: Props) {
     targetType: collectionName,
     target: item,
     formSettings: {
-      allowMultipleChildren: item.enrollmentSettings.allowMultipleChildren ?? true,
+      allowMultipleChildren: true, // Always allow multiple children
       customMessage: item.enrollmentSettings.customMessage || 'Bedankt voor je inschrijving! We nemen zo snel mogelijk contact met je op.',
       enrollmentDeadline: item.enrollmentSettings.enrollmentDeadline,
       closed: item.enrollmentSettings.closed,

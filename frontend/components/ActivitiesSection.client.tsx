@@ -333,8 +333,10 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                           <PayloadRichText content={act.description} />
                         </div>
                         
-                        {/* Add enrollment button if enrollments are enabled */}
-                        {act.enrollmentSettings?.enabled && act.enrollmentSettings?.enrollmentLink && (
+                        {/* Add enrollment button if enrollments are enabled and button not hidden */}
+                        {act.enrollmentSettings?.enabled && 
+                         !act.enrollmentSettings?.hideButton && 
+                         act.enrollmentSettings?.enrollmentLink && (
                           <div className="mt-3">
                             <a
                               href={act.enrollmentSettings.enrollmentLink}
@@ -423,8 +425,10 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         <PayloadRichText content={act.description} />
                       </div>
                       
-                      {/* Add enrollment button if enrollments are enabled */}
-                      {act.enrollmentSettings?.enabled && act.enrollmentSettings?.enrollmentLink && (
+                      {/* Add enrollment button if enrollments are enabled and button not hidden */}
+                      {act.enrollmentSettings?.enabled && 
+                       !act.enrollmentSettings?.hideButton && 
+                       act.enrollmentSettings?.enrollmentLink && (
                         <div className="mt-3">
                           <a
                             href={act.enrollmentSettings.enrollmentLink}

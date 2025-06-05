@@ -3,19 +3,39 @@
 import React, { useState } from 'react'
 import { UsersIcon } from 'lucide-react'
 import { StatusSelector } from './StatusSelector'
+import { ClientDate } from './ClientDate'
 
 interface EnrollmentTableProps {
   enrollments: any[]
   totalResponses: number
   customQuestionsArray: string[]
+  activityTitle?: string
+  activityType?: string
+  activityStartDate?: string
+  activityEndDate?: string
+  activityDivision?: string | string[]
+  onStatusUpdate?: (enrollmentId: string, newStatus: string) => void
 }
 
 export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({ 
   enrollments, 
   totalResponses, 
-  customQuestionsArray 
+  customQuestionsArray,
+  activityTitle,
+  activityType,
+  activityStartDate,
+  activityEndDate,
+  activityDivision,
+  onStatusUpdate
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
+  const [enrollmentStatuses, setEnrollmentStatuses] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {}
+    enrollments.forEach(e => {
+      initial[e.id] = e.status
+    })
+    return initial
+  })
 
   // Filter enrollments based on search term
   const filteredEnrollments = enrollments.filter((enrollment) => {
@@ -41,65 +61,134 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
     return false
   })
 
+  // Handle status update
+  const handleStatusUpdate = (enrollmentId: string, newStatus: string) => {
+    setEnrollmentStatuses(prev => ({
+      ...prev,
+      [enrollmentId]: newStatus
+    }))
+    // Also notify parent if callback provided
+    if (onStatusUpdate) {
+      onStatusUpdate(enrollmentId, newStatus)
+    }
+  }
+
   const exportToCSV = () => {
     try {
+      // Create title row with activity name
+      const titleRow = activityTitle ? [`Inschrijvingen - ${activityTitle}`] : ['Inschrijvingen Export']
+      
       // Create CSV headers
       const headers = [
         '#',
         'Status', 
         'Email',
-        'Aantal Kinderen',
-        'Namen',
+        'Voornaam',
+        'Achternaam',
         'Datum',
         'Tijd',
         'Opmerkingen',
         ...customQuestionsArray
       ]
       
-      // Create CSV rows
-      const csvData = filteredEnrollments.map((enrollment, index) => {
-        const row = [
-          index + 1,
-          enrollment.status === 'paid' ? 'Betaald' : 'Niet Betaald',
-          enrollment.participantEmail,
-          enrollment.numberOfChildren,
-          enrollment.children?.map((child: any) => 
-            `${child.participantInfo.firstName} ${child.participantInfo.lastName}`
-          ).join(', ') || '',
-          new Date(enrollment.createdAt).toLocaleDateString('nl-BE'),
-          new Date(enrollment.createdAt).toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' }),
-          enrollment.additionalOptions?.comments || '',
-          ...customQuestionsArray.map(question => 
-            enrollment.additionalOptions?.customAnswers?.[question] || ''
-          )
-        ]
-        
-        // Escape commas and quotes in CSV
-        return row.map(cell => {
-          const cellStr = String(cell || '')
-          if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
-            return `"${cellStr.replace(/"/g, '""')}"`
-          }
-          return cellStr
-        })
+      // Create CSV rows - one row per child
+      const csvData: string[][] = []
+      let rowNumber = 1
+      
+      filteredEnrollments.forEach((enrollment) => {
+        if (enrollment.children && enrollment.children.length > 0) {
+          // Create a row for each child
+          enrollment.children.forEach((child: any) => {
+            const row = [
+              rowNumber++,
+              (enrollmentStatuses[enrollment.id] || enrollment.status) === 'paid' ? 'Betaald' : 'Niet Betaald',
+              enrollment.participantEmail,
+              child.participantInfo.firstName || '',
+              child.participantInfo.lastName || '',
+              (() => {
+                const date = new Date(enrollment.createdAt)
+                const day = date.getDate().toString().padStart(2, '0')
+                const month = (date.getMonth() + 1).toString().padStart(2, '0')
+                const year = date.getFullYear()
+                return `${day}/${month}/${year}`
+              })(),
+              (() => {
+                const date = new Date(enrollment.createdAt)
+                const hours = date.getHours().toString().padStart(2, '0')
+                const minutes = date.getMinutes().toString().padStart(2, '0')
+                return `${hours}:${minutes}`
+              })(),
+              enrollment.additionalOptions?.comments || '',
+              ...customQuestionsArray.map(question => 
+                enrollment.additionalOptions?.customAnswers?.[question] || ''
+              )
+            ]
+            
+            // Escape commas and quotes in CSV
+            csvData.push(row.map(cell => {
+              const cellStr = String(cell || '')
+              if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+                return `"${cellStr.replace(/"/g, '""')}"`
+              }
+              return cellStr
+            }))
+          })
+        } else {
+          // If no children, still create one row with empty name fields
+          const row = [
+            rowNumber++,
+            (enrollmentStatuses[enrollment.id] || enrollment.status) === 'paid' ? 'Betaald' : 'Niet Betaald',
+            enrollment.participantEmail,
+            '',
+            '',
+            (() => {
+              const date = new Date(enrollment.createdAt)
+              const day = date.getDate().toString().padStart(2, '0')
+              const month = (date.getMonth() + 1).toString().padStart(2, '0')
+              const year = date.getFullYear()
+              return `${day}/${month}/${year}`
+            })(),
+            (() => {
+              const date = new Date(enrollment.createdAt)
+              const hours = date.getHours().toString().padStart(2, '0')
+              const minutes = date.getMinutes().toString().padStart(2, '0')
+              return `${hours}:${minutes}`
+            })(),
+            enrollment.additionalOptions?.comments || '',
+            ...customQuestionsArray.map(question => 
+              enrollment.additionalOptions?.customAnswers?.[question] || ''
+            )
+          ]
+          
+          // Escape commas and quotes in CSV
+          csvData.push(row.map(cell => {
+            const cellStr = String(cell || '')
+            if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+              return `"${cellStr.replace(/"/g, '""')}"`
+            }
+            return cellStr
+          }))
+        }
       })
       
-      // Combine headers and data
-      const csvContent = [headers, ...csvData]
+      // Combine title, empty row, headers and data
+      const csvContent = [titleRow, [], headers, ...csvData]
         .map(row => row.join(','))
         .join('\n')
       
-      // Create and download file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      // Create and download file with BOM for Excel compatibility
+      const BOM = '\uFEFF'
+      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
       const link = document.createElement('a')
       
       if (link.download !== undefined) {
         const url = URL.createObjectURL(blob)
         link.setAttribute('href', url)
         
-        // Generate filename with current date
+        // Generate filename with activity name and date
         const date = new Date().toLocaleDateString('nl-BE').replace(/\//g, '-')
-        link.setAttribute('download', `inschrijvingen-${date}.csv`)
+        const safeName = activityTitle ? activityTitle.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').substring(0, 30) : 'export'
+        link.setAttribute('download', `inschrijvingen-${safeName}-${date}.csv`)
         
         link.style.visibility = 'hidden'
         document.body.appendChild(link)
@@ -114,15 +203,15 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
 
   return (
     <div style={{
-      backgroundColor: 'white',
-      border: '1px solid #e5e7eb',
+      backgroundColor: 'hsl(90, 6%, 97%)', // --card
+      border: '1px solid hsl(108, 35%, 73%)', // --border
       borderRadius: '8px',
-      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 1px 3px 0 rgba(82, 123, 61, 0.1)',
       overflow: 'hidden'
     }}>
       <div style={{
         padding: '24px',
-        borderBottom: '1px solid #e5e7eb'
+        borderBottom: '1px solid hsl(108, 35%, 73%)' // --border
       }}>
         <div style={{ 
           display: 'flex', 
@@ -133,13 +222,14 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
           <h3 style={{
             fontSize: '1.125rem',
             fontWeight: '600',
-            color: '#111827',
+            color: 'hsl(120, 5%, 3%)', // --foreground
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            margin: '0'
+            margin: '0',
+            fontFamily: 'var(--font-heading)'
           }}>
-            <UsersIcon style={{ height: '20px', width: '20px', color: '#4b5563' }} />
+            <UsersIcon style={{ height: '20px', width: '20px', color: 'hsl(108, 35%, 36%)' }} />
             Inschrijvingen Overzicht ({filteredEnrollments.length} van {totalResponses})
           </h3>
           
@@ -151,24 +241,30 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 padding: '8px 12px',
-                border: '1px solid #d1d5db',
+                border: '1px solid hsl(108, 35%, 73%)', // --border
                 borderRadius: '6px',
                 fontSize: '0.875rem',
-                minWidth: '250px'
+                minWidth: '250px',
+                backgroundColor: 'hsl(90, 6%, 97%)', // --background
+                color: 'hsl(120, 5%, 3%)', // --foreground
+                outline: 'none'
               }}
             />
             <button
               onClick={exportToCSV}
               style={{
-                backgroundColor: '#059669',
+                backgroundColor: 'hsl(108, 35%, 36%)', // --primary (scout green)
                 color: 'white',
                 padding: '8px 16px',
                 borderRadius: '6px',
                 border: 'none',
                 fontSize: '0.875rem',
                 fontWeight: '500',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
               }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'hsl(108, 35%, 32%)'} // darker on hover
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'hsl(108, 35%, 36%)'}
             >
               📊 Export CSV
             </button>
@@ -212,62 +308,69 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb' }}>
+              <tr style={{ backgroundColor: 'hsl(108, 35%, 73%)' }}>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>#</th>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>Status</th>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>Email</th>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>Kinderen</th>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>Namen</th>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>Datum</th>
                 <th style={{
                   padding: '8px 12px',
                   textAlign: 'left',
                   fontSize: '0.75rem',
                   fontWeight: '600',
-                  color: '#374151',
-                  borderBottom: '1px solid #e5e7eb'
+                  color: 'hsl(120, 5%, 3%)', // --foreground
+                  borderBottom: '1px solid hsl(108, 35%, 73%)',
+                  fontFamily: 'var(--font-heading)'
                 }}>Opmerkingen</th>
                 {customQuestionsArray.map((question) => (
                   <th key={question} style={{
@@ -275,10 +378,11 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
                     textAlign: 'left',
                     fontSize: '0.75rem',
                     fontWeight: '600',
-                    color: '#374151',
-                    borderBottom: '1px solid #e5e7eb',
+                    color: 'hsl(120, 5%, 3%)', // --foreground
+                    borderBottom: '1px solid hsl(108, 35%, 73%)',
                     minWidth: '120px',
-                    maxWidth: '180px'
+                    maxWidth: '180px',
+                    fontFamily: 'var(--font-heading)'
                   }}>
                     {question}
                   </th>
@@ -314,7 +418,8 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
                   }}>
                     <StatusSelector 
                       enrollmentId={enrollment.id}
-                      currentStatus={enrollment.status}
+                      currentStatus={enrollmentStatuses[enrollment.id] || enrollment.status}
+                      onStatusUpdate={handleStatusUpdate}
                     />
                   </td>
                   <td style={{
@@ -374,16 +479,9 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
                     color: '#6b7280',
                     verticalAlign: 'top'
                   }}>
-                    {new Date(enrollment.createdAt).toLocaleDateString('nl-BE', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric'
-                    })}
+                    <ClientDate dateString={enrollment.createdAt} format="date" />
                     <br />
-                    {new Date(enrollment.createdAt).toLocaleTimeString('nl-BE', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
+                    <ClientDate dateString={enrollment.createdAt} format="time" />
                   </td>
                   <td style={{
                     padding: '8px 12px',
