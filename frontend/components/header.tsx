@@ -10,7 +10,7 @@ export default function Header() {
             <span className="hidden font-bold sm:inline-block">Scouts Sint-Johannes</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link href="/info" className="transition-colors hover:text-primary">Info</Link>
+            <Link href="/inschrijven" className="transition-colors hover:text-primary">Info</Link>
             <Link href="/leiding" className="transition-colors hover:text-primary">Leiding</Link>
             <Link href="/fotos" className="transition-colors hover:text-primary">Foto's</Link>
             <Link href="/verhuur-lokaal" className="transition-colors hover:text-primary">Verhuur Lokaal</Link>
@@ -20,7 +20,7 @@ export default function Header() {
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none">
             <Button asChild className="transition-colors">
-              <Link href="/lid-worden">Word Lid</Link>
+              <Link href="/inschrijven">Inschrijven</Link>
             </Button>
           </div>
         </div>

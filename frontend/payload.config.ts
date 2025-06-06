@@ -8,6 +8,7 @@ import sharp from 'sharp';
 import { Activiteiten } from './collections/Activiteiten';
 import { Leiders } from './collections/Leiders';
 import { InfoPage } from './globals/InfoPage';
+import { InschrijvenPage } from './globals/InschrijvenPage';
 import { LeidersFoto } from './collections/LeidersFoto';
 import { RandomAfbeeldingen } from './collections/RandomAfbeeldingen';
 import { HomepageHeroImages } from './collections/HomepageHeroImages';
@@ -36,7 +37,8 @@ export default buildConfig({
     // Add other collections here
   ],
   globals: [
-    InfoPage
+    InfoPage,
+    InschrijvenPage
     // Add globals here
   ],
   plugins: [

@@ -108,9 +108,11 @@ export interface Config {
   };
   globals: {
     infoPage: InfoPage;
+    inschrijvenPage: InschrijvenPage;
   };
   globalsSelect: {
     infoPage: InfoPageSelect<false> | InfoPageSelect<true>;
+    inschrijvenPage: InschrijvenPageSelect<false> | InschrijvenPageSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1160,6 +1162,52 @@ export interface InfoPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inschrijvenPage".
+ */
+export interface InschrijvenPage {
+  id: number;
+  title: string;
+  subtitle: string;
+  ctaButtonText: string;
+  ctaButtonUrl: string;
+  ctaSubtext?: string | null;
+  whyJoinTitle?: string | null;
+  whyJoinReasons?:
+    | {
+        icon: 'users' | 'star' | 'heart' | 'mapPin' | 'calendar' | 'sparkles';
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  existingMembersSection?: {
+    title?: string | null;
+    content?: string | null;
+    infoBoxTitle?: string | null;
+    infoBoxContent?: string | null;
+  };
+  divisionsTitle?: string | null;
+  divisionsSubtitle?: string | null;
+  practicalInfoTitle?: string | null;
+  practicalInfo?:
+    | {
+        icon?: ('calendar' | 'mapPin' | 'euro' | 'shirt') | null;
+        title: string;
+        content: string;
+        id?: string | null;
+      }[]
+    | null;
+  finalCtaSection?: {
+    title?: string | null;
+    content?: string | null;
+    buttonText?: string | null;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "infoPage_select".
  */
 export interface InfoPageSelect<T extends boolean = true> {
@@ -1173,6 +1221,56 @@ export interface InfoPageSelect<T extends boolean = true> {
         id?: T;
       };
   heroImage?: T;
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inschrijvenPage_select".
+ */
+export interface InschrijvenPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  ctaButtonText?: T;
+  ctaButtonUrl?: T;
+  ctaSubtext?: T;
+  whyJoinTitle?: T;
+  whyJoinReasons?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  existingMembersSection?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        infoBoxTitle?: T;
+        infoBoxContent?: T;
+      };
+  divisionsTitle?: T;
+  divisionsSubtitle?: T;
+  practicalInfoTitle?: T;
+  practicalInfo?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        content?: T;
+        id?: T;
+      };
+  finalCtaSection?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        buttonText?: T;
+      };
   _status?: T;
   updatedAt?: T;
   createdAt?: T;
