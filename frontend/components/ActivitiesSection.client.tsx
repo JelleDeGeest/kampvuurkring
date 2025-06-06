@@ -19,6 +19,28 @@ import { useImportantDates, PeriodItem } from '@/hooks/useImportantDates'
 const TRANSITION_DURATION = 300
 const INITIAL_FADE_IN_DURATION = 300
 
+// Banner component for image headers
+function ImageBanner({ bannerImage, title }: { bannerImage: any, title: string }) {
+  // Handle both populated media objects and simple IDs
+  const imageUrl = typeof bannerImage === 'object' && bannerImage?.url 
+    ? bannerImage.url 
+    : typeof bannerImage === 'string' 
+    ? bannerImage 
+    : null;
+
+  if (!imageUrl) return null;
+
+  return (
+    <div className="relative w-full h-32 overflow-hidden rounded-t-lg">
+      <img 
+        src={imageUrl}
+        alt={`Banner voor ${title}`}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )
+}
+
 export default function ActivitiesSection() {
   // ─── Activities filter hooks ───
   const {
@@ -157,6 +179,7 @@ export default function ActivitiesSection() {
               endDate:    w.endDate || w.startDate,
               division:   div, // Single division for this card
               description: { root: { children: [] } },
+              bannerImage: w.bannerImage,
               button:     w.button,
               enrollmentSettings: w.enrollmentSettings
             });
@@ -171,6 +194,7 @@ export default function ActivitiesSection() {
             endDate:    w.endDate || w.startDate,
             division:   w.division,
             description: { root: { children: [] } },
+            banner:     w.banner,
             button:     w.button,
             enrollmentSettings: w.enrollmentSettings
           });
@@ -191,6 +215,7 @@ export default function ActivitiesSection() {
               endDate:    c.endDate || c.startDate,
               division:   div, // Single division for this card
               description: { root: { children: [] } },
+              bannerImage: c.bannerImage,
               button:     c.button,
               enrollmentSettings: c.enrollmentSettings
             });
@@ -205,6 +230,7 @@ export default function ActivitiesSection() {
             endDate:    c.endDate || c.startDate,
             division:   c.division,
             description: { root: { children: [] } },
+            banner:     c.banner,
             button:     c.button,
             enrollmentSettings: c.enrollmentSettings
           });
@@ -371,9 +397,15 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                 
                 // Regular division items (activities, weekends, camps)
                 const tabMeta = categoryTabs.find((t) => t.value === act.division)
+                const hasBanner = isSpecialEvent && act.bannerImage;
+                
                 return (
-                  <Card key={act.id} className="border bg-white">
-                    <CardHeader className="pb-0 pt-3 px-3">
+                  <Card key={act.id} className="border bg-white overflow-hidden">
+                    {/* Render image banner for weekends and camps if they have one */}
+                    {hasBanner && (
+                      <ImageBanner bannerImage={act.bannerImage} title={act.title} />
+                    )}
+                    <CardHeader className={`pb-0 px-3 ${hasBanner ? 'pt-2' : 'pt-3'}`}>
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
                           <div

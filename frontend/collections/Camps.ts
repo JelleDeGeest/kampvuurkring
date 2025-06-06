@@ -60,9 +60,14 @@ export const Camps: CollectionConfig = {
       },
     },
     {
-      name: 'description',
-      label: 'Beschrijving',
-      type: 'richText',
+      name: 'bannerImage',
+      label: 'Kamp Banner',
+      type: 'upload',
+      relationTo: 'banner-images',
+      required: false,
+      admin: {
+        description: 'Kies een banner afbeelding voor dit kamp uit de banner collectie',
+      },
     },
     {
       name: 'enrollmentSettings',

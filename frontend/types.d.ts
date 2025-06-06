@@ -68,6 +68,7 @@ export interface Config {
   blocks: {};
   collections: {
     media: Media;
+    'banner-images': BannerImage;
     activiteiten: Activiteiten;
     leiders: Leider;
     'leiders-foto': LeidersFoto;
@@ -86,6 +87,7 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     media: MediaSelect<false> | MediaSelect<true>;
+    'banner-images': BannerImagesSelect<false> | BannerImagesSelect<true>;
     activiteiten: ActiviteitenSelect<false> | ActiviteitenSelect<true>;
     leiders: LeidersSelect<false> | LeidersSelect<true>;
     'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
@@ -158,6 +160,52 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * Banner afbeeldingen voor weekends en kampen
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner-images".
+ */
+export interface BannerImage {
+  id: number;
+  /**
+   * Geef de banner een duidelijke naam (bv. "Zomerkamp Bos", "Winterkamp Bergen")
+   */
+  name: string;
+  /**
+   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -407,21 +455,10 @@ export interface Weekend {
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * Kies een banner afbeelding voor dit weekend uit de banner collectie
+   */
+  bannerImage?: (number | null) | BannerImage;
   /**
    * Beheer inschrijvingen voor dit weekend
    */
@@ -497,21 +534,10 @@ export interface Camp {
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * Kies een banner afbeelding voor dit kamp uit de banner collectie
+   */
+  bannerImage?: (number | null) | BannerImage;
   /**
    * Beheer inschrijvingen voor dit kamp
    */
@@ -665,6 +691,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'banner-images';
+        value: number | BannerImage;
+      } | null)
+    | ({
         relationTo: 'activiteiten';
         value: number | Activiteiten;
       } | null)
@@ -767,6 +797,49 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner-images_select".
+ */
+export interface BannerImagesSelect<T extends boolean = true> {
+  name?: T;
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -919,7 +992,7 @@ export interface WeekendsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
-  description?: T;
+  bannerImage?: T;
   enrollmentSettings?:
     | T
     | {
@@ -954,7 +1027,7 @@ export interface CampsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
-  description?: T;
+  bannerImage?: T;
   enrollmentSettings?:
     | T
     | {

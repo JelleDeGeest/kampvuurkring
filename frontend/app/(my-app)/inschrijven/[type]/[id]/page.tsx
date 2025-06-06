@@ -5,6 +5,36 @@ import { LexicalRenderer } from '@/components/LexicalRenderer'
 import PreviewControls from '@/components/PreviewControls'
 import { DynamicForm } from '@/components/DynamicForm'
 import Header from '@/components/header'
+import Footer from '@/app/(my-app)/components/Footer'
+
+// Banner component for enrollment pages (smaller than homepage carousel)
+function EnrollmentBanner({ bannerImage, title }: { bannerImage: any, title: string }) {
+  // Handle both populated media objects and simple IDs
+  const imageUrl = typeof bannerImage === 'object' && bannerImage?.url 
+    ? bannerImage.url 
+    : typeof bannerImage === 'string' 
+    ? bannerImage 
+    : null;
+
+  if (!imageUrl) return null;
+
+  return (
+    <div className="relative w-full h-[200px] md:h-[250px] rounded-2xl overflow-hidden mb-8">
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ 
+          backgroundImage: `url(${imageUrl})`,
+        }}
+      />
+      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="absolute bottom-4 left-4 md:left-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
+          {title}
+        </h1>
+      </div>
+    </div>
+  )
+}
 
 interface Props {
   params: {
@@ -54,6 +84,9 @@ export default async function EnrollmentPage({ params }: Props) {
   }
 
   const item = result.docs[0]
+  
+  // Check if this is a weekend or camp that might have a banner
+  const hasBanner = (resolvedParams.type === 'weekends' || resolvedParams.type === 'kampen') && item.bannerImage;
   
   // Check if enrollments are enabled
   if (!item.enrollmentSettings?.enabled) {
@@ -130,8 +163,16 @@ export default async function EnrollmentPage({ params }: Props) {
       
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
+          {/* Banner Display for weekends/camps */}
+          {hasBanner && (
+            <EnrollmentBanner bannerImage={item.bannerImage} title={item.title} />
+          )}
+          
           <div className="text-center mb-6">
-            <h1 className="text-4xl font-bold text-primary mb-4">{formPage.title}</h1>
+            {/* Only show title if no banner */}
+            {!hasBanner && (
+              <h1 className="text-4xl font-bold text-primary mb-4">{formPage.title}</h1>
+            )}
             
             {/* Target Information - inline display */}
             <div className="flex flex-wrap justify-center gap-6 text-lg">

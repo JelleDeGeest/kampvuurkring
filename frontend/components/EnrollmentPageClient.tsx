@@ -38,12 +38,21 @@ export const EnrollmentPageClient: React.FC<EnrollmentPageClientProps> = ({
   const totalChildren = enrollments.reduce((sum: number, enrollment: any) => 
     sum + (enrollment.numberOfChildren || 0), 0
   )
-  const paidCount = enrollments.filter((enrollment: any) => 
-    (enrollmentStatuses[enrollment.id] || enrollment.status) === 'paid'
-  ).length
-  const pendingCount = enrollments.filter((enrollment: any) => 
-    (enrollmentStatuses[enrollment.id] || enrollment.status) === 'pending'
-  ).length
+  
+  // Count children instead of enrollments for payment status
+  const paidChildrenCount = enrollments.reduce((sum: number, enrollment: any) => {
+    if ((enrollmentStatuses[enrollment.id] || enrollment.status) === 'paid') {
+      return sum + (enrollment.numberOfChildren || 0)
+    }
+    return sum
+  }, 0)
+  
+  const pendingChildrenCount = enrollments.reduce((sum: number, enrollment: any) => {
+    if ((enrollmentStatuses[enrollment.id] || enrollment.status) === 'pending') {
+      return sum + (enrollment.numberOfChildren || 0)
+    }
+    return sum
+  }, 0)
 
   return (
     <>
@@ -139,13 +148,13 @@ export const EnrollmentPageClient: React.FC<EnrollmentPageClientProps> = ({
         </div>
         <div style={{ width: '1px', height: '16px', backgroundColor: 'hsl(108, 35%, 73%)' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'hsl(33, 97%, 50%)' }}>{pendingCount}</span>
-          <span>niet betaald</span>
+          <span style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'hsl(33, 97%, 50%)' }}>{pendingChildrenCount}</span>
+          <span>kinderen niet betaald</span>
         </div>
         <div style={{ width: '1px', height: '16px', backgroundColor: 'hsl(108, 35%, 73%)' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'hsl(108, 41%, 65%)' }}>{paidCount}</span>
-          <span>betaald</span>
+          <span style={{ fontWeight: 'bold', fontSize: '0.875rem', color: 'hsl(108, 41%, 65%)' }}>{paidChildrenCount}</span>
+          <span>kinderen betaald</span>
         </div>
       </div>
 

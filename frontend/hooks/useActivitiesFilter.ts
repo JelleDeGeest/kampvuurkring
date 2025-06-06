@@ -10,6 +10,7 @@ export interface Activity {
   startDate: string;
   endDate: string;
   description: { root: any };
+  bannerImage?: any; // Media object or ID
   button?: {
     text?: string;
     url?: string;

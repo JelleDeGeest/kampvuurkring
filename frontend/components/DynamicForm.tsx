@@ -7,6 +7,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { generateReceiptPDFFromHTML } from '@/lib/generate-receipt-pdf-html'
+import { EnrollmentReceipt } from '@/components/EnrollmentReceipt'
+import { Download } from 'lucide-react'
+import { useRef } from 'react'
 
 interface CustomQuestion {
   question: string
@@ -53,6 +57,9 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false)
+  const [enrollmentData, setEnrollmentData] = useState<any>(null)
+  const receiptRef = useRef<HTMLDivElement>(null)
   
   // Initialize with one child
   const [children, setChildren] = useState<ChildData[]>([{
@@ -89,6 +96,13 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
+
+    // Check payment confirmation if payment is required
+    if (formPage.paymentSettings?.isPaid && !paymentConfirmed) {
+      setError('Je moet bevestigen dat je de betaling hebt uitgevoerd voordat je het formulier kunt versturen.')
+      setIsSubmitting(false)
+      return
+    }
 
     const formData = new FormData(e.currentTarget)
     
@@ -139,6 +153,26 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
         throw new Error('Er is iets misgegaan bij het versturen van het formulier')
       }
 
+      const result = await response.json()
+      
+      // Store enrollment data for PDF generation
+      setEnrollmentData({
+        enrollmentId: result.enrollment.id,
+        targetTitle: formPage.target.title,
+        targetType: formPage.targetType,
+        children: childrenData,
+        customAnswers: customAnswers,
+        comments: formData.get('comments') as string || '',
+        totalPrice: totalPrice,
+        paymentInstructions: formPage.paymentSettings?.paymentInstructions,
+        isPaid: formPage.paymentSettings?.isPaid,
+        startDate: formPage.target.startDate,
+        endDate: formPage.target.endDate,
+        division: formPage.target.division,
+        createdAt: result.enrollment.createdAt || new Date().toISOString(),
+        bannerImage: formPage.target.bannerImage
+      })
+
       setSuccess(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden')
@@ -147,24 +181,65 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     }
   }
 
-  if (success) {
+  const handleDownloadPDF = async () => {
+    if (!enrollmentData || !receiptRef.current) return
+    
+    const fileName = `inschrijving-${enrollmentData.targetTitle.toLowerCase().replace(/\s+/g, '-')}-${enrollmentData.enrollmentId}.pdf`
+    
+    try {
+      await generateReceiptPDFFromHTML(receiptRef.current, fileName)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+      setError('Er is een fout opgetreden bij het genereren van de PDF')
+    }
+  }
+
+  if (success && enrollmentData) {
     return (
-      <Card className="max-w-2xl mx-auto mt-8">
-        <CardHeader>
-          <CardTitle className="text-green-600">Inschrijving verzonden!</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{formPage.formSettings?.customMessage || 'Bedankt voor je inschrijving! We nemen zo snel mogelijk contact met je op.'}</p>
-          {formPage.paymentSettings?.isPaid && (
-            <div className="mt-4 p-4 bg-yellow-50 rounded-md">
-              <p className="font-semibold">Totaal te betalen: €{totalPrice}</p>
-              {formPage.paymentSettings.paymentInstructions && (
-                <p className="mt-2 text-sm whitespace-pre-wrap">{formPage.paymentSettings.paymentInstructions}</p>
-              )}
+      <>
+        {/* Hidden receipt for PDF generation */}
+        <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+          <div ref={receiptRef}>
+            <EnrollmentReceipt data={{
+              ...enrollmentData,
+              description: formPage.target.description
+            }} />
+          </div>
+        </div>
+
+        {/* Visible success message */}
+        <Card className="max-w-2xl mx-auto mt-8">
+          <CardHeader>
+            <CardTitle className="text-primary">Inschrijving verzonden!</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>{formPage.formSettings?.customMessage || 'Je inschrijving is succesvol geregistreerd!'}</p>
+            
+            {formPage.paymentSettings?.isPaid && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-800 font-semibold text-sm">
+                  Let op: Inschrijving is pas definitief als de betaling is ontvangen.
+                </p>
+              </div>
+            )}
+            
+            <div className="pt-4">
+              <Button
+                onClick={handleDownloadPDF}
+                variant="default"
+                className="w-full sm:w-auto flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download Bevestiging (PDF)
+              </Button>
+              <p className="text-sm text-gray-600 mt-2">
+                Download en bewaar deze bevestiging voor je administratie.
+                {formPage.paymentSettings?.isPaid && ' De betalingsinformatie vind je in de PDF.'}
+              </p>
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </>
     )
   }
 
@@ -225,18 +300,6 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
           </div>
         )}
 
-      {/* Price Information */}
-      {formPage.paymentSettings?.isPaid && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Prijs Informatie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>Prijs per kind: €{formPage.paymentSettings.pricePerChild}</p>
-            <p className="font-semibold mt-2">Totaal ({children.length} {children.length === 1 ? 'kind' : 'kinderen'}): €{totalPrice}</p>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Children Information */}
       {children.map((child, index) => (
@@ -351,9 +414,63 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
         </CardContent>
       </Card>
 
+      {/* Payment Information */}
+      {formPage.paymentSettings?.isPaid && (
+        <Card className="border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-primary">Betaling</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-red-800 font-semibold text-sm">
+                Let op: Inschrijving is pas definitief als de betaling is ontvangen.
+              </p>
+            </div>
+            
+            <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg">
+              <p className="text-sm text-muted-foreground mb-2">Prijs per kind: €{formPage.paymentSettings.pricePerChild}</p>
+              <p className="font-bold text-lg text-primary">Totaal te betalen ({children.length} {children.length === 1 ? 'kind' : 'kinderen'}): €{totalPrice}</p>
+            </div>
+            
+            {formPage.paymentSettings.paymentInstructions && (
+              <div className="border-l-4 border-primary bg-primary/5 p-4 rounded-r-lg">
+                <h4 className="font-semibold text-primary mb-2">Betaalinstructies:</h4>
+                <div className="text-sm text-foreground whitespace-pre-wrap">
+                  {formPage.paymentSettings.paymentInstructions}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Payment Confirmation */}
+      {formPage.paymentSettings?.isPaid && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="pt-6">
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                id="payment-confirmation"
+                checked={paymentConfirmed}
+                onChange={(e) => setPaymentConfirmed(e.target.checked)}
+                className="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+              />
+              <label htmlFor="payment-confirmation" className="text-sm text-foreground cursor-pointer">
+                <span className="font-semibold">Ik bevestig dat ik de betaling van €{totalPrice} heb uitgevoerd volgens de bovenstaande instructies.</span>
+                <br />
+                <span className="text-xs text-muted-foreground">
+                  Je moet dit vakje aanvinken om je inschrijving te kunnen versturen.
+                </span>
+              </label>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
         <Button 
           type="submit" 
-          disabled={isSubmitting}
+          disabled={isSubmitting || (formPage.paymentSettings?.isPaid && !paymentConfirmed)}
           className="w-full"
         >
           {isSubmitting ? 'Versturen...' : 'Inschrijving Versturen'}

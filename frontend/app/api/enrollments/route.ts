@@ -108,9 +108,6 @@ export async function POST(request: NextRequest) {
       data: enrollmentData,
     })
 
-    // Send confirmation email (implement this later if needed)
-    // await sendConfirmationEmail(enrollment)
-
     return NextResponse.json(
       { 
         success: true, 

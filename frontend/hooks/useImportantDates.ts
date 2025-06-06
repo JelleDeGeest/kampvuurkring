@@ -20,6 +20,7 @@ export interface EventItem {
 
 export interface PeriodItem extends EventItem {
   division: string | string[];
+  bannerImage?: any; // Media object or ID
 }
 
 interface ImportantDates {

@@ -17,10 +17,12 @@ import { Weekends } from './collections/Weekends'
 import { Camps }    from './collections/Camps'
 import { Enrollments } from './collections/Enrollments'
 import { Media } from './collections/media'
+import { BannerImages } from './collections/BannerImages'
 
 export default buildConfig({
   collections: [
     Media, // Add Media first since other collections reference it
+    BannerImages, // Add BannerImages early since other collections reference it
     Activiteiten,
     Leiders,
     LeidersFoto,

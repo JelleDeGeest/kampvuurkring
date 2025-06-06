@@ -59,9 +59,14 @@ export const Weekends: CollectionConfig = {
       },
     },
     {
-      name: 'description',
-      label: 'Beschrijving',
-      type: 'richText',
+      name: 'bannerImage',
+      label: 'Weekend Banner',
+      type: 'upload',
+      relationTo: 'banner-images',
+      required: false,
+      admin: {
+        description: 'Kies een banner afbeelding voor dit weekend uit de banner collectie',
+      },
     },
     {
       name: 'enrollmentSettings',
