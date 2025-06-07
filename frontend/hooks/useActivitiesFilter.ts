@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CategoryValue, ALL_CATEGORIES } from './CategorySelectionContext';
+import { useDraftMode } from '@/components/DraftModeProvider';
 
 // Activity interface
 export interface Activity {
@@ -34,6 +35,7 @@ export function useActivitiesFilter() {
   const [activeFilters, setActiveFilters] = useState<CategoryValue[]>([]);
   const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [isFirstFilter, setIsFirstFilter] = useState(true);
+  const { isDraftMode } = useDraftMode();
 
   // Filter activities based on selected categories
   // Make this a stable callback with useCallback to avoid dependency issues
@@ -104,9 +106,15 @@ export function useActivitiesFilter() {
       try {
         setIsLoading(true);
         
+        console.log('Activities fetch - Draft mode:', isDraftMode)
+        
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?sort=startDate`,
-          { signal: controller.signal, cache: "no-store" }
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?sort=startDate${isDraftMode ? '&draft=true' : ''}`,
+          { 
+            signal: controller.signal, 
+            cache: "no-store",
+            credentials: 'include' // Include cookies for draft mode
+          }
         );
         
         if (!isMounted) return;
@@ -135,7 +143,7 @@ export function useActivitiesFilter() {
       isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [isDraftMode]);
 
   return {
     allActivities,

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useDraftMode } from '@/components/DraftModeProvider'
 
 export interface EventItem {
   id: string
@@ -51,6 +52,7 @@ export function useImportantDates() {
   const [data, setData] = useState<ImportantDates | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { isDraftMode } = useDraftMode()
 
   useEffect(() => {
     let mounted = true
@@ -60,13 +62,17 @@ export function useImportantDates() {
       try {
         setIsLoading(true)
         
+        const draftParam = isDraftMode ? '&draft=true' : ''
+        console.log('Important dates fetch - Draft mode:', isDraftMode)
+        
         // Fetch data with better error handling
         let evResponse, weResponse, caResponse;
         
         try {
-          evResponse = await fetch(`${base}/api/events${qs}`, { 
+          evResponse = await fetch(`${base}/api/events${qs}${draftParam}`, { 
             signal: controller.signal, 
-            cache: 'no-store' 
+            cache: 'no-store',
+            credentials: 'include' // Include cookies for draft mode
           });
         } catch (err: any) {
           if (err.name === 'AbortError') return;
@@ -75,9 +81,10 @@ export function useImportantDates() {
         }
         
         try {
-          weResponse = await fetch(`${base}/api/weekends${qs}`, { 
+          weResponse = await fetch(`${base}/api/weekends${qs}${draftParam}`, { 
             signal: controller.signal, 
-            cache: 'no-store' 
+            cache: 'no-store',
+            credentials: 'include' // Include cookies for draft mode
           });
         } catch (err: any) {
           if (err.name === 'AbortError') return;
@@ -86,9 +93,10 @@ export function useImportantDates() {
         }
         
         try {
-          caResponse = await fetch(`${base}/api/camps${qs}`, { 
+          caResponse = await fetch(`${base}/api/camps${qs}${draftParam}`, { 
             signal: controller.signal, 
-            cache: 'no-store' 
+            cache: 'no-store',
+            credentials: 'include' // Include cookies for draft mode
           });
         } catch (err: any) {
           if (err.name === 'AbortError') return;
@@ -158,7 +166,7 @@ export function useImportantDates() {
 
     fetchAll()
     return () => { mounted = false; controller.abort() }
-  }, [])
+  }, [isDraftMode])
 
   return { data, isLoading, error }
 }

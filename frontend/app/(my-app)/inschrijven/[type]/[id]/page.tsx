@@ -6,6 +6,8 @@ import PreviewControls from '@/components/PreviewControls'
 import { DynamicForm } from '@/components/DynamicForm'
 import Header from '@/components/header'
 import Footer from '@/app/(my-app)/components/Footer'
+import RefreshOnSave from '@/components/RefreshOnSave'
+import PreviewSwitcher from '@/components/PreviewSwitcher'
 
 // Banner component for enrollment pages (smaller than homepage carousel)
 function EnrollmentBanner({ bannerImage, title }: { bannerImage: any, title: string }) {
@@ -97,6 +99,13 @@ export default async function EnrollmentPage({ params }: Props) {
   if (item.enrollmentSettings.closed) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
+        <PreviewControls />
+        {inDraftMode && (
+          <>
+            <RefreshOnSave />
+            <PreviewSwitcher />
+          </>
+        )}
         <Header />
         <main className="flex-1">
           <div className="container mx-auto px-4 py-8">
@@ -116,6 +125,13 @@ export default async function EnrollmentPage({ params }: Props) {
     if (deadline < new Date()) {
       return (
         <div className="flex min-h-screen flex-col bg-background">
+          <PreviewControls />
+          {inDraftMode && (
+            <>
+              <RefreshOnSave />
+              <PreviewSwitcher />
+            </>
+          )}
           <Header />
           <main className="flex-1">
             <div className="container mx-auto px-4 py-8">
@@ -159,6 +175,12 @@ export default async function EnrollmentPage({ params }: Props) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <PreviewControls />
+      {inDraftMode && (
+        <>
+          <RefreshOnSave />
+          <PreviewSwitcher />
+        </>
+      )}
       <Header />
       
       <main className="flex-1">

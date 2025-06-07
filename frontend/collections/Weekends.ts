@@ -3,9 +3,35 @@ import { CollectionConfig } from 'payload'
 export const Weekends: CollectionConfig = {
   slug: 'weekends',
   labels: { singular: 'Weekend', plural: 'Weekends' },
+  versions: {
+    drafts: {
+      autosave: {
+        interval: 400, // Autosave every 400ms
+      },
+    },
+    maxPerDoc: 30,
+  },
   admin: { 
     useAsTitle: 'title',
-    defaultColumns: ['title', 'division', 'startDate'] 
+    defaultColumns: ['title', 'division', 'startDate'],
+    preview: (doc) => {
+      if (!doc?.enrollmentSettings?.enabled) return null
+      return `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/preview/inschrijven/weekends/${doc.id}?secret=${process.env.PAYLOAD_SECRET}`
+    },
+    livePreview: {
+      url: ({ data }) => {
+        // Always show preview, but default to homepage when enrollments are disabled
+        if (!data?.enrollmentSettings?.enabled) {
+          return '/preview/home?noEnrollment=true'
+        }
+        return `/preview/inschrijven/weekends/${data.id}`
+      },
+      breakpoints: [
+        { label: 'Mobile', name: 'mobile', width: 375, height: 667 },
+        { label: 'Tablet', name: 'tablet', width: 768, height: 1024 },
+        { label: 'Desktop', name: 'desktop', width: 1280, height: 800 },
+      ],
+    },
   },
   access: { 
     read: () => true,
