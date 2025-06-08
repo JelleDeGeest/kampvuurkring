@@ -17,23 +17,70 @@ services:
       - /usr/src/app/media-leiding
     env_file:
       - .env
-    entrypoint: []  # Override the entrypoint
+    entrypoint: []
     command: ["npm", "run", "dev"]
     depends_on:
-      - db  # Ensures the database is ready before starting
+      - db
+    networks:
+      - app-network
 
   db:
-    container_name: postgres
-    image: postgres:15
+    container_name: supabase-db
+    image: supabase/postgres:15.1.0.147
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: payload
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./supabase/volumes/db/data:/var/lib/postgresql/data:Z
+    networks:
+      - app-network
+
+  # Minimal Supabase Studio setup
+  postgres-meta:
+    container_name: supabase-meta
+    image: supabase/postgres-meta:v0.80.0
+    restart: unless-stopped
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: ${POSTGRES_DB}
+      PG_META_DB_USER: postgres
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  studio:
+    container_name: supabase-studio
+    image: supabase/studio:20240422-5cf8f30
+    restart: unless-stopped
+    ports:
+      - "54323:3000"
+    environment:
+      STUDIO_PG_META_URL: http://postgres-meta:8080
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DEFAULT_ORGANIZATION_NAME: "Scouts Sint-Johannes"
+      DEFAULT_PROJECT_NAME: "Kampvuurkring"
+      SUPABASE_URL: http://localhost:8000
+      SUPABASE_PUBLIC_URL: http://localhost:8000
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      NEXT_PUBLIC_ENABLE_LOGS: false
+      NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
+    depends_on:
+      - postgres-meta
+    networks:
+      - app-network
+
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   data:
-  pgdata:
