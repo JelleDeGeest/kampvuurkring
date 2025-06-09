@@ -19,6 +19,9 @@ export const Activiteiten: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'division', 'startDate'],
+    components: {
+      beforeListTable: ['/components/ActivitiesOverviewLink#ActivitiesOverviewLinkField'],
+    },
     preview: (doc) => {
       if (!doc?.enrollmentSettings?.enabled) return null
       return `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/preview/inschrijven/activiteiten/${doc.id}?secret=${process.env.PAYLOAD_SECRET}`
@@ -64,6 +67,19 @@ export const Activiteiten: CollectionConfig = {
         { label: 'Givers',     value: 'givers' },
         { label: 'Jin',        value: 'jin' },
       ],
+    },
+    {
+      name: 'dateSuggestion',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '/components/ActivityDateSuggestion#ActivityDateSuggestion',
+        },
+        condition: (data) => {
+          // Only show suggestion when title and division are filled
+          return data?.title && data?.division && (Array.isArray(data.division) ? data.division.length > 0 : true)
+        },
+      },
     },
     {
       name: 'startDate',

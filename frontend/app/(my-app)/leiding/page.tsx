@@ -1,16 +1,45 @@
 import Header from "@/components/header"
 import Image from "next/image"
+import Link from "next/link"
 
 interface Leider {
   id: string
   name: string
   totem: string
+  kapoenenNaam?: string
+  wouterNaam?: string
   image?: {
     url: string
   }
 }
 
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3000';
+
+// Helper component to display leader names based on their tak
+function LeiderNameDisplay({ leider, tak }: { leider: Leider; tak: string }) {
+  const displayName = tak === 'kapoenen' && leider.kapoenenNaam 
+    ? leider.kapoenenNaam 
+    : tak === 'wouters' && leider.wouterNaam 
+    ? leider.wouterNaam 
+    : null;
+
+  if (displayName) {
+    return (
+      <>
+        <h3 className="font-bold text-lg group-hover:text-primary transition-colors duration-200">{displayName}</h3>
+        <p className="text-sm text-gray-600">{leider.name}</p>
+        <p className="text-xs text-gray-500">{leider.totem}</p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <h3 className="font-semibold group-hover:text-primary transition-colors duration-200">{leider.name}</h3>
+      <p className="text-sm text-gray-600">{leider.totem}</p>
+    </>
+  );
+}
 
 async function fetchLeidersByTak(tak: string) {
   const res = await fetch(
@@ -52,26 +81,25 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {kapoenenLeiders.map((leider: Leider) => (
-                console.log(leider),
-                <div key={`kapoenen-${leider.id}`} className="flex flex-col">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
+                <Link key={`kapoenen-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
                       <Image
                         src={`${PAYLOAD_URL}${leider.image.url}`}
                         alt={leider.name}
                         width={160}
                         height={160}
-                        className="object-cover"
+                        className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gray-300" />
                     )}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">{leider.name}</h3>
-                    <p className="text-sm text-gray-600">{leider.totem}</p>
+                    <LeiderNameDisplay leider={leider} tak="kapoenen" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -93,25 +121,25 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {woutersLeiders.map((leider: Leider) => (
-                <div key={`wouters-${leider.id}`} className="flex flex-col">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
+                <Link key={`wouters-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
                       <Image
                         src={`${PAYLOAD_URL}${leider.image.url}`}
                         alt={leider.name}
                         width={160}
                         height={160}
-                        className="object-cover"
+                        className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gray-300" />
                     )}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">{leider.name}</h3>
-                    <p className="text-sm text-gray-600">{leider.totem}</p>
+                    <LeiderNameDisplay leider={leider} tak="wouters" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -133,25 +161,25 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {jonggiversLeiders.map((leider: Leider) => (
-                <div key={`jonggivers-${leider.id}`} className="flex flex-col">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
+                <Link key={`jonggivers-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
                       <Image
                         src={`${PAYLOAD_URL}${leider.image.url}`}
                         alt={leider.name}
                         width={160}
                         height={160}
-                        className="object-cover"
+                        className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gray-300" />
                     )}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">{leider.name}</h3>
-                    <p className="text-sm text-gray-600">{leider.totem}</p>
+                    <LeiderNameDisplay leider={leider} tak="other" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -173,25 +201,25 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {giversLeiders.map((leider: Leider) => (
-                <div key={`givers-${leider.id}`} className="flex flex-col">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
+                <Link key={`givers-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
                       <Image
                         src={`${PAYLOAD_URL}${leider.image.url}`}
                         alt={leider.name}
                         width={160}
                         height={160}
-                        className="object-cover"
+                        className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gray-300" />
                     )}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">{leider.name}</h3>
-                    <p className="text-sm text-gray-600">{leider.totem}</p>
+                    <LeiderNameDisplay leider={leider} tak="other" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -213,25 +241,25 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {jinLeiders.map((leider: Leider) => (
-                <div key={`jin-${leider.id}`} className="flex flex-col">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
+                <Link key={`jin-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
                       <Image
                         src={`${PAYLOAD_URL}${leider.image.url}`}
                         alt={leider.name}
                         width={160}
                         height={160}
-                        className="object-cover"
+                        className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gray-300" />
                     )}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">{leider.name}</h3>
-                    <p className="text-sm text-gray-600">{leider.totem}</p>
+                    <LeiderNameDisplay leider={leider} tak="other" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -253,25 +281,25 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {groepsLeiders.map((leider: Leider) => (
-                <div key={`groepsleiding-${leider.id}`} className="flex flex-col">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto">
+                <Link key={`groepsleiding-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
+                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
                       <Image
                         src={`${PAYLOAD_URL}${leider.image.url}`}
                         alt={leider.name}
                         width={160}
                         height={160}
-                        className="object-cover"
+                        className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gray-300" />
                     )}
+                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
                   </div>
                   <div className="mt-2 text-center">
-                    <h3 className="font-semibold">{leider.name}</h3>
-                    <p className="text-sm text-gray-600">{leider.totem}</p>
+                    <LeiderNameDisplay leider={leider} tak="other" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
