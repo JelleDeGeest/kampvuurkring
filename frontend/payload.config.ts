@@ -19,6 +19,7 @@ import { Camps }    from './collections/Camps'
 import { Enrollments } from './collections/Enrollments'
 import { Media } from './collections/media'
 import { BannerImages } from './collections/BannerImages'
+import PhotoAlbums from './src/collections/PhotoAlbums'
 
 export default buildConfig({
   collections: [
@@ -33,7 +34,8 @@ export default buildConfig({
     Events,
     Weekends,
     Camps,
-    Enrollments
+    Enrollments,
+    PhotoAlbums
     // Add other collections here
   ],
   globals: [

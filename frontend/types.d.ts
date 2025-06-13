@@ -79,6 +79,7 @@ export interface Config {
     weekends: Weekend;
     camps: Camp;
     enrollments: Enrollment;
+    photoAlbums: PhotoAlbum;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     weekends: WeekendsSelect<false> | WeekendsSelect<true>;
     camps: CampsSelect<false> | CampsSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    photoAlbums: PhotoAlbumsSelect<false> | PhotoAlbumsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -669,6 +671,27 @@ export interface Enrollment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photoAlbums".
+ */
+export interface PhotoAlbum {
+  id: number;
+  name: string;
+  year: number;
+  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'groepsactiviteit';
+  link: string;
+  /**
+   * Optioneel: waar is dit album genomen?
+   */
+  location?: string | null;
+  /**
+   * Beste is een groepsfoto in landscape formaat
+   */
+  coverImage: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -738,6 +761,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'enrollments';
         value: number | Enrollment;
+      } | null)
+    | ({
+        relationTo: 'photoAlbums';
+        value: number | PhotoAlbum;
       } | null)
     | ({
         relationTo: 'users';
@@ -1096,6 +1123,20 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   totalPrice?: T;
   submittedAt?: T;
   status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photoAlbums_select".
+ */
+export interface PhotoAlbumsSelect<T extends boolean = true> {
+  name?: T;
+  year?: T;
+  tak?: T;
+  link?: T;
+  location?: T;
+  coverImage?: T;
   updatedAt?: T;
   createdAt?: T;
 }

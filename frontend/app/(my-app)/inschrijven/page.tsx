@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import Header from '@/components/header'
-import Footer from '@/app/(my-app)/components/Footer'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Users, Calendar, MapPin, Heart, Star, Sparkles } from 'lucide-react'
 import getPayloadClient from '@/lib/getPayload'
 import { draftMode } from 'next/headers'
 import PreviewControls from '@/components/PreviewControls'
+import TakkenAccordion from '@/components/TakkenAccordion'
 
 export const dynamic = 'force-dynamic'
 
@@ -124,10 +124,10 @@ export default async function InschrijvenPage() {
         },
       ],
       existingMembersSection: {
-        title: 'Ben je al lid?',
-        content: 'Vergeet niet om je inschrijving te hernieuwen voor het nieuwe scoutsjaar! Dit kan je eenvoudig doen via dezelfde knop hierboven. Log in met je bestaande account en volg de stappen om je inschrijving te verlengen.',
-        infoBoxTitle: 'Belangrijke data',
-        infoBoxContent: 'Het nieuwe scoutsjaar start in september. Zorg dat je inschrijving in orde is voor de start van het nieuwe jaar om van bij het begin mee te kunnen doen!',
+        title: 'Lid worden',
+        content: 'Wilt uw zoon/dochter graag in de scouts? Of twijfelt hij/zij nog?\n\nIeder kind mag steeds tweemaal proberen, nadien dient uw zoon/dochter te beslissen of hij al dan niet lid wil worden van de onze scouts.\nBij het tabblad \'agenda/ratel\' vind je steeds terug waar en wanneer er vergadering plaatsvindt.',
+        infoBoxTitle: 'Hoe schrijf ik mijn kind in?',
+        infoBoxContent: 'Leden die vorig jaar al ingeschreven waren kunnen zich inloggen op de website van stamhoofd. (https://scouts-sint-johannes.stamhoofd.be) Daar kun je de gegevens van het lid controleren. Wanneer je het lidgeld betaald hebt, is je kind ingeschreven. Zijn er binnen je gezin nieuwe leden? Dan klik je bij \'inschrijven\' \'nieuw lid toevoegen\'.\n\nNieuwe leden maken een account aan op stamhoofd. (https://scouts-sint-johannes.stamhoofd.be) Daar kom je terecht op de pagina waar je je zoon/dochter kunt inschrijven met zijn/haar gegevens. Je kunt meerdere kinderen inschrijven onder hetzelfde account. Wanneer dat gebeurt is, ga je naar het tabblad \'afrekeningen\'. Daar zie je onderaan de pagina hoeveel je moet overschrijven naar het juiste rekeningnummer. Dat blijft even staan totdat wij de betaling goedkeurden, wat soms eventjes kan duren. Bij vragen kun je ons steeds bereiken via groepsleiding@scoutssintjohannes.be.\n\nHoeveel bedraagt het lidgeld?\n\nHet lidgeld bedraagt 45 euro per kind.\nVanaf 3 kinderen ingeschreven in de scouts bedraagt het 35 euro per kind.\nHet lidgeld is voor de verzekering die vanuit Scouts en Gidsen Vlaanderen gevraagd wordt.\n\nEr is ook een mogelijkheid voor verminderd lidgeld. We willen ieder kind de kans geven om lid te worden van scouting. Geld mag daarbij geen rol spelen. Voor wie het financieel wat moeilijker is, bestaat het verminderd lidgeld. Je betaalt dan 15 euro lidgeld.',
       },
       divisionsTitle: 'Onze takken',
       divisionsSubtitle: 'Bij de scouts is er voor elke leeftijd een aangepast programma. Ontdek welke tak bij jouw leeftijd past!',
@@ -142,10 +142,6 @@ export default async function InschrijvenPage() {
           icon: 'mapPin',
           title: 'Waar?',
           content: 'Onze lokalen bevinden zich in het hart van onze gemeente. Het exacte adres ontvang je na inschrijving.',
-        },
-        {
-          title: 'Lidgeld',
-          content: 'Het jaarlijkse lidgeld bedraagt €50. Dit omvat verzekering, activiteiten en het lidmaatschap bij Scouts en Gidsen Vlaanderen. Voor bestaande leden: vergeet niet je lidgeld te vernieuwen voor het nieuwe scoutsjaar!',
         },
         {
           title: 'Uniform',
@@ -247,24 +243,7 @@ export default async function InschrijvenPage() {
             <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
               {pageData.divisionsSubtitle}
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {divisions.map((division) => (
-                <div 
-                  key={division.name}
-                  className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow border-2"
-                  style={{ borderColor: division.color, backgroundColor: division.bgColor }}
-                >
-                  <h3 
-                    className="text-xl font-bold mb-2"
-                    style={{ color: division.color }}
-                  >
-                    {division.name}
-                  </h3>
-                  <p className="font-medium text-gray-700 mb-3">{division.age}</p>
-                  <p className="text-sm text-gray-600">{division.description}</p>
-                </div>
-              ))}
-            </div>
+            <TakkenAccordion className="max-w-4xl mx-auto" />
           </div>
         </section>
 
@@ -299,22 +278,17 @@ export default async function InschrijvenPage() {
                 {pageData.finalCtaSection.content}
               </p>
               
-              {/* Another playful button with animation */}
-              <div className="relative inline-block group">
-                <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-primary to-secondary rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-200 animate-pulse"></div>
-                <a 
-                  href={pageData.ctaButtonUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="relative"
-                >
-                  <Button size="lg" className="text-lg px-10 py-6 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-200 shadow-xl">
-                    <Star className="mr-2 h-6 w-6 animate-spin-slow" />
-                    {pageData.finalCtaSection.buttonText}
-                    <Sparkles className="ml-2 h-6 w-6" />
-                  </Button>
-                </a>
-              </div>
+              <a 
+                href={pageData.ctaButtonUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-200">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  {pageData.finalCtaSection.buttonText}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </a>
               
               <div className="mt-8 flex items-center justify-center gap-4 text-sm text-muted-foreground">
                 <span>Heb je vragen?</span>
@@ -326,8 +300,6 @@ export default async function InschrijvenPage() {
           </section>
         )}
       </main>
-      
-      <Footer />
     </div>
   )
 }
