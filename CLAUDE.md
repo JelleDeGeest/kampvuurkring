@@ -43,9 +43,11 @@ The app uses Next.js App Router with route groups:
 - **Activiteiten** - Activities/events
 - **Leiders** - Scout leaders with photos
 - **Events, Camps, Weekends** - Different event types
-- **FormPages** - Dynamic form builder
 - **Enrollments** - Form submissions
 - **HomepageHeros** - Hero section management
+- **PhotoAlbums** - Photo galleries for events
+- **Media** - File uploads and images
+- **BannerImages** - Banner images for pages
 
 ### Component Patterns
 - Server/Client components are clearly marked (`.client.tsx` suffix for client components)

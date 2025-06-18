@@ -13,7 +13,7 @@ interface Leider {
   }
 }
 
-const PAYLOAD_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3000';
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
 // Helper component to display leader names based on their tak
 function LeiderNameDisplay({ leider, tak }: { leider: Leider; tak: string }) {

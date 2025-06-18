@@ -18,7 +18,7 @@ interface Leider {
   }
 }
 
-const PAYLOAD_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3000';
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
 // Division data with colors and labels
 const divisionData: Record<string, { label: string; color: string; icon: string; cssVar: string }> = {

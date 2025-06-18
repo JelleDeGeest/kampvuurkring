@@ -17,9 +17,9 @@ import { Events }   from './collections/Events'
 import { Weekends } from './collections/Weekends'
 import { Camps }    from './collections/Camps'
 import { Enrollments } from './collections/Enrollments'
-import { Media } from './collections/media'
+import { Media } from './collections/Media'
 import { BannerImages } from './collections/BannerImages'
-import PhotoAlbums from './src/collections/PhotoAlbums'
+import PhotoAlbums from './collections/PhotoAlbums'
 
 export default buildConfig({
   collections: [
