@@ -12,23 +12,32 @@ interface TakActivitiesServerProps {
 
 export async function TakActivitiesServer({ tak, limit = 10 }: TakActivitiesServerProps) {
   const { isEnabled } = await draftMode()
-  const payload = await getPayloadClient()
   
-  // Fetch activities for the specific tak
-  const result = await payload.find({
-    collection: 'activiteiten',
-    where: {
-      division: {
-        contains: tak,
+  let activities: any[] = []
+  
+  try {
+    const payload = await getPayloadClient()
+    
+    // Fetch activities for the specific tak
+    const result = await payload.find({
+      collection: 'activiteiten',
+      where: {
+        division: {
+          contains: tak,
+        },
       },
-    },
-    sort: 'startDate',
-    limit,
-    draft: isEnabled,
-    depth: 2, // Include related data
-  })
+      sort: 'startDate',
+      limit,
+      draft: isEnabled,
+      depth: 2, // Include related data
+    })
 
-  const activities = result.docs
+    activities = result.docs
+  } catch (error) {
+    // During build time, database might not be available
+    // Return empty array to allow the build to continue
+    console.warn('Database not available during build, using empty data')
+  }
 
   if (activities.length === 0) {
     return (
@@ -66,14 +75,7 @@ export async function TakActivitiesServer({ tak, limit = 10 }: TakActivitiesServ
           {/* Enrollment button if enabled */}
           {activity.enrollmentSettings?.enabled && (
             <div className="mt-4">
-              {activity.enrollmentSettings.formPage ? (
-                <a 
-                  href={`/inschrijven/activiteiten/${activity.id}`}
-                  className="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Inschrijven
-                </a>
-              ) : activity.enrollmentSettings.enrollmentLink && (
+              {activity.enrollmentSettings.enrollmentLink && (
                 <a 
                   href={activity.enrollmentSettings.enrollmentLink}
                   target="_blank"

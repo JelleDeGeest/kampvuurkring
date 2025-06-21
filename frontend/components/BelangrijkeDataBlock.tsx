@@ -156,7 +156,6 @@ function Section({
                   
                   {/* Add enrollment button if enrollments are enabled and button not hidden */}
                   {it.enrollmentSettings?.enabled && 
-                   !it.enrollmentSettings?.hideButton && 
                    it.enrollmentSettings?.enrollmentLink && (
                     <div className="mt-2">
                       <a
@@ -169,22 +168,22 @@ function Section({
                   )}
                   
                   {/* Add button if available (for other types of buttons) */}
-                  {((it.button?.text && it.button?.url) || (it.buttonText && it.buttonUrl)) && (
+                  {(it.button?.text && it.button?.url) && (
                     <div className="mt-2">
                       <a
-                        href={it.button?.url || it.buttonUrl}
+                        href={it.button.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                       >
-                        {it.button?.text || it.buttonText}
+                        {it.button.text}
                       </a>
                     </div>
                   )}
                 </div>
               </div>
             ) : (
-              <PeriodRow key={it.id} item={it as PeriodItem} periodType={periodType} />
+              <PeriodRow key={it.id} item={it as PeriodItem} />
             ),
           )
         ) : (
@@ -227,7 +226,6 @@ function PeriodRow({ item }: { item: PeriodItem }) {
 
         {/* Add enrollment button if enrollments are enabled and button not hidden */}
         {item.enrollmentSettings?.enabled && 
-         !item.enrollmentSettings?.hideButton && 
          item.enrollmentSettings?.enrollmentLink && (
           <div className="mt-2">
             <a
@@ -240,15 +238,15 @@ function PeriodRow({ item }: { item: PeriodItem }) {
         )}
 
         {/* Add button if available (for other types of buttons) */}
-        {((item.button?.text && item.button?.url) || (item.buttonText && item.buttonUrl)) && (
+        {(item.button?.text && item.button?.url) && (
           <div className="mt-2">
             <a
-              href={item.button?.url || item.buttonUrl}
+              href={item.button.url}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
-              {item.button?.text || item.buttonText}
+              {item.button.text}
             </a>
           </div>
         )}

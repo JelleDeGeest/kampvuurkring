@@ -2,6 +2,9 @@ import Header from "@/components/header"
 import Image from "next/image"
 import Link from "next/link"
 
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic'
+
 interface Leider {
   id: string
   name: string
@@ -42,13 +45,18 @@ function LeiderNameDisplay({ leider, tak }: { leider: Leider; tak: string }) {
 }
 
 async function fetchLeidersByTak(tak: string) {
-  const res = await fetch(
-    // NOTE the added &depth=1
-    `${PAYLOAD_URL}/api/leiders?where[takken][in]=${tak}&depth=1`,
-    { cache: 'no-store' }
-  );
-  const data = await res.json();
-  return data.docs;
+  try {
+    const res = await fetch(
+      // NOTE the added &depth=1
+      `${PAYLOAD_URL}/api/leiders?where[takken][in]=${tak}&depth=1`,
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    return data.docs || [];
+  } catch (error) {
+    console.warn(`Error fetching leiders for ${tak}:`, error);
+    return [];
+  }
 }
 
 export default async function LeidingPage() {

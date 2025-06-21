@@ -24,13 +24,5 @@ export const Events: CollectionConfig = {
         description: 'Bijvoorbeeld: "Inschrijven", "Meer info", "Aanmelden"',
       },
     },
-    {
-      name: 'buttonUrl',
-      label: 'Button URL',
-      type: 'url',
-      admin: {
-        description: 'Link naar externe inschrijfpagina of meer informatie',
-      },
-    },
   ],
 }

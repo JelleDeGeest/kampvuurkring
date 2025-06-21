@@ -51,9 +51,10 @@ async function fetchLeider(id: string): Promise<Leider | null> {
 export default async function LeiderPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const leider = await fetchLeider(params.id);
+  const resolvedParams = await params
+  const leider = await fetchLeider(resolvedParams.id);
 
   if (!leider) {
     notFound();
@@ -224,80 +225,58 @@ export default async function LeiderPage({
                             </>
                           )}
                         </div>
-                        <p className="text-xl text-muted-foreground">{leider.totem}</p>
+                        <p className="text-md text-muted-foreground">{leider.totem}</p>
                       </>
                     )}
                   </div>
 
-                  {/* Contact Info - with visual separation */}
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center md:justify-start items-center md:items-start">
+                  {/* Contact Information */}
+                  <div className="space-y-2 text-sm">
                     {leider.phoneNumber && (
-                      <a
-                        href={`tel:${leider.phoneNumber}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shadow-sm text-sm"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
-                        {leider.phoneNumber}
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Telefoon:</span>
+                        <a 
+                          href={`tel:${leider.phoneNumber}`}
+                          className="text-primary hover:underline"
+                        >
+                          {leider.phoneNumber}
+                        </a>
+                      </div>
                     )}
                     {leider.email && (
-                      <a
-                        href={`mailto:${leider.email}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shadow-sm text-sm"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                        {leider.email}
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Email:</span>
+                        <a 
+                          href={`mailto:${leider.email}`}
+                          className="text-primary hover:underline"
+                        >
+                          {leider.email}
+                        </a>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Descriptions - full width below */}
-              <div className="mt-6 md:mt-8 space-y-4 md:space-y-6">
-                {/* General Description */}
-                {leider.description && (
-                  <div className="p-6 bg-background rounded-2xl border border-border shadow-sm">
-                    <h2 className="text-xl font-semibold text-foreground mb-4">Over {leider.name}</h2>
-                    <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                      {leider.description}
-                    </p>
+              {/* Description */}
+              {leider.description && (
+                <div className="mt-6 pt-6 border-t border-border">
+                  <h3 className="text-lg font-semibold mb-3">Over {leider.name}</h3>
+                  <div className="prose prose-sm max-w-none">
+                    <p className="text-muted-foreground">{leider.description}</p>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Totem Description */}
-                {leider.totemBeschrijving && (
-                  <div className="p-6 bg-muted/10 rounded-2xl shadow-sm">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      {/* Totem Animal Image Placeholder */}
-                      <div className="flex-shrink-0">
-                        <div className="w-24 h-24 rounded-lg overflow-hidden bg-muted/50 border border-border shadow-sm">
-                          {/* Placeholder for totem animal image */}
-                          <div className="w-full h-full flex items-center justify-center">
-                            <svg className="w-12 h-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7C16 9.20914 14.2091 11 12 11C9.79086 11 8 9.20914 8 7C8 4.79086 9.79086 3 12 3C14.2091 3 16 4.79086 16 7Z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11C12 11 16 13 16 17C16 19.2091 14.2091 21 12 21C9.79086 21 8 19.2091 8 17C8 13 12 11 12 11Z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 20C5 20 6 19 6 17C6 15 5 14 5 14M19 20C19 20 18 19 18 17C18 15 19 14 19 14" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Totem Text Content */}
-                      <div className="flex-1">
-                        <h2 className="text-xl font-semibold text-foreground mb-3">Totem: {leider.totem}</h2>
-                        <p className="text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                          {leider.totemBeschrijving}
-                        </p>
-                      </div>
-                    </div>
+              {/* Totem Description */}
+              {leider.totemBeschrijving && (
+                <div className="mt-6 pt-6 border-t border-border">
+                  <h3 className="text-lg font-semibold mb-3">Totem: {leider.totem}</h3>
+                  <div className="prose prose-sm max-w-none">
+                    <p className="text-muted-foreground">{leider.totemBeschrijving}</p>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -305,3 +284,6 @@ export default async function LeiderPage({
     </div>
   )
 }
+
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic'

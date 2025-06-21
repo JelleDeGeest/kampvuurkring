@@ -1,13 +1,13 @@
 import { draftMode } from 'next/headers'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { type: string; id: string } }
+  { params }: { params: Promise<{ type: string; id: string }> }
 ): Promise<Response> {
-  const { type, id } = params
+  const { type, id } = await params
 
   // Validate the type parameter
   const validTypes = ['activiteiten', 'weekends', 'kampen']
@@ -50,7 +50,7 @@ export async function GET(
     
     // Redirect to the enrollment page with view param if provided
     const redirectUrl = view ? `/inschrijven/${type}/${id}?view=${view}` : `/inschrijven/${type}/${id}`
-    return redirect(redirectUrl)
+    return NextResponse.redirect(redirectUrl)
   }
 
   // For external preview (with secret), validate the secret
@@ -62,7 +62,7 @@ export async function GET(
   (await draftMode()).enable()
 
   // If we have a payload token, set it as a cookie for authentication
-  const response = redirect(`/inschrijven/${type}/${id}`)
+  const response = NextResponse.redirect(`/inschrijven/${type}/${id}`)
   
   if (payloadToken) {
     response.cookies.set('payload-token', payloadToken, {

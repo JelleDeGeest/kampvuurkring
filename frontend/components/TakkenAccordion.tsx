@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, Calendar, MapPin, Star } from 'lucide-react'
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
+import Calendar from 'lucide-react/dist/esm/icons/calendar'
+import MapPin from 'lucide-react/dist/esm/icons/map-pin'
+import Star from 'lucide-react/dist/esm/icons/star'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
 

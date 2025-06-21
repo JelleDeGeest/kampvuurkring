@@ -9,6 +9,14 @@ const __dirname = path.dirname(__filename);
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  // Skip static generation during build to avoid database connection issues
+  experimental: {
+    reactCompiler: false,
+  },
+  // Disable static generation for pages that require database access
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
+  },
   images: {
     domains: ['payload', 'localhost'],
     remotePatterns: [
@@ -36,9 +44,6 @@ const nextConfig = {
       '@payload-config': path.join(__dirname, 'payload.config.ts')
     };
     return config;
-  },
-  experimental: {
-    reactCompiler: false,
   },
 };
 

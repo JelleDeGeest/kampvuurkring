@@ -1012,7 +1012,6 @@ export interface EventsSelect<T extends boolean = true> {
   endDate?: T;
   description?: T;
   buttonText?: T;
-  buttonUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }

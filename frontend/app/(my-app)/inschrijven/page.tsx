@@ -1,12 +1,19 @@
 import Link from 'next/link'
 import Header from '@/components/header'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Users, Calendar, MapPin, Heart, Star, Sparkles } from 'lucide-react'
+import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'
+import Users from 'lucide-react/dist/esm/icons/users'
+import Calendar from 'lucide-react/dist/esm/icons/calendar'
+import MapPin from 'lucide-react/dist/esm/icons/map-pin'
+import Heart from 'lucide-react/dist/esm/icons/heart'
+import Star from 'lucide-react/dist/esm/icons/star'
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles'
 import getPayloadClient from '@/lib/getPayload'
 import { draftMode } from 'next/headers'
 import PreviewControls from '@/components/PreviewControls'
 import TakkenAccordion from '@/components/TakkenAccordion'
 
+// Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
 
 // Division info with colors from the theme

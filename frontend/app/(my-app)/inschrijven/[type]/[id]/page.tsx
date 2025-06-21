@@ -8,6 +8,17 @@ import Header from '@/components/header'
 import Footer from '@/app/(my-app)/components/Footer'
 import RefreshOnSave from '@/components/RefreshOnSave'
 import PreviewSwitcher from '@/components/PreviewSwitcher'
+import { format } from 'date-fns'
+import { nl } from 'date-fns/locale'
+import { Calendar, MapPin, Users, Euro } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { PayloadRichText } from '@/components/PayloadRichText'
+import { EnrollmentPageClient } from '@/components/EnrollmentPageClient'
+import Link from 'next/link'
+
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic'
 
 // Banner component for enrollment pages (smaller than homepage carousel)
 function EnrollmentBanner({ bannerImage, title }: { bannerImage: any, title: string }) {
@@ -39,10 +50,10 @@ function EnrollmentBanner({ bannerImage, title }: { bannerImage: any, title: str
 }
 
 interface Props {
-  params: {
+  params: Promise<{
     type: 'activiteiten' | 'weekends' | 'kampen'
     id: string
-  }
+  }>
 }
 
 const typeLabels = {
@@ -198,40 +209,25 @@ export default async function EnrollmentPage({ params }: Props) {
             
             {/* Target Information - inline display */}
             <div className="flex flex-wrap justify-center gap-6 text-lg">
+              <div>
+                <span className="font-semibold">Type:</span> {typeLabels[resolvedParams.type]}
+              </div>
+              <div>
+                <span className="font-semibold">Titel:</span> {item.title}
+              </div>
               {item.division && (
                 <div>
-                  <span className="font-medium">Tak(ken):</span> {Array.isArray(item.division) ? item.division.join(', ') : item.division}
-                </div>
-              )}
-              {item.startDate && (
-                <div>
-                  <span className="font-medium">Start:</span> {new Date(item.startDate).toLocaleDateString('nl-BE')}
-                </div>
-              )}
-              {item.endDate && item.endDate !== item.startDate && (
-                <div>
-                  <span className="font-medium">Eind:</span> {new Date(item.endDate).toLocaleDateString('nl-BE')}
+                  <span className="font-semibold">Tak:</span> {Array.isArray(item.division) ? item.division.join(', ') : item.division}
                 </div>
               )}
             </div>
           </div>
-
-          {/* Description if available */}
-          {item.description && (
-            <div className="prose max-w-none mb-8 text-center">
-              <div className="max-w-3xl mx-auto">
-                <LexicalRenderer content={item.description} />
-              </div>
-            </div>
-          )}
-
-          {/* Enrollment Form */}
-          <div className="mt-12">
-            <h2 className="text-3xl font-bold mb-8 text-center">Inschrijfformulier</h2>
-            <DynamicForm formPage={formPage} />
-          </div>
+          
+          <DynamicForm formPage={formPage} />
         </div>
       </main>
+      
+      <Footer />
     </div>
   )
 }

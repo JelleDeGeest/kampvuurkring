@@ -3,17 +3,17 @@ import getPayloadClient from '@/lib/getPayload'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const resolvedParams = await params
+    const { id } = await params
     const { status } = await request.json()
     const payload = await getPayloadClient()
 
     // Update the enrollment status
     const updatedEnrollment = await payload.update({
       collection: 'enrollments',
-      id: resolvedParams.id,
+      id,
       data: {
         status: status
       }

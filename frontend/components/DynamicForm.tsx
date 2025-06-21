@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { generateReceiptPDFFromHTML } from '@/lib/generate-receipt-pdf-html'
 import { EnrollmentReceipt } from '@/components/EnrollmentReceipt'
-import { Download } from 'lucide-react'
+import Download from 'lucide-react/dist/esm/icons/download'
 import { useRef } from 'react'
 
 interface CustomQuestion {

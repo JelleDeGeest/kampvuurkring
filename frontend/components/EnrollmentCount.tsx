@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useField, useForm } from '@payloadcms/ui'
 
 export const EnrollmentCountField: React.FC = () => {
-  const { value, path } = useField<string>({ path: 'enrollmentSettings.enrollmentCount' })
+  const { value } = useField<string>({ path: 'enrollmentSettings.enrollmentCount' })
   const [count, setCount] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   

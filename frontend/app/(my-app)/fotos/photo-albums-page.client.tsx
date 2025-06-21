@@ -6,7 +6,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar, Users, Search, Camera } from "lucide-react"
+import Search from 'lucide-react/dist/esm/icons/search'
+import Camera from 'lucide-react/dist/esm/icons/camera'
+import Calendar from 'lucide-react/dist/esm/icons/calendar'
+import Users from 'lucide-react/dist/esm/icons/users'
 
 interface PhotoAlbum {
   id: string
@@ -111,8 +114,7 @@ export function PhotoAlbumsPageClient({ photoAlbums }: PhotoAlbumsPageClientProp
   const [birthYear, setBirthYear] = useState<string>('')
   
   const years = useMemo(() => {
-    const uniqueYears = [...new Set(photoAlbums.map(album => album.year))]
-    return uniqueYears.sort((a, b) => b - a)
+    return Array.from(new Set(photoAlbums.map(album => album.year))).sort((a, b) => b - a)
   }, [photoAlbums])
   
   // Counter animations - all end at 1500ms with staggered delays
@@ -200,7 +202,7 @@ export function PhotoAlbumsPageClient({ photoAlbums }: PhotoAlbumsPageClientProp
                   Filter op tak
                 </Label>
                 <Select value={selectedTak} onValueChange={setSelectedTak}>
-                  <SelectTrigger id="tak-filter" className="bg-white border-input hover:border-primary focus:border-primary transition-all duration-200">
+                  <SelectTrigger className="bg-white border-input hover:border-primary focus:border-primary transition-all duration-200">
                     <SelectValue placeholder={selectedTak === 'all' ? 'Alle takken' : takLabels[selectedTak as keyof typeof takLabels] || 'Alle takken'} />
                   </SelectTrigger>
                   <SelectContent>
@@ -220,7 +222,7 @@ export function PhotoAlbumsPageClient({ photoAlbums }: PhotoAlbumsPageClientProp
                   Filter op jaar
                 </Label>
                 <Select value={selectedYear} onValueChange={setSelectedYear}>
-                  <SelectTrigger id="year-filter" className="bg-white border-input hover:border-primary focus:border-primary transition-all duration-200">
+                  <SelectTrigger className="bg-white border-input hover:border-primary focus:border-primary transition-all duration-200">
                     <SelectValue placeholder={selectedYear === 'all' ? 'Alle jaren' : selectedYear} />
                   </SelectTrigger>
                   <SelectContent>

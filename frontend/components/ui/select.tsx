@@ -1,20 +1,42 @@
 "use client"
 
-import * as React from "react"
-import { ChevronDownIcon } from "lucide-react"
+import React, { useState, useRef, useEffect } from "react"
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
 import { cn } from "@/lib/utils"
 
 interface SelectProps {
-  value: string
-  onValueChange: (value: string) => void
-  children: React.ReactNode
+  value?: string
+  onValueChange?: (value: string) => void
+  children?: React.ReactNode
 }
 
-const Select: React.FC<SelectProps> = ({ value, onValueChange, children }) => {
-  const [open, setOpen] = React.useState(false)
-  const selectRef = React.useRef<HTMLDivElement>(null)
+interface SelectTriggerProps {
+  children?: React.ReactNode
+  className?: string
+  onClick?: () => void
+  open?: boolean
+}
 
-  React.useEffect(() => {
+interface SelectContentProps {
+  children?: React.ReactNode
+  className?: string
+  onValueChange?: (value: string) => void
+  value?: string
+}
+
+interface SelectItemProps {
+  value: string
+  children?: React.ReactNode
+  className?: string
+  onSelect?: (value: string) => void
+  isSelected?: boolean
+}
+
+function Select({ value, onValueChange, children }: SelectProps) {
+  const [open, setOpen] = useState(false)
+  const selectRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (selectRef.current && !selectRef.current.contains(event.target as Node)) {
         setOpen(false)
@@ -25,123 +47,56 @@ const Select: React.FC<SelectProps> = ({ value, onValueChange, children }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const childrenArray = React.Children.toArray(children)
-  const trigger = childrenArray.find(
-    (child): child is React.ReactElement => 
-      React.isValidElement(child) && child.type === SelectTrigger
-  )
-  const content = childrenArray.find(
-    (child): child is React.ReactElement => 
-      React.isValidElement(child) && child.type === SelectContent
-  )
+  const handleValueChange = (val: string) => {
+    onValueChange?.(val)
+    setOpen(false)
+  }
 
   return (
     <div ref={selectRef} className="relative">
-      {trigger && React.cloneElement(trigger, {
-        onClick: () => setOpen(!open),
-        open,
-      })}
-      {content && open && (
+      {/* Render trigger */}
+      <div onClick={() => setOpen(!open)}>
+        {children}
+      </div>
+      
+      {/* Render content */}
+      {open && (
         <div className="absolute top-full left-0 right-0 z-[9999] mt-1">
-          {React.cloneElement(content, {
-            onValueChange: (val: string) => {
-              onValueChange(val)
-              setOpen(false)
-            },
-            value,
-          })}
+          <div className="min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md">
+            <div className="p-1">
+              {children}
+            </div>
+          </div>
         </div>
       )}
     </div>
   )
 }
 
-interface SelectTriggerProps {
-  children: React.ReactNode
-  className?: string
-  onClick?: () => void
-  open?: boolean
-}
-
-const SelectTrigger: React.FC<SelectTriggerProps> = ({ 
-  children, 
-  className,
-  onClick,
-  open
-}) => {
+function SelectTrigger({ children, className, open }: SelectTriggerProps) {
   return (
     <button
       type="button"
-      onClick={onClick}
       className={cn(
         "flex h-10 w-full items-center justify-between whitespace-nowrap rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-all duration-200",
         className
       )}
     >
       {children}
-      <ChevronDownIcon className={cn("h-4 w-4 opacity-50 transition-transform", open && "rotate-180")} />
+      <ChevronDown className={cn("h-4 w-4 opacity-50 transition-transform", open && "rotate-180")} />
     </button>
   )
 }
 
-interface SelectValueProps {
-  placeholder?: string
-}
-
-const SelectValue: React.FC<SelectValueProps> = ({ placeholder }) => {
-  return <span>{placeholder}</span>
-}
-
-interface SelectContentProps {
-  children: React.ReactNode
-  className?: string
-  onValueChange?: (value: string) => void
-  value?: string
-}
-
-const SelectContent: React.FC<SelectContentProps> = ({ 
-  children, 
-  className,
-  onValueChange,
-  value
-}) => {
+function SelectContent({ children, className }: SelectContentProps) {
   return (
-    <div
-      className={cn(
-        "min-w-[8rem] w-full rounded-md border bg-white text-foreground shadow-lg animate-in fade-in-0 zoom-in-95",
-        className
-      )}
-    >
-      <div className="p-1">
-        {React.Children.map(children, (child) => {
-          if (React.isValidElement(child) && child.type === SelectItem) {
-            return React.cloneElement(child as React.ReactElement<SelectItemProps>, {
-              onSelect: onValueChange,
-              isSelected: child.props.value === value,
-            })
-          }
-          return child
-        })}
-      </div>
+    <div className={cn("p-1", className)}>
+      {children}
     </div>
   )
 }
 
-interface SelectItemProps {
-  value: string
-  children: React.ReactNode
-  className?: string
-  onSelect?: (value: string) => void
-  isSelected?: boolean
-}
-
-const SelectItem: React.FC<SelectItemProps> = ({ 
-  value, 
-  children, 
-  className,
-  onSelect,
-  isSelected
-}) => {
+function SelectItem({ value, children, isSelected, onSelect, className }: SelectItemProps) {
   return (
     <button
       type="button"
@@ -157,10 +112,8 @@ const SelectItem: React.FC<SelectItemProps> = ({
   )
 }
 
-export {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
+function SelectValue({ placeholder }: { placeholder?: string }) {
+  return <span>{placeholder}</span>
 }
+
+export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue }

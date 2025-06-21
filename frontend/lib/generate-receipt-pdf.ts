@@ -28,12 +28,12 @@ export async function generateReceiptPDF(data: ReceiptData): Promise<jsPDF> {
   const doc = new jsPDF();
   
   // Colors
-  const primaryColor = [37, 99, 235]; // RGB for #2563eb
-  const textColor = [31, 41, 55]; // RGB for #1f2937
-  const lightGray = [249, 250, 251]; // RGB for #f9fafb
-  const borderGray = [229, 231, 235]; // RGB for #e5e7eb
-  const greenBg = [220, 252, 231]; // Light green
-  const greenText = [21, 128, 61]; // Dark green
+  const primaryColor: [number, number, number] = [37, 99, 235]; // RGB for #2563eb
+  const textColor: [number, number, number] = [31, 41, 55]; // RGB for #1f2937
+  const lightGray: [number, number, number] = [249, 250, 251]; // RGB for #f9fafb
+  const borderGray: [number, number, number] = [229, 231, 235]; // RGB for #e5e7eb
+  const greenBg: [number, number, number] = [220, 252, 231]; // Light green
+  const greenText: [number, number, number] = [21, 128, 61]; // Dark green
   
   let yPos = 15;
   

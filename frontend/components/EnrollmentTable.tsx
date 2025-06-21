@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { UsersIcon } from 'lucide-react'
+import Users from 'lucide-react/dist/esm/icons/users'
 import { StatusSelector } from './StatusSelector'
 import { ClientDate } from './ClientDate'
 
@@ -229,7 +229,7 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
             margin: '0',
             fontFamily: 'var(--font-heading)'
           }}>
-            <UsersIcon style={{ height: '20px', width: '20px', color: 'hsl(108, 35%, 36%)' }} />
+            <Users className="h-4 w-4 mr-2 text-muted-foreground" />
             Inschrijvingen Overzicht ({filteredEnrollments.length} van {totalResponses})
           </h3>
           

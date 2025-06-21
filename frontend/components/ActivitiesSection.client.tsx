@@ -194,7 +194,6 @@ export default function ActivitiesSection() {
             endDate:    w.endDate || w.startDate,
             division:   w.division,
             description: { root: { children: [] } },
-            banner:     w.banner,
             button:     w.button,
             enrollmentSettings: w.enrollmentSettings
           });
@@ -230,7 +229,6 @@ export default function ActivitiesSection() {
             endDate:    c.endDate || c.startDate,
             division:   c.division,
             description: { root: { children: [] } },
-            banner:     c.banner,
             button:     c.button,
             enrollmentSettings: c.enrollmentSettings
           });
@@ -361,7 +359,6 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         
                         {/* Add enrollment button if enrollments are enabled and button not hidden */}
                         {act.enrollmentSettings?.enabled && 
-                         !act.enrollmentSettings?.hideButton && 
                          act.enrollmentSettings?.enrollmentLink && (
                           <div className="mt-3">
                             <a
@@ -374,15 +371,15 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         )}
                         
                         {/* Add button if available (for other types of buttons) */}
-                        {((act.button?.text && act.button?.url) || (act.buttonText && act.buttonUrl)) && (
+                        {(act.button?.text && act.button?.url) && (
                           <div className="mt-3">
                             <a
-                              href={act.button?.url || act.buttonUrl}
+                              href={act.button.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                             >
-                              {act.button?.text || act.buttonText}
+                              {act.button.text}
                             </a>
                           </div>
                         )}
@@ -459,7 +456,6 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                       
                       {/* Add enrollment button if enrollments are enabled and button not hidden */}
                       {act.enrollmentSettings?.enabled && 
-                       !act.enrollmentSettings?.hideButton && 
                        act.enrollmentSettings?.enrollmentLink && (
                         <div className="mt-3">
                           <a
@@ -472,15 +468,15 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                       )}
                       
                       {/* Add button if available (for other types of buttons) */}
-                      {((act.button?.text && act.button?.url) || (act.buttonText && act.buttonUrl)) && (
+                      {(act.button?.text && act.button?.url) && (
                         <div className="mt-3">
                           <a
-                            href={act.button?.url || act.buttonUrl}
+                            href={act.button.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                           >
-                            {act.button?.text || act.buttonText}
+                            {act.button.text}
                           </a>
                         </div>
                       )}

@@ -4,7 +4,7 @@ import { draftMode } from 'next/headers'
 import Header from '@/components/header'
 import Footer from '@/app/(my-app)/components/Footer'
 import { Card } from '@/components/ui/card'
-import { Calendar, Clock, MapPin, Users } from 'lucide-react'
+import { Calendar, MapPin, Users } from 'lucide-react'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
 import PreviewControls from '@/components/PreviewControls'
@@ -51,9 +51,9 @@ const takInfo: Record<Tak, { name: string; age: string; color: string; bgColor: 
 }
 
 interface Props {
-  params: {
+  params: Promise<{
     tak: string
-  }
+  }>
 }
 
 export default async function TakActivitiesPage({ params }: Props) {
@@ -68,50 +68,60 @@ export default async function TakActivitiesPage({ params }: Props) {
   const tak = resolvedParams.tak as Tak
   const info = takInfo[tak]
   
-  const payload = await getPayloadClient()
+  let activities: any[] = []
+  let camps: any[] = []
+  let weekends: any[] = []
   
-  // Fetch activities for this tak
-  const activitiesResult = await payload.find({
-    collection: 'activiteiten',
-    where: {
-      division: {
-        contains: tak,
+  try {
+    const payload = await getPayloadClient()
+    
+    // Fetch activities for this tak
+    const activitiesResult = await payload.find({
+      collection: 'activiteiten',
+      where: {
+        division: {
+          contains: tak,
+        },
       },
-    },
-    sort: 'startDate',
-    draft: isEnabled,
-    depth: 2,
-  })
-  
-  const activities = activitiesResult.docs
-  
-  // Also fetch upcoming camps and weekends for this tak
-  const campsResult = await payload.find({
-    collection: 'camps',
-    where: {
-      division: {
-        contains: tak,
+      sort: 'startDate',
+      draft: isEnabled,
+      depth: 2,
+    })
+    
+    activities = activitiesResult.docs
+    
+    // Also fetch upcoming camps and weekends for this tak
+    const campsResult = await payload.find({
+      collection: 'camps',
+      where: {
+        division: {
+          contains: tak,
+        },
       },
-    },
-    sort: 'startDate',
-    draft: isEnabled,
-    depth: 2,
-  })
-  
-  const weekendsResult = await payload.find({
-    collection: 'weekends',
-    where: {
-      division: {
-        contains: tak,
+      sort: 'startDate',
+      draft: isEnabled,
+      depth: 2,
+    })
+    
+    const weekendsResult = await payload.find({
+      collection: 'weekends',
+      where: {
+        division: {
+          contains: tak,
+        },
       },
-    },
-    sort: 'startDate',
-    draft: isEnabled,
-    depth: 2,
-  })
-  
-  const camps = campsResult.docs
-  const weekends = weekendsResult.docs
+      sort: 'startDate',
+      draft: isEnabled,
+      depth: 2,
+    })
+    
+    camps = campsResult.docs
+    weekends = weekendsResult.docs
+  } catch (error) {
+    // During build time, database might not be available
+    // Return empty arrays to allow the build to continue
+    console.warn('Database not available during build, using empty data')
+  }
   
   // Filter to only show future events
   const now = new Date()
@@ -164,17 +174,6 @@ export default async function TakActivitiesPage({ params }: Props) {
                     key={activity.id} 
                     className="overflow-hidden hover:shadow-lg transition-all duration-200"
                   >
-                    {/* Banner image if available */}
-                    {activity.bannerImage && (
-                      <div className="aspect-video relative overflow-hidden">
-                        <img
-                          src={activity.bannerImage.url || activity.bannerImage}
-                          alt={activity.title}
-                          className="object-cover w-full h-full"
-                        />
-                      </div>
-                    )}
-                    
                     <div className="p-6">
                       <h3 className="text-xl font-semibold mb-3">{activity.title}</h3>
                       
@@ -187,7 +186,7 @@ export default async function TakActivitiesPage({ params }: Props) {
                         </div>
                         
                         <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4" />
+                          <span className="text-xs font-medium">Tijd:</span>
                           <span>
                             {format(new Date(activity.startDate), 'HH:mm', { locale: nl })}
                             {' - '}
@@ -202,35 +201,17 @@ export default async function TakActivitiesPage({ params }: Props) {
                       </div>
                       
                       {activity.description && (
-                        <div className="mb-4 text-sm line-clamp-3">
-                          <PayloadRichText 
-                            content={activity.description} 
-                            className="prose-sm"
-                          />
+                        <div className="mb-4">
+                          <PayloadRichText content={activity.description} />
                         </div>
                       )}
                       
-                      {/* Enrollment or action button */}
                       {activity.enrollmentSettings?.enabled && (
-                        <div className="mt-auto">
-                          {activity.enrollmentSettings.formPage ? (
-                            <Link href={`/inschrijven/activiteiten/${activity.id}`}>
-                              <Button className="w-full">
-                                Inschrijven
-                              </Button>
-                            </Link>
-                          ) : activity.enrollmentSettings.enrollmentLink && (
-                            <a 
-                              href={activity.enrollmentSettings.enrollmentLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Button className="w-full">
-                                Inschrijven (externe link)
-                              </Button>
-                            </a>
-                          )}
-                        </div>
+                        <Link href={`/inschrijven/activiteit/${activity.id}`}>
+                          <Button className="w-full">
+                            Inschrijven
+                          </Button>
+                        </Link>
                       )}
                     </div>
                   </Card>
@@ -240,59 +221,39 @@ export default async function TakActivitiesPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Weekends Section */}
-        {futureWeekends.length > 0 && (
-          <section className="py-16 bg-secondary/10">
-            <div className="container">
-              <h2 className="text-3xl font-bold mb-8">Weekends</h2>
-              <div className="grid gap-6 md:grid-cols-2">
-                {futureWeekends.map((weekend) => (
-                  <Card key={weekend.id} className="p-6">
-                    <h3 className="text-xl font-semibold mb-2">{weekend.title}</h3>
-                    <p className="text-muted-foreground">
-                      {format(new Date(weekend.startDate), 'd MMMM', { locale: nl })}
-                      {' - '}
-                      {format(new Date(weekend.endDate), 'd MMMM yyyy', { locale: nl })}
-                    </p>
-                    {weekend.enrollmentSettings?.enabled && (
-                      <Link 
-                        href={`/inschrijven/weekends/${weekend.id}`}
-                        className="inline-block mt-4"
-                      >
-                        <Button>Meer info & inschrijven</Button>
-                      </Link>
-                    )}
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
         {/* Camps Section */}
         {futureCamps.length > 0 && (
-          <section className="py-16">
+          <section className="py-16 bg-muted/50">
             <div className="container">
-              <h2 className="text-3xl font-bold mb-8">Kampen</h2>
-              <div className="grid gap-6">
+              <h2 className="text-3xl font-bold mb-8">Komende kampen</h2>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {futureCamps.map((camp) => (
-                  <Card key={camp.id} className="p-8">
-                    <h3 className="text-2xl font-semibold mb-3">{camp.title}</h3>
-                    <p className="text-lg text-muted-foreground mb-4">
-                      {format(new Date(camp.startDate), 'd MMMM', { locale: nl })}
-                      {' - '}
-                      {format(new Date(camp.endDate), 'd MMMM yyyy', { locale: nl })}
-                    </p>
-                    {camp.description && (
-                      <div className="mb-4">
-                        <PayloadRichText content={camp.description} />
+                  <Card 
+                    key={camp.id} 
+                    className="overflow-hidden hover:shadow-lg transition-all duration-200"
+                  >
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold mb-3">{camp.title}</h3>
+                      
+                      <div className="space-y-2 text-sm text-muted-foreground mb-4">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            {format(new Date(camp.startDate), 'd MMMM yyyy', { locale: nl })}
+                            {' - '}
+                            {format(new Date(camp.endDate), 'd MMMM yyyy', { locale: nl })}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                    {camp.enrollmentSettings?.enabled && (
-                      <Link href={`/inschrijven/kampen/${camp.id}`}>
-                        <Button size="lg">Inschrijven voor kamp</Button>
-                      </Link>
-                    )}
+                      
+                      {camp.enrollmentSettings?.enabled && (
+                        <Link href={`/inschrijven/kamp/${camp.id}`}>
+                          <Button className="w-full">
+                            Inschrijven
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -300,30 +261,45 @@ export default async function TakActivitiesPage({ params }: Props) {
           </section>
         )}
 
-        {/* Navigation to other takken */}
-        <section className="py-16 bg-gray-50">
-          <div className="container">
-            <h2 className="text-2xl font-semibold mb-6 text-center">
-              Bekijk activiteiten van andere takken
-            </h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {validTakken.filter(t => t !== tak).map((otherTak) => (
-                <Link
-                  key={otherTak}
-                  href={`/activiteiten/${otherTak}`}
-                  className="px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105"
-                  style={{
-                    backgroundColor: takInfo[otherTak].bgColor,
-                    color: takInfo[otherTak].color,
-                    border: `2px solid ${takInfo[otherTak].color}`,
-                  }}
-                >
-                  {takInfo[otherTak].name}
-                </Link>
-              ))}
+        {/* Weekends Section */}
+        {futureWeekends.length > 0 && (
+          <section className="py-16">
+            <div className="container">
+              <h2 className="text-3xl font-bold mb-8">Komende weekends</h2>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {futureWeekends.map((weekend) => (
+                  <Card 
+                    key={weekend.id} 
+                    className="overflow-hidden hover:shadow-lg transition-all duration-200"
+                  >
+                    <div className="p-6">
+                      <h3 className="text-xl font-semibold mb-3">{weekend.title}</h3>
+                      
+                      <div className="space-y-2 text-sm text-muted-foreground mb-4">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          <span>
+                            {format(new Date(weekend.startDate), 'd MMMM yyyy', { locale: nl })}
+                            {' - '}
+                            {format(new Date(weekend.endDate), 'd MMMM yyyy', { locale: nl })}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {weekend.enrollmentSettings?.enabled && (
+                        <Link href={`/inschrijven/weekend/${weekend.id}`}>
+                          <Button className="w-full">
+                            Inschrijven
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
       
       <Footer />
@@ -337,3 +313,6 @@ export async function generateStaticParams() {
     tak,
   }))
 }
+
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic'

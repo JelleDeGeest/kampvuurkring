@@ -16,13 +16,14 @@ export const Camps: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'division', 'startDate'],
     preview: (doc) => {
-      if (!doc?.enrollmentSettings?.enabled) return null
+      const enrollmentSettings = doc?.enrollmentSettings as { enabled?: boolean } | undefined
+      if (!enrollmentSettings?.enabled) return null
       return `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/preview/inschrijven/kampen/${doc.id}?secret=${process.env.PAYLOAD_SECRET}`
     },
     livePreview: {
       url: ({ data }) => {
-        // Always show preview, but default to homepage when enrollments are disabled
-        if (!data?.enrollmentSettings?.enabled) {
+        const enrollmentSettings = data?.enrollmentSettings as { enabled?: boolean } | undefined
+        if (!enrollmentSettings?.enabled) {
           return '/preview/home?noEnrollment=true'
         }
         return `/preview/inschrijven/kampen/${data.id}`

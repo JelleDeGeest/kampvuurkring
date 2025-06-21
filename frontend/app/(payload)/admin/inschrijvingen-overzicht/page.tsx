@@ -3,6 +3,9 @@ import getPayloadClient from '@/lib/getPayload'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic'
+
 export default async function EnrollmentResponsesPage() {
   const payload = await getPayloadClient()
 

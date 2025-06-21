@@ -4,8 +4,8 @@ import React from 'react'
 import { useConfig } from '@payloadcms/ui'
 
 export const ActivitiesOverviewLinkField: React.FC = () => {
-  const config = useConfig()
-  const serverURL = config.serverURL || ''
+  // const config = useConfig()
+  const serverURL = process.env.NEXT_PUBLIC_SITE_URL || ''
 
   const handleClick = () => {
     window.open(`${serverURL}/admin/activiteiten-overzicht`, '_blank')

@@ -2,14 +2,13 @@ import { notFound } from 'next/navigation'
 import getPayloadClient from '@/lib/getPayload'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { CalendarIcon, UsersIcon, MailIcon, MessageSquareIcon } from 'lucide-react'
 import { EnrollmentPageClient } from '@/components/EnrollmentPageClient'
 
 interface Props {
-  params: {
+  params: Promise<{
     type: 'activiteiten' | 'weekends' | 'camps'
     id: string
-  }
+  }>
 }
 
 const typeLabels = {

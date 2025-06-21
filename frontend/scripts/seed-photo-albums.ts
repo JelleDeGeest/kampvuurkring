@@ -1,10 +1,20 @@
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '../payload.config'
 
+type TakType = 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'groepsactiviteit'
+
+interface SeedPhotoAlbum {
+  name: string
+  year: number
+  tak: TakType
+  link: string
+  coverImage: any
+}
+
 async function seedPhotoAlbums() {
   const payload = await getPayloadHMR({ config })
 
-  const photoAlbums = [
+  const photoAlbums: SeedPhotoAlbum[] = [
     {
       name: 'Zomerkamp 2024',
       year: 2024,

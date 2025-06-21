@@ -27,7 +27,7 @@ export const LexicalRenderer: React.FC<LexicalRendererProps> = ({
         switch (node.type) {
           case 'heading':
             const level = node.tag || 1; // Default to h1 if tag is missing
-            const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+            const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
             return (
               <HeadingTag 
                 key={i} 
