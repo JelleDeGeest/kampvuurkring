@@ -7,7 +7,7 @@ export const HomepageHeroImages: CollectionConfig = {
   upload: {
     staticDir: path.resolve(process.cwd(), 'homepage-hero-images'),
     mimeTypes: ['image/*'], // Allow only images
-    // Disable Payload's default imageSizes
+    // Disable image sizes for now to fix upload
     imageSizes: [],
     disableLocalStorage: false, // Keep images on server
   },

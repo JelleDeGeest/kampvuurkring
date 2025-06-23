@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import { useHomepageHeroes, Hero } from "@/hooks/useHomepageHeroes"
@@ -9,6 +10,19 @@ export function EventCarousel() {
   const { heroes, isLoading, error, hasCompleteInfo } = useHomepageHeroes()
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set())
+
+  // Preload next image
+  useEffect(() => {
+    if (heroes.length <= 1) return
+    
+    const nextIndex = (activeIndex + 1) % heroes.length
+    const nextHero = heroes[nextIndex]
+    if (nextHero?.homeHeroImage?.url) {
+      const img = new window.Image()
+      img.src = nextHero.homeHeroImage.url
+    }
+  }, [activeIndex, heroes])
 
   // Don't auto-rotate if there's only a single hero
   useEffect(() => {
@@ -34,11 +48,15 @@ export function EventCarousel() {
     setIsAutoPlaying(false)
   }
 
+  const handleImageLoad = (url: string) => {
+    setImagesLoaded(prev => new Set(prev).add(url))
+  }
+
   // Loading state
   if (isLoading) {
     return (
-      <div className="relative w-full h-[300px] md:h-[367px] lg:h-[400px] rounded-2xl overflow-hidden bg-gray-200 flex items-center justify-center">
-        <div className="animate-pulse">Laden...</div>
+      <div className="relative w-full h-[300px] md:h-[367px] lg:h-[400px] rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center">
+        <div className="animate-pulse text-gray-500">Laden...</div>
       </div>
     )
   }
@@ -50,20 +68,22 @@ export function EventCarousel() {
 
   return (
     <div className="relative w-full h-[300px] md:h-[367px] lg:h-[400px] rounded-2xl overflow-visible group">
-      {/* Container for outer glow effects */}
+      {/* Container for outer glow effects - only render for active hero */}
       <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
         {heroes.map((hero, index) => {
           const isActive = index === activeIndex;
+          if (!isActive) return null;
+          
           return (
             <div
               key={`glow-${hero.id}`}
               className="absolute inset-0 transition-opacity ease-in-out"
               style={{ 
-                opacity: isActive ? 1 : 0,
+                opacity: 1,
                 transitionDuration: '1600ms',
               }}
             >
-              {/* Horizontally extended glow effect */}
+              {/* Horizontally extended glow effect with lower quality for performance */}
               <div 
                 style={{
                   position: 'absolute',
@@ -87,28 +107,42 @@ export function EventCarousel() {
       <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
         {heroes.map((hero, index) => {
           const isActive = index === activeIndex;
+          const imageUrl = hero.homeHeroImage.url;
+          const isImageLoaded = imagesLoaded.has(imageUrl);
           
           return (
             <div
               key={hero.id}
-              className="absolute inset-0 transition-opacity ease-in-out"
+              className="absolute inset-0"
               style={{ 
                 opacity: isActive ? 1 : 0,
-                transitionDuration: '1600ms',
+                transition: 'opacity 1600ms ease-in-out',
+                visibility: isActive ? 'visible' : 'hidden',
               }}
             >
-              {/* Dark overlay for better contrast */}
-              <div 
-                className="absolute inset-0 bg-black/15"
-              />
+              {/* Loading placeholder */}
+              {!isImageLoaded && (
+                <div className="absolute inset-0 bg-gray-100 animate-pulse" />
+              )}
               
-              {/* Hero Image */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center"
-                style={{ 
-                  backgroundImage: `url(${hero.homeHeroImage.url})`,
+              {/* Hero Image using Next.js Image component */}
+              <Image
+                src={imageUrl}
+                alt={hero.homeHeroImage.alt || hero.title || 'Hero image'}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                className="object-cover"
+                priority={index === 0}
+                quality={85}
+                onLoad={() => handleImageLoad(imageUrl)}
+                style={{
+                  opacity: isImageLoaded ? 1 : 0,
+                  transition: 'opacity 300ms ease-in-out',
                 }}
               />
+              
+              {/* Dark overlay for better contrast */}
+              <div className="absolute inset-0 bg-black/15" />
               
               {/* Info Box */}
               {hasCompleteInfo(hero) && (
@@ -138,14 +172,16 @@ export function EventCarousel() {
             {/* Arrow Navigation */}
             <button
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-30"
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-30 hover:bg-black/70"
+              aria-label="Previous image"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
 
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-30"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-30 hover:bg-black/70"
+              aria-label="Next image"
             >
               <ChevronRight className="h-6 w-6" />
             </button>
@@ -159,9 +195,12 @@ export function EventCarousel() {
                     setActiveIndex(index)
                     setIsAutoPlaying(false)
                   }}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === activeIndex ? 'bg-primary' : 'bg-gray-300'
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    index === activeIndex 
+                      ? 'bg-primary w-6' 
+                      : 'bg-gray-300 hover:bg-gray-400'
                   }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
@@ -170,4 +209,4 @@ export function EventCarousel() {
       </div>
     </div>
   )
-} 
+}

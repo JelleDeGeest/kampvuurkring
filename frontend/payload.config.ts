@@ -5,9 +5,9 @@ import sharp from 'sharp';
 
 // Import your collections and globals
 // If these imports fail, you'll need to create these files
-import { Activiteiten } from './collections/Activiteiten';
-import { Leiders } from './collections/Leiders';
-import { InfoPage } from './globals/InfoPage';
+import { Activiteiten } from './collections/activiteiten';
+import { Leiders } from './collections/leiders';
+import { InfoPage } from './globals/infoPage';
 import { InschrijvenPage } from './globals/InschrijvenPage';
 import { LeidersFoto } from './collections/LeidersFoto';
 import { RandomAfbeeldingen } from './collections/RandomAfbeeldingen';
@@ -17,7 +17,7 @@ import { Events }   from './collections/Events'
 import { Weekends } from './collections/Weekends'
 import { Camps }    from './collections/Camps'
 import { Enrollments } from './collections/Enrollments'
-import { Media } from './collections/Media'
+import { Media } from './collections/media'
 import { BannerImages } from './collections/BannerImages'
 import PhotoAlbums from './collections/PhotoAlbums'
 

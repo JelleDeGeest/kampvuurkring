@@ -8,6 +8,24 @@
 
 # media folder
 /frontend/media/*
+/frontend/media-leiding/
+/frontend/banner-images/
+/frontend/homepage-hero-images/
+/frontend/leiders-foto/
+/frontend/random-afbeeldingen/
+
+# Database volumes
+supabase/volumes/
+postgres-data/
+postgres-data-prod/
+
+# Backup files
+*.backup
+*.old
+
+# Scripts
+docker-compose-prod.sh
+scripts/cleanup-dangling-media.sql
 
 
 # next.js

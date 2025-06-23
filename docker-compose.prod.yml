@@ -8,7 +8,7 @@ services:
       - "0.0.0.0:${PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URI=postgresql://postgres:kampvuurkring123@db:5432/scouts_production_db?sslmode=disable
+      - DATABASE_URI=${DATABASE_URI:-postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable}
       - PAYLOAD_SECRET=${PAYLOAD_SECRET}
       - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
       - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-http://localhost:3000}
@@ -20,6 +20,10 @@ services:
     volumes:
       - ./frontend/media:/app/media
       - ./frontend/media-leiding:/app/media-leiding
+      - ./frontend/banner-images:/app/banner-images
+      - ./frontend/homepage-hero-images:/app/homepage-hero-images
+      - ./frontend/leiders-foto:/app/leiders-foto
+      - ./frontend/random-afbeeldingen:/app/random-afbeeldingen
     env_file:
       - .env.production
     depends_on:
