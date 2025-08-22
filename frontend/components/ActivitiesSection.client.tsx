@@ -306,6 +306,23 @@ function DateGroups({ acts }: { acts: Activity[] }) {
     return g
   }, {})
 
+  // Define the order of Scout sections
+  const sectionOrder = ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin', 'event']
+
+  // Function to sort activities by Scout section order
+  const sortActivitiesBySection = (activities: Activity[]) => {
+    return [...activities].sort((a, b) => {
+      const indexA = sectionOrder.indexOf(a.division)
+      const indexB = sectionOrder.indexOf(b.division)
+      
+      // If division not found, put it at the end
+      const orderA = indexA === -1 ? 999 : indexA
+      const orderB = indexB === -1 ? 999 : indexB
+      
+      return orderA - orderB
+    })
+  }
+
   return (
     <div className="mb-8">
       {Object.entries(groups)
@@ -316,7 +333,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
               {format(new Date(dateStr), 'EEEE d MMMM yyyy', { locale: nl })}
             </h3>
             <div className="space-y-1">
-              {list.map((act) => {
+              {sortActivitiesBySection(list).map((act) => {
                 // Special handling for events (non-division items)
                 if (act.division === 'event') {
                   return (
