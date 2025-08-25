@@ -9,6 +9,8 @@ services:
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
+      - PAYLOAD_DROP_DATABASE=false
+      - PAYLOAD_MIGRATE_EXISTING_TABLES=true
     volumes:
       - ./frontend:/usr/src/app
       - ./frontend/media:/usr/src/app/media

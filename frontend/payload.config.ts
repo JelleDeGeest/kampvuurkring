@@ -9,6 +9,11 @@ import { Activiteiten } from './collections/activiteiten';
 import { Leiders } from './collections/leiders';
 import { InfoPage } from './globals/infoPage';
 import { InschrijvenPage } from './globals/InschrijvenPage';
+import { LeidersPage } from './globals/LeidersPage';
+import { FotosPage } from './globals/FotosPage';
+import { ContactPage } from './globals/ContactPage';
+import { VerhuurPage } from './globals/VerhuurPage';
+import { LeidersDivisionBanners } from './globals/LeidersDivisionBanners';
 import { LeidersFoto } from './collections/LeidersFoto';
 import { RandomAfbeeldingen } from './collections/RandomAfbeeldingen';
 import { HomepageHeroImages } from './collections/HomepageHeroImages';
@@ -19,12 +24,14 @@ import { Camps }    from './collections/Camps'
 import { Enrollments } from './collections/Enrollments'
 import { Media } from './collections/media'
 import { BannerImages } from './collections/BannerImages'
+import { LeidersBanners } from './collections/LeidersBanners'
 import PhotoAlbums from './collections/PhotoAlbums'
 
 export default buildConfig({
   collections: [
     Media, // Add Media first since other collections reference it
     BannerImages, // Add BannerImages early since other collections reference it
+    LeidersBanners, // Add LeidersBanners for leiders page banners
     Activiteiten,
     Leiders,
     LeidersFoto,
@@ -40,7 +47,12 @@ export default buildConfig({
   ],
   globals: [
     InfoPage,
-    InschrijvenPage
+    InschrijvenPage,
+    LeidersPage,
+    LeidersDivisionBanners,
+    FotosPage,
+    ContactPage,
+    VerhuurPage
     // Add globals here
   ],
   plugins: [

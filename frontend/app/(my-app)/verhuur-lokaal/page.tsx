@@ -1,23 +1,132 @@
-"use client"
-
+import { Metadata } from 'next'
 import Header from "@/components/header"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import Image from "next/image"
 import { Calendar, MapPin, Users, Euro } from "lucide-react"
+import { getPayloadHMR } from '@payloadcms/next/utilities'
+import config from '@payload-config'
+import { ContactForm } from './contact-form.client'
 
-export default function VerhuurLokaalPage() {
+// Force dynamic rendering to avoid database connection during build
+export const dynamic = 'force-dynamic'
+
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
+
+interface VerhuurPageGlobal {
+  title: string
+  subtitle: string
+  banner?: {
+    id: string
+    alt: string
+    url: string
+    filename: string
+    width?: number
+    height?: number
+  }
+}
+
+export const metadata: Metadata = {
+  title: "Verhuur - Scouts Sint-Johannes",
+  description: 'Huur onze lokalen en materiaal voor jullie activiteiten',
+}
+
+async function getVerhuurPageData(): Promise<VerhuurPageGlobal | null> {
+  try {
+    const payload = await getPayloadHMR({ config })
+    
+    const result = await payload.findGlobal({
+      slug: 'verhuurPage',
+      depth: 1,
+    })
+    
+    return result as VerhuurPageGlobal
+  } catch (error) {
+    // During build time, database might not be available
+    console.warn('Database not available during build, using default verhuur page data')
+    return {
+      title: 'Verhuur',
+      subtitle: 'Huur onze lokalen en materiaal voor jullie activiteiten.'
+    }
+  }
+}
+
+export default async function VerhuurLokaalPage() {
+  const verhuurPageData = await getVerhuurPageData()
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
+      
+      {/* Banner Section */}
+      {verhuurPageData?.banner ? (
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="relative w-full h-[150px] md:h-[180px] lg:h-[220px] rounded-2xl overflow-visible">
+            {/* Container for outer glow effect */}
+            <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
+              <div className="absolute inset-0">
+                {/* Glow effect */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    inset: '0',
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${verhuurPageData.banner.url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(50px) saturate(350%) opacity(35%)',
+                    transform: 'scale(1.5, 0.9) translateY(-12%)',
+                    transformOrigin: 'center',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Banner content */}
+            <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
+              {/* Banner image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={`${PAYLOAD_URL}${verhuurPageData.banner.url}`}
+                  alt={verhuurPageData.banner.alt}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              
+              {/* Dark overlay for better contrast */}
+              <div className="absolute inset-0 bg-black/20" />
+              
+              {/* Banner title */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
+                    {verhuurPageData.title}
+                  </h1>
+                  <p className="text-lg md:text-xl drop-shadow-lg">
+                    {verhuurPageData.subtitle}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        /* Fallback header when no banner is active */
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="text-center py-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary">
+              {verhuurPageData?.title || 'Verhuur'}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground">
+              {verhuurPageData?.subtitle || 'Huur onze lokalen en materiaal voor jullie activiteiten.'}
+            </p>
+          </div>
+        </section>
+      )}
+      
       <main className="flex-1">
-        <div className="container mx-auto px-4 py-8 md:py-12">
-          <h1 className="text-4xl font-bold text-primary mb-8">
-            Verhuur Lokaal
-          </h1>
-          <div className="w-full h-1 bg-secondary mb-8" />
+        <div className="container px-4 lg:px-12 pt-6">
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
@@ -98,38 +207,7 @@ export default function VerhuurLokaalPage() {
             </div>
 
             <div className="lg:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-foreground">Informatie Aanvragen</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-foreground">Naam</Label>
-                      <Input id="name" placeholder="Uw naam" className="border-border" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-foreground">E-mail</Label>
-                      <Input id="email" type="email" placeholder="uw@email.com" className="border-border" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="date" className="text-foreground">Gewenste datum</Label>
-                      <Input id="date" type="date" className="border-border" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="text-foreground">Bericht</Label>
-                      <Textarea 
-                        id="message" 
-                        placeholder="Vertel ons meer over uw plannen..." 
-                        className="border-border"
-                      />
-                    </div>
-                    <Button type="submit" className="w-full">
-                      Verstuur Aanvraag
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
+              <ContactForm />
             </div>
           </div>
         </div>

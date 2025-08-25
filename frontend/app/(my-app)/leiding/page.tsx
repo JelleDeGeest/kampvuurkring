@@ -16,6 +16,19 @@ interface Leider {
   }
 }
 
+interface LeidersPageGlobal {
+  title: string
+  subtitle: string
+  banner?: {
+    id: string
+    alt: string
+    url: string
+    filename: string
+    width?: number
+    height?: number
+  }
+}
+
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
 // Helper component to display leader names based on their tak
@@ -59,19 +72,114 @@ async function fetchLeidersByTak(tak: string) {
   }
 }
 
+async function fetchLeidersPageGlobal(): Promise<LeidersPageGlobal | null> {
+  try {
+    const res = await fetch(
+      `${PAYLOAD_URL}/api/globals/leidersPage?depth=1`,
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    return data || null;
+  } catch (error) {
+    console.warn('Error fetching leiders page global:', error);
+    return null;
+  }
+}
+
 export default async function LeidingPage() {
-  const kapoenenLeiders = await fetchLeidersByTak('kapoenen');
-  const woutersLeiders  = await fetchLeidersByTak('wouters');
-  const jonggiversLeiders = await fetchLeidersByTak('jonggivers');
-  const giversLeiders   = await fetchLeidersByTak('givers');
-  const jinLeiders      = await fetchLeidersByTak('jin');
-  const groepsLeiders   = await fetchLeidersByTak('groepsleiding');
+  const [
+    leidersPageData,
+    kapoenenLeiders,
+    woutersLeiders,
+    jonggiversLeiders,
+    giversLeiders,
+    jinLeiders,
+    groepsLeiders
+  ] = await Promise.all([
+    fetchLeidersPageGlobal(),
+    fetchLeidersByTak('kapoenen'),
+    fetchLeidersByTak('wouters'),
+    fetchLeidersByTak('jonggivers'),
+    fetchLeidersByTak('givers'),
+    fetchLeidersByTak('jin'),
+    fetchLeidersByTak('groepsleiding')
+  ]);
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
+      
+      {/* Banner Section */}
+      {leidersPageData?.banner ? (
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="relative w-full h-[150px] md:h-[180px] lg:h-[220px] rounded-2xl overflow-visible">
+            {/* Container for outer glow effect */}
+            <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
+              <div className="absolute inset-0">
+                {/* Glow effect */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    inset: '0',
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${leidersPageData.banner.url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(50px) saturate(350%) opacity(35%)',
+                    transform: 'scale(1.5, 0.9) translateY(-12%)',
+                    transformOrigin: 'center',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Banner content */}
+            <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
+              {/* Banner image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={`${PAYLOAD_URL}${leidersPageData.banner.url}`}
+                  alt={leidersPageData.banner.alt}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              
+              {/* Dark overlay for better contrast */}
+              <div className="absolute inset-0 bg-black/20" />
+              
+              {/* Banner title */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
+                    {leidersPageData.title}
+                  </h1>
+                  <p className="text-lg md:text-xl drop-shadow-lg">
+                    {leidersPageData.subtitle}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        /* Fallback header when no banner is active */
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="text-center py-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary">
+              {leidersPageData?.title || 'Onze Leiding'}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground">
+              {leidersPageData?.subtitle || 'Ontmoet het team van Scouts Sint-Johannes'}
+            </p>
+          </div>
+        </section>
+      )}
+      
       <main className="flex-1">
-        <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 py-8 md:py-12">
+        <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-8 pb-8 md:pb-12">
           {/* Kapoenen Section */}
           <div className="flex mb-8 rounded-2xl overflow-hidden shadow-sm">
             <div className="w-12 bg-[hsl(var(--kapoenen))] flex flex-col items-center p-2">

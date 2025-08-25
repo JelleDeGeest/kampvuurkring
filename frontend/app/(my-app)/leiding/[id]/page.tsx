@@ -18,6 +18,13 @@ interface Leider {
   }
 }
 
+interface LeidersBanner {
+  id: string
+  name: string
+  alt: string
+  url: string
+}
+
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
 // Division data with colors and labels
@@ -48,6 +55,64 @@ async function fetchLeider(id: string): Promise<Leider | null> {
   }
 }
 
+async function fetchDivisionBanner(division: string): Promise<LeidersBanner | null> {
+  try {
+    // Fetch the global configuration
+    const res = await fetch(
+      `${PAYLOAD_URL}/api/globals/leidersDivisionBanners?depth=1`,
+      { cache: 'no-store' }
+    );
+    const data = await res.json();
+    
+    // Map division to the correct field name
+    const fieldMap: Record<string, string> = {
+      'kapoenen': 'kapoenenBanner',
+      'wouters': 'woutersBanner',
+      'jonggivers': 'jonggiversBanner',
+      'givers': 'giversBanner',
+      'jin': 'jinBanner',
+    };
+    
+    const bannerField = fieldMap[division];
+    if (!bannerField) return null;
+    
+    // Return the banner data if it exists
+    const banner = data[bannerField];
+    if (!banner) return null;
+    
+    // Return the banner with all necessary fields
+    return {
+      id: banner.id,
+      name: banner.name || '',
+      alt: banner.alt || banner.name || '',
+      url: banner.url || '',
+    };
+  } catch (error) {
+    console.warn(`Error fetching banner for division ${division}:`, error);
+    return null;
+  }
+}
+
+function getPrimaryDivision(takken: string[]): string | null {
+  // Filter out non-Scout divisions
+  const scoutDivisions = takken.filter(tak => 
+    ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin'].includes(tak)
+  );
+  
+  if (scoutDivisions.length === 0) return null;
+  
+  // Priority order: Kapoenen > Wouters > Jonggivers > Givers > Jin
+  const priorityOrder = ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin'];
+  
+  for (const division of priorityOrder) {
+    if (scoutDivisions.includes(division)) {
+      return division;
+    }
+  }
+  
+  return scoutDivisions[0]; // Fallback to first division
+}
+
 export default async function LeiderPage({
   params,
 }: {
@@ -59,6 +124,10 @@ export default async function LeiderPage({
   if (!leider) {
     notFound();
   }
+
+  // Determine which division banner to show
+  const primaryDivision = getPrimaryDivision(leider.takken || []);
+  const divisionBanner = primaryDivision ? await fetchDivisionBanner(primaryDivision) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -77,7 +146,9 @@ export default async function LeiderPage({
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)`,
+                    backgroundImage: divisionBanner 
+                      ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${divisionBanner.url})`
+                      : `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -90,11 +161,29 @@ export default async function LeiderPage({
 
             {/* Banner content */}
             <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
-              {/* Nature gradient background */}
-              <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-emerald-400 to-emerald-600"></div>
-              
-              {/* Dark overlay for better contrast */}
-              <div className="absolute inset-0 bg-black/15" />
+              {divisionBanner ? (
+                /* Banner image */
+                <>
+                  <div className="absolute inset-0">
+                    <Image
+                      src={`${PAYLOAD_URL}${divisionBanner.url}`}
+                      alt={divisionBanner.alt}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                  {/* Dark overlay for better contrast */}
+                  <div className="absolute inset-0 bg-black/20" />
+                </>
+              ) : (
+                /* Fallback gradient */
+                <>
+                  <div className="absolute inset-0 bg-gradient-to-b from-sky-400 via-emerald-400 to-emerald-600"></div>
+                  {/* Dark overlay for better contrast */}
+                  <div className="absolute inset-0 bg-black/15" />
+                </>
+              )}
               
               {/* Optional: Add a pattern overlay for texture */}
               <div className="absolute inset-0 opacity-20">

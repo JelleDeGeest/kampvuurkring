@@ -1,6 +1,8 @@
+import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@/components/header'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'
 import Users from 'lucide-react/dist/esm/icons/users'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
@@ -15,6 +17,13 @@ import TakkenAccordion from '@/components/TakkenAccordion'
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
+
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
+
+export const metadata: Metadata = {
+  title: "Inschrijven - Scouts Sint-Johannes",
+  description: 'Schrijf je in voor onze activiteiten, kampen en weekends',
+}
 
 // Division info with colors from the theme
 const divisions = [
@@ -168,16 +177,79 @@ export default async function InschrijvenPage() {
       {isEnabled && <PreviewControls />}
       <Header />
       
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative bg-primary/5 py-20 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
-          <div className="container relative z-10 text-center">
-            <h1 className="text-5xl font-bold text-primary mb-6">{pageData.title}</h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+      {/* Banner Section */}
+      {pageData.banner ? (
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="relative w-full h-[150px] md:h-[180px] lg:h-[220px] rounded-2xl overflow-visible">
+            {/* Container for outer glow effect */}
+            <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
+              <div className="absolute inset-0">
+                {/* Glow effect */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    inset: '0',
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${pageData.banner.url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(50px) saturate(350%) opacity(35%)',
+                    transform: 'scale(1.5, 0.9) translateY(-12%)',
+                    transformOrigin: 'center',
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Banner content */}
+            <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
+              {/* Banner image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                  alt={pageData.banner.alt}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              
+              {/* Dark overlay for better contrast */}
+              <div className="absolute inset-0 bg-black/20" />
+              
+              {/* Banner title */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
+                    {pageData.title}
+                  </h1>
+                  <p className="text-lg md:text-xl drop-shadow-lg">
+                    {pageData.subtitle}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        /* Fallback header when no banner is active */
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="text-center py-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary">
+              {pageData.title}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground">
               {pageData.subtitle}
             </p>
-            
+          </div>
+        </section>
+      )}
+      
+      <main className="flex-1">
+        {/* CTA Section */}
+        <section className="container px-4 lg:px-12 pt-6 pb-16">
+          <div className="text-center">
             {/* Playful CTA Button */}
             <div className="relative inline-block">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>

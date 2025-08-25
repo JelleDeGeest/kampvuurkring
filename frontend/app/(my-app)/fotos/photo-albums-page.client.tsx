@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Header from "@/components/header"
+import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,6 +11,21 @@ import Search from 'lucide-react/dist/esm/icons/search'
 import Camera from 'lucide-react/dist/esm/icons/camera'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import Users from 'lucide-react/dist/esm/icons/users'
+
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
+
+interface FotosPageGlobal {
+  title: string
+  subtitle: string
+  banner?: {
+    id: string
+    alt: string
+    url: string
+    filename: string
+    width?: number
+    height?: number
+  }
+}
 
 interface PhotoAlbum {
   id: string
@@ -25,6 +41,7 @@ interface PhotoAlbum {
 }
 
 interface PhotoAlbumsPageClientProps {
+  fotosPageData: FotosPageGlobal | null
   photoAlbums: PhotoAlbum[]
 }
 
@@ -108,7 +125,7 @@ function useCountUp(end: number, duration: number = 1000, delay: number = 0) {
   return { count, ref: countRef }
 }
 
-export function PhotoAlbumsPageClient({ photoAlbums }: PhotoAlbumsPageClientProps) {
+export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbumsPageClientProps) {
   const [selectedTak, setSelectedTak] = useState<string>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')
   const [birthYear, setBirthYear] = useState<string>('')
@@ -152,45 +169,102 @@ export function PhotoAlbumsPageClient({ photoAlbums }: PhotoAlbumsPageClientProp
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
-      <main className="flex-1">
-        {/* Hero Section with full background */}
-        <section className="relative bg-primary/5 py-12 overflow-visible">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
-          <div className="container relative z-10 mx-auto px-4">
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center mb-3">
-                <Camera className="h-10 w-10 text-primary mr-3" />
-                <h1 className="text-4xl md:text-5xl font-bold text-primary font-heading">
-                  Fotoalbums
-                </h1>
+      
+      {/* Banner Section */}
+      {fotosPageData?.banner ? (
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="relative w-full h-[150px] md:h-[180px] lg:h-[220px] rounded-2xl overflow-visible">
+            {/* Container for outer glow effect */}
+            <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
+              <div className="absolute inset-0">
+                {/* Glow effect */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    inset: '0',
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${fotosPageData.banner.url})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(50px) saturate(350%) opacity(35%)',
+                    transform: 'scale(1.5, 0.9) translateY(-12%)',
+                    transformOrigin: 'center',
+                  }}
+                />
               </div>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Herbeleef onze avonturen! Bekijk foto's van kampen, weekends en activiteiten.
-              </p>
             </div>
-            
+
+            {/* Banner content */}
+            <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
+              {/* Banner image */}
+              <div className="absolute inset-0">
+                <Image
+                  src={`${PAYLOAD_URL}${fotosPageData.banner.url}`}
+                  alt={fotosPageData.banner.alt}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              
+              {/* Dark overlay for better contrast */}
+              <div className="absolute inset-0 bg-black/20" />
+              
+              {/* Banner title */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
+                    {fotosPageData.title}
+                  </h1>
+                  <p className="text-lg md:text-xl drop-shadow-lg">
+                    {fotosPageData.subtitle}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        /* Fallback header when no banner is active */
+        <section className="container px-4 lg:px-12 pt-8">
+          <div className="text-center py-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary">
+              {fotosPageData?.title || 'Fotoalbums'}
+            </h1>
+            <p className="text-lg md:text-xl text-muted-foreground">
+              {fotosPageData?.subtitle || 'Herbeleef onze avonturen! Bekijk foto\'s van kampen, weekends en activiteiten.'}
+            </p>
+          </div>
+        </section>
+      )}
+      
+      <main className="flex-1">
+        {/* Stats and Filters Section */}
+        <section className="container px-4 lg:px-12 pt-6">
+          <div className="w-full">            
             {/* Stats Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div ref={takkenCounter.ref} className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center shadow-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div ref={takkenCounter.ref} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center shadow-sm">
               <p className="text-3xl font-bold text-accent">{takkenCounter.count}</p>
               <p className="text-sm text-muted-foreground">Takken</p>
             </div>
-            <div ref={yearsCounter.ref} className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center shadow-sm">
+            <div ref={yearsCounter.ref} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center shadow-sm">
               <p className="text-3xl font-bold text-secondary">{yearsCounter.count}</p>
               <p className="text-sm text-muted-foreground">Jaren</p>
             </div>
-            <div ref={albumsCounter.ref} className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center shadow-sm">
+            <div ref={albumsCounter.ref} className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center shadow-sm">
               <p className="text-3xl font-bold text-primary">{albumsCounter.count}</p>
               <p className="text-sm text-muted-foreground">Albums</p>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center shadow-sm">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 text-center shadow-sm">
               <p className="text-3xl font-bold text-primary">∞</p>
               <p className="text-sm text-muted-foreground">Herinneringen</p>
             </div>
           </div>
           
           {/* Filters */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg shadow-sm border border-border/50 p-6 relative z-50">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6 relative z-50">
             <h2 className="text-lg font-semibold mb-4 flex items-center">
               <Search className="h-5 w-5 mr-2 text-primary" />
               Filter Albums

@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     media: Media;
     'banner-images': BannerImage;
+    'leiders-banners': LeidersBanner;
     activiteiten: Activiteiten;
     leiders: Leider;
     'leiders-foto': LeidersFoto;
@@ -89,6 +90,7 @@ export interface Config {
   collectionsSelect: {
     media: MediaSelect<false> | MediaSelect<true>;
     'banner-images': BannerImagesSelect<false> | BannerImagesSelect<true>;
+    'leiders-banners': LeidersBannersSelect<false> | LeidersBannersSelect<true>;
     activiteiten: ActiviteitenSelect<false> | ActiviteitenSelect<true>;
     leiders: LeidersSelect<false> | LeidersSelect<true>;
     'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
@@ -111,10 +113,20 @@ export interface Config {
   globals: {
     infoPage: InfoPage;
     inschrijvenPage: InschrijvenPage;
+    leidersPage: LeidersPage;
+    leidersDivisionBanners: LeidersDivisionBanner;
+    fotosPage: FotosPage;
+    contactPage: ContactPage;
+    verhuurPage: VerhuurPage;
   };
   globalsSelect: {
     infoPage: InfoPageSelect<false> | InfoPageSelect<true>;
     inschrijvenPage: InschrijvenPageSelect<false> | InschrijvenPageSelect<true>;
+    leidersPage: LeidersPageSelect<false> | LeidersPageSelect<true>;
+    leidersDivisionBanners: LeidersDivisionBannersSelect<false> | LeidersDivisionBannersSelect<true>;
+    fotosPage: FotosPageSelect<false> | FotosPageSelect<true>;
+    contactPage: ContactPageSelect<false> | ContactPageSelect<true>;
+    verhuurPage: VerhuurPageSelect<false> | VerhuurPageSelect<true>;
   };
   locale: null;
   user: User & {
@@ -194,6 +206,52 @@ export interface BannerImage {
   focalY?: number | null;
   sizes?: {
     card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Banner afbeeldingen voor individuele leider pagina's. Wijs banners toe aan takken via de "Leiders Tak Banners" global.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leiders-banners".
+ */
+export interface LeidersBanner {
+  id: number;
+  /**
+   * Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")
+   */
+  name: string;
+  /**
+   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    banner?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -723,6 +781,10 @@ export interface PayloadLockedDocument {
         value: number | BannerImage;
       } | null)
     | ({
+        relationTo: 'leiders-banners';
+        value: number | LeidersBanner;
+      } | null)
+    | ({
         relationTo: 'activiteiten';
         value: number | Activiteiten;
       } | null)
@@ -852,6 +914,49 @@ export interface BannerImagesSelect<T extends boolean = true> {
     | T
     | {
         card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leiders-banners_select".
+ */
+export interface LeidersBannersSelect<T extends boolean = true> {
+  name?: T;
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        banner?:
           | T
           | {
               url?: T;
@@ -1214,6 +1319,10 @@ export interface InschrijvenPage {
   id: number;
   title: string;
   subtitle: string;
+  /**
+   * Upload een banner voor de inschrijven pagina.
+   */
+  banner?: (number | null) | Media;
   ctaButtonText: string;
   ctaButtonUrl: string;
   ctaSubtext?: string | null;
@@ -1254,6 +1363,121 @@ export interface InschrijvenPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leidersPage".
+ */
+export interface LeidersPage {
+  id: number;
+  /**
+   * De hoofdtitel die op de leiders pagina wordt weergegeven
+   */
+  title: string;
+  /**
+   * De ondertitel onder de hoofdtitel
+   */
+  subtitle?: string | null;
+  /**
+   * Upload een banner voor de hoofdpagina van leiding. Deze is apart van de banners voor individuele leider pagina's.
+   */
+  banner?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Upload of selecteer banners voor elke tak op individuele leider pagina's
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leidersDivisionBanners".
+ */
+export interface LeidersDivisionBanner {
+  id: number;
+  /**
+   * Banner die wordt weergegeven op individuele Kapoenen leider pagina's
+   */
+  kapoenenBanner?: (number | null) | Media;
+  /**
+   * Banner die wordt weergegeven op individuele Wouters leider pagina's
+   */
+  woutersBanner?: (number | null) | Media;
+  /**
+   * Banner die wordt weergegeven op individuele Jonggivers leider pagina's
+   */
+  jonggiversBanner?: (number | null) | Media;
+  /**
+   * Banner die wordt weergegeven op individuele Givers leider pagina's
+   */
+  giversBanner?: (number | null) | Media;
+  /**
+   * Banner die wordt weergegeven op individuele Jin leider pagina's
+   */
+  jinBanner?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fotosPage".
+ */
+export interface FotosPage {
+  id: number;
+  /**
+   * De hoofdtitel die op de fotos pagina wordt weergegeven
+   */
+  title: string;
+  /**
+   * De ondertitel onder de hoofdtitel
+   */
+  subtitle?: string | null;
+  /**
+   * Upload een banner voor de fotos pagina.
+   */
+  banner?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contactPage".
+ */
+export interface ContactPage {
+  id: number;
+  /**
+   * De hoofdtitel die op de contact pagina wordt weergegeven
+   */
+  title: string;
+  /**
+   * De ondertitel onder de hoofdtitel
+   */
+  subtitle?: string | null;
+  /**
+   * Upload een banner voor de contact pagina.
+   */
+  banner?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verhuurPage".
+ */
+export interface VerhuurPage {
+  id: number;
+  /**
+   * De hoofdtitel die op de verhuur pagina wordt weergegeven
+   */
+  title: string;
+  /**
+   * De ondertitel onder de hoofdtitel
+   */
+  subtitle?: string | null;
+  /**
+   * Upload een banner voor de verhuur pagina.
+   */
+  banner?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "infoPage_select".
  */
 export interface InfoPageSelect<T extends boolean = true> {
@@ -1279,6 +1503,7 @@ export interface InfoPageSelect<T extends boolean = true> {
 export interface InschrijvenPageSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
+  banner?: T;
   ctaButtonText?: T;
   ctaButtonUrl?: T;
   ctaSubtext?: T;
@@ -1318,6 +1543,68 @@ export interface InschrijvenPageSelect<T extends boolean = true> {
         buttonText?: T;
       };
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leidersPage_select".
+ */
+export interface LeidersPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  banner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leidersDivisionBanners_select".
+ */
+export interface LeidersDivisionBannersSelect<T extends boolean = true> {
+  kapoenenBanner?: T;
+  woutersBanner?: T;
+  jonggiversBanner?: T;
+  giversBanner?: T;
+  jinBanner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fotosPage_select".
+ */
+export interface FotosPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  banner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contactPage_select".
+ */
+export interface ContactPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  banner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verhuurPage_select".
+ */
+export interface VerhuurPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  banner?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

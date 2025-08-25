@@ -6,6 +6,19 @@ import config from '@payload-config'
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
 
+interface FotosPageGlobal {
+  title: string
+  subtitle: string
+  banner?: {
+    id: string
+    alt: string
+    url: string
+    filename: string
+    width?: number
+    height?: number
+  }
+}
+
 export const metadata: Metadata = {
   title: "Foto's - Scouts Sint-Johannes",
   description: 'Bekijk onze fotoalbums van kampen, weekends en activiteiten',
@@ -33,8 +46,34 @@ async function getPhotoAlbums() {
   return photoAlbums
 }
 
+async function getFotosPageData(): Promise<FotosPageGlobal | null> {
+  try {
+    const payload = await getPayloadHMR({ config })
+    
+    const result = await payload.findGlobal({
+      slug: 'fotosPage',
+      depth: 1,
+    })
+    
+    return result as FotosPageGlobal
+  } catch (error) {
+    // During build time, database might not be available
+    console.warn('Database not available during build, using default fotos page data')
+    return {
+      title: 'Fotoalbums',
+      subtitle: 'Herbeleef onze avonturen! Bekijk foto\'s van kampen, weekends en activiteiten.'
+    }
+  }
+}
+
 export default async function PhotosPage() {
-  const photoAlbums = await getPhotoAlbums()
+  const [fotosPageData, photoAlbums] = await Promise.all([
+    getFotosPageData(),
+    getPhotoAlbums()
+  ])
   
-  return <PhotoAlbumsPageClient photoAlbums={photoAlbums as any} />
+  return <PhotoAlbumsPageClient 
+    fotosPageData={fotosPageData} 
+    photoAlbums={photoAlbums as any} 
+  />
 }

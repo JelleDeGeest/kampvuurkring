@@ -47,6 +47,16 @@ export const InschrijvenPage: GlobalConfig = {
       defaultValue: 'Word lid of hernieuw je inschrijving voor een nieuw jaar vol avonturen!',
     },
     {
+      name: 'banner',
+      type: 'upload',
+      label: 'Banner Afbeelding',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Upload een banner voor de inschrijven pagina.',
+      },
+    },
+    {
       name: 'ctaButtonText',
       label: 'CTA Knop Tekst',
       type: 'text',
