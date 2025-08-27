@@ -1,9 +1,15 @@
 import { Metadata } from 'next'
 import Header from "@/components/header"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
+import KapoenenLogo from "@/public/logos/Kapoenen.svg"
+import WoutersLogo from "@/public/logos/Wouters.svg"
+import JonggiversLogo from "@/public/logos/Jonggivers.svg"
+import GiversLogo from "@/public/logos/Givers.svg"
+import JinLogo from "@/public/logos/Jin.svg"
+import GroepsLogo from "@/public/logos/Groeps.svg"
+import HomeLogo from "@/public/logos/home.svg"
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
@@ -22,6 +28,7 @@ interface ContactPageGlobal {
     height?: number
   }
 }
+
 
 export const metadata: Metadata = {
   title: "Contact - Scouts Sint-Johannes",
@@ -48,8 +55,10 @@ async function getContactPageData(): Promise<ContactPageGlobal | null> {
   }
 }
 
+
 export default async function ContactPage() {
-  const contactPageData = await getContactPageData()
+  const contactPageData = await getContactPageData();
+  
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
@@ -124,47 +133,146 @@ export default async function ContactPage() {
       )}
       
       <main className="flex-1">
-        <div className="container px-4 lg:px-12 pt-6">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <Card className="bg-background">
-              <CardHeader>
-                <CardTitle className="text-primary">Contactgegevens</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+        <div className="container px-4 lg:px-12 pt-6 pb-12">
+          <div className="grid gap-6 lg:grid-cols-[5fr_2fr]">
+            
+            {/* Left Half - Location Info and Map */}
+            <div className="space-y-6">
+              
+              {/* Location Header Card */}
+              <div className="bg-white rounded-lg p-4">
+                <h3 className="text-2xl font-semibold text-primary">Onze Locatie</h3>
+                <p className="text-base text-muted-foreground mt-1">
+                  Scoutslokaal Den Tybaert, Tybaertstraat 1, 9170 Sint-Gillis-Waas
+                </p>
+              </div>
+
+              {/* Map Card */}
+              <div className="bg-white rounded-lg overflow-hidden">
+                <div className="h-[580px] relative w-full">
+                  <iframe
+                    src="https://maps.google.com/maps?q=Tybaertstraat+1,+9170+Sint-Gillis-Waas,+Belgium&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    className="absolute inset-0 w-full h-full"
+                    style={{ border: 0, minHeight: '580px' }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Scoutslokaal Den Tybaert Location"
+                  />
+                </div>
+              </div>
+
+            </div>
+
+            {/* Right Half - Contact Information */}
+            <div className="bg-white rounded-lg p-6">
+              <div className="space-y-8">
+              
+              {/* Groepsleiding Section */}
+              <div>
+                <h3 className="text-2xl font-semibold text-primary mb-6">Groepsleiding</h3>
+                <div className="flex items-center gap-4">
+                  <GroepsLogo
+                    className="h-8 w-8 flex-shrink-0"
+                    style={{ color: 'hsl(var(--groepsleiding))' }}
+                  />
                   <div>
-                    <h3 className="font-semibold text-foreground">Adres</h3>
-                    <p className="text-muted-foreground">Straatnaam 123</p>
-                    <p className="text-muted-foreground">1234 AB Stad</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Email</h3>
-                    <p className="text-muted-foreground">info@scoutssintjohannes.nl</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Telefoon</h3>
-                    <p className="text-muted-foreground">+31 123 456 789</p>
+                    <p className="font-semibold text-foreground">Groepsleiding</p>
+                    <a href="mailto:groepsleiding@scoutssintjohannes.be" className="text-primary hover:underline">
+                      groepsleiding@scoutssintjohannes.be
+                    </a>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-background">
-              <CardHeader>
-                <CardTitle className="text-primary">Openingstijden</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+              </div>
+
+              {/* Rental Contact Section */}
+              <div>
+                <h3 className="text-2xl font-semibold text-primary mb-6">Lokalenverhuur</h3>
+                <div className="flex items-center gap-4">
+                  <HomeLogo
+                    className="h-8 w-8 flex-shrink-0"
+                    style={{ color: 'hsl(var(--primary))' }}
+                  />
                   <div>
-                    <h3 className="font-semibold text-foreground">Scoutsavonden</h3>
-                    <p className="text-muted-foreground">Zaterdag: 14:00 - 17:00</p>
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Bestuur</h3>
-                    <p className="text-muted-foreground">Maandag: 19:00 - 21:00</p>
+                    <p className="font-semibold text-foreground">Marlene Stuer</p>
+                    <p className="text-muted-foreground">03/770.74.29</p>
+                    <a href="mailto:lokaalverhuur@scoutssintjohannes.be" className="text-primary hover:underline">
+                      lokaalverhuur@scoutssintjohannes.be
+                    </a>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+
+              {/* Division Emails Section */}
+              <div>
+                <h3 className="text-2xl font-semibold text-primary mb-6">Takken</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <KapoenenLogo
+                      className="h-8 w-8 flex-shrink-0"
+                      style={{ color: 'hsl(var(--kapoenen))' }}
+                    />
+                    <div>
+                      <p className="font-semibold text-foreground">Kapoenen</p>
+                      <a href="mailto:kapoenen@scoutssintjohannes.be" className="text-primary hover:underline">
+                        kapoenen@scoutssintjohannes.be
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <WoutersLogo
+                      className="h-8 w-8 flex-shrink-0"
+                      style={{ color: 'hsl(var(--wouters))' }}
+                    />
+                    <div>
+                      <p className="font-semibold text-foreground">Wouters</p>
+                      <a href="mailto:wouters@scoutssintjohannes.be" className="text-primary hover:underline">
+                        wouters@scoutssintjohannes.be
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <JonggiversLogo
+                      className="h-8 w-8 flex-shrink-0"
+                      style={{ color: 'hsl(var(--jonggivers))' }}
+                    />
+                    <div>
+                      <p className="font-semibold text-foreground">Jonggivers</p>
+                      <a href="mailto:jonggivers@scoutssintjohannes.be" className="text-primary hover:underline">
+                        jonggivers@scoutssintjohannes.be
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <GiversLogo
+                      className="h-8 w-8 flex-shrink-0"
+                      style={{ color: 'hsl(var(--givers))' }}
+                    />
+                    <div>
+                      <p className="font-semibold text-foreground">Givers</p>
+                      <a href="mailto:givers@scoutssintjohannes.be" className="text-primary hover:underline">
+                        givers@scoutssintjohannes.be
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <JinLogo
+                      className="h-8 w-8 flex-shrink-0"
+                      style={{ color: 'hsl(var(--jin))' }}
+                    />
+                    <div>
+                      <p className="font-semibold text-foreground">Jin</p>
+                      <a href="mailto:jin@scoutssintjohannes.be" className="text-primary hover:underline">
+                        jin@scoutssintjohannes.be
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+            </div>
+            
           </div>
         </div>
       </main>
