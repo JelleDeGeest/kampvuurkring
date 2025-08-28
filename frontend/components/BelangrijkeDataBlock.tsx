@@ -106,7 +106,7 @@ export default function BelangrijkeDataBlock() {
   const events = data.events;
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 pt-0 w-full">
       <h2 className="text-xl font-bold mb-4 text-primary">Belangrijke Data</h2>
 
       <Section title="Evenementen" items={events} kind="event" />

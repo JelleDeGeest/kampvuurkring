@@ -30,11 +30,11 @@ export default async function Home() {
           <Header />
 
           <main className="flex-1">
-            <section className="container px-4 lg:px-12 py-8">
+            <section className="container px-4 lg:px-12 pt-8">
               <EventCarousel />
             </section>
 
-            <section className="container px-4 lg:px-12 py-8 md:py-12">
+            <section className="container px-4 lg:px-12 py-6 md:py-8">
               <div className="flex flex-col-reverse lg:flex-row gap-6">
                 <ActivitiesSection />
 
