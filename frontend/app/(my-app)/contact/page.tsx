@@ -20,7 +20,7 @@ interface ContactPageGlobal {
   title: string
   subtitle: string
   banner?: {
-    id: string
+    id: number | string
     alt: string
     url: string
     filename: string
@@ -137,7 +137,7 @@ export default async function ContactPage() {
           <div className="grid gap-6 lg:grid-cols-[5fr_2fr]">
             
             {/* Left Half - Location Info and Map */}
-            <div className="space-y-6">
+            <div className="space-y-6 order-2 lg:order-1">
               
               {/* Location Header Card */}
               <div className="bg-white rounded-lg p-4">
@@ -149,11 +149,11 @@ export default async function ContactPage() {
 
               {/* Map Card */}
               <div className="bg-white rounded-lg overflow-hidden">
-                <div className="h-[580px] relative w-full">
+                <div className="h-[520px] relative w-full">
                   <iframe
                     src="https://maps.google.com/maps?q=Tybaertstraat+1,+9170+Sint-Gillis-Waas,+Belgium&t=&z=15&ie=UTF8&iwloc=&output=embed"
                     className="absolute inset-0 w-full h-full"
-                    style={{ border: 0, minHeight: '580px' }}
+                    style={{ border: 0, minHeight: '520px' }}
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
@@ -165,8 +165,8 @@ export default async function ContactPage() {
             </div>
 
             {/* Right Half - Contact Information */}
-            <div className="bg-white rounded-lg p-6">
-              <div className="space-y-8">
+            <div className="bg-white rounded-lg p-6 h-fit order-1 lg:order-2">
+              <div className="space-y-6">
               
               {/* Groepsleiding Section */}
               <div>
@@ -188,18 +188,10 @@ export default async function ContactPage() {
               {/* Rental Contact Section */}
               <div>
                 <h3 className="text-2xl font-semibold text-primary mb-6">Lokalenverhuur</h3>
-                <div className="flex items-center gap-4">
-                  <HomeLogo
-                    className="h-8 w-8 flex-shrink-0"
-                    style={{ color: 'hsl(var(--primary))' }}
-                  />
-                  <div>
-                    <p className="font-semibold text-foreground">Marlene Stuer</p>
-                    <p className="text-muted-foreground">03/770.74.29</p>
-                    <a href="mailto:lokaalverhuur@scoutssintjohannes.be" className="text-primary hover:underline">
-                      lokaalverhuur@scoutssintjohannes.be
-                    </a>
-                  </div>
+                <div>
+                  <a href="/verhuur-lokaal" className="inline-block bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                    Meer info over verhuur →
+                  </a>
                 </div>
               </div>
 

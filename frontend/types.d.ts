@@ -734,8 +734,9 @@ export interface Enrollment {
 export interface PhotoAlbum {
   id: number;
   name: string;
-  year: number;
-  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'groepsactiviteit';
+  startYear: number;
+  endYear: number;
+  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'jowos' | 'groepsactiviteit';
   link: string;
   /**
    * Optioneel: waar is dit album genomen?
@@ -1236,7 +1237,8 @@ export interface EnrollmentsSelect<T extends boolean = true> {
  */
 export interface PhotoAlbumsSelect<T extends boolean = true> {
   name?: T;
-  year?: T;
+  startYear?: T;
+  endYear?: T;
   tak?: T;
   link?: T;
   location?: T;

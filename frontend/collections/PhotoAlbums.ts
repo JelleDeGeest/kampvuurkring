@@ -8,7 +8,7 @@ const PhotoAlbums: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'year', 'tak'],
+    defaultColumns: ['name', 'startYear', 'endYear', 'tak'],
   },
   access: {
     read: () => true,
@@ -27,15 +27,33 @@ const PhotoAlbums: CollectionConfig = {
       },
     },
     {
-      name: 'year',
-      type: 'number',
-      label: 'Jaar',
-      required: true,
-      min: 2000,
-      max: 2100,
-      admin: {
-        placeholder: '2024',
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'startYear',
+          type: 'number',
+          label: 'Start jaar',
+          required: true,
+          min: 2000,
+          max: 2100,
+          admin: {
+            placeholder: '2024',
+            width: '50%',
+          },
+        },
+        {
+          name: 'endYear',
+          type: 'number',
+          label: 'Eind jaar',
+          required: true,
+          min: 2000,
+          max: 2100,
+          admin: {
+            placeholder: '2025',
+            width: '50%',
+          },
+        },
+      ]
     },
     {
       name: 'tak',
@@ -62,6 +80,10 @@ const PhotoAlbums: CollectionConfig = {
         {
           label: 'Jin',
           value: 'jin',
+        },
+        {
+          label: "Jowo's",
+          value: 'jowos',
         },
         {
           label: 'Groepsactiviteit',

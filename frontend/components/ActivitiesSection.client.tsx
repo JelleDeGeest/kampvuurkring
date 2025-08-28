@@ -307,13 +307,15 @@ function DateGroups({ acts }: { acts: Activity[] }) {
   }, {})
 
   // Define the order of Scout sections
-  const sectionOrder = ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin', 'event']
+  const sectionOrder = ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin', 'jowos', 'event']
 
   // Function to sort activities by Scout section order
   const sortActivitiesBySection = (activities: Activity[]) => {
     return [...activities].sort((a, b) => {
-      const indexA = sectionOrder.indexOf(a.division)
-      const indexB = sectionOrder.indexOf(b.division)
+      const divisionA = Array.isArray(a.division) ? a.division[0] : a.division
+      const divisionB = Array.isArray(b.division) ? b.division[0] : b.division
+      const indexA = sectionOrder.indexOf(divisionA)
+      const indexB = sectionOrder.indexOf(divisionB)
       
       // If division not found, put it at the end
       const orderA = indexA === -1 ? 999 : indexA

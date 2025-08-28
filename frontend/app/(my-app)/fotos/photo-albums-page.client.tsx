@@ -18,7 +18,7 @@ interface FotosPageGlobal {
   title: string
   subtitle: string
   banner?: {
-    id: string
+    id: number | string
     alt: string
     url: string
     filename: string
@@ -30,8 +30,9 @@ interface FotosPageGlobal {
 interface PhotoAlbum {
   id: string
   name: string
-  year: number
-  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'groepsactiviteit'
+  startYear: number
+  endYear: number
+  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'jowos' | 'groepsactiviteit'
   link: string
   location?: string
   coverImage: {
@@ -51,18 +52,52 @@ const takLabels = {
   jonggivers: 'Jonggivers',
   givers: 'Givers',
   jin: 'Jin',
+  jowos: "Jowo's",
   groepsactiviteit: 'Groepsactiviteit',
 }
 
-function calculateTakByBirthYear(birthYear: number, albumYear: number): string[] {
-  const age = albumYear - birthYear
-  const schoolYear = age - 6 // Approximate school year (assuming age 6 in 1st grade)
+function calculateTakByBirthYear(birthYear: number, startYear: number, photoAlbums: PhotoAlbum[]): string[] {
+  // Only process reasonable birth years (not 2, 20, etc.)
+  if (birthYear < 1990 || birthYear > 2025) return []
   
-  if (schoolYear >= 1 && schoolYear <= 2) return ['kapoenen']
-  if (schoolYear >= 3 && schoolYear <= 5) return ['wouters']
-  if (schoolYear >= 6 && schoolYear <= 8) return ['jonggivers'] // 6e leerjaar - 2e middelbaar
-  if (schoolYear >= 9 && schoolYear <= 11) return ['givers'] // 3e - 5e middelbaar
-  if (schoolYear === 12) return ['jin'] // 6e middelbaar
+  // Everyone starts scouting at age 6 (Kapoenen)
+  const firstScoutYear = birthYear + 6
+  
+  // Calculate which year of scouting this album is for this person
+  const scoutingYear = startYear - firstScoutYear + 1
+  
+  // Only show albums for valid scouting years (1-15)
+  if (scoutingYear < 1 || scoutingYear > 15) return []
+  
+  // Check if Jowo's albums exist for this person's specific scout years 3-6
+  const scoutYear3 = firstScoutYear + 2  // 2023 + 2 = 2025 (for years 3-4: 2025-2026, 2026-2027)
+  const scoutYear4 = firstScoutYear + 3  // 2023 + 3 = 2026 
+  const scoutYear5 = firstScoutYear + 4  // 2023 + 4 = 2027 (for years 5-6: 2027-2028, 2028-2029)
+  const scoutYear6 = firstScoutYear + 5  // 2023 + 5 = 2028
+  
+  const hasJowosAlbums = photoAlbums.some(album => 
+    album.tak === 'jowos' && 
+    (album.startYear === scoutYear3 || album.startYear === scoutYear4 || 
+     album.startYear === scoutYear5 || album.startYear === scoutYear6)
+  )
+  
+  // Kapoenen and Givers/Jin are always the same
+  if (scoutingYear >= 1 && scoutingYear <= 2) return ['kapoenen']        // Years 1-2
+  if (scoutingYear >= 9 && scoutingYear <= 11) return ['givers']         // Years 9-11
+  if (scoutingYear === 12) return ['jin']                                // Year 12
+  if (scoutingYear >= 13) return ['jowos']                               // Year 13+ (leaders)
+  
+  // Dynamic progression for years 3-8 based on whether Jowo's albums exist
+  if (hasJowosAlbums) {
+    // Jowo's progression: Wouters (2) → Jowo's (2) → Jonggivers (2)
+    if (scoutingYear >= 3 && scoutingYear <= 4) return ['wouters']       // Years 3-4
+    if (scoutingYear >= 5 && scoutingYear <= 6) return ['jowos']         // Years 5-6  
+    if (scoutingYear >= 7 && scoutingYear <= 8) return ['jonggivers']    // Years 7-8
+  } else {
+    // Normal progression: Wouters (3) → Jonggivers (3)
+    if (scoutingYear >= 3 && scoutingYear <= 5) return ['wouters']       // Years 3-5
+    if (scoutingYear >= 6 && scoutingYear <= 8) return ['jonggivers']    // Years 6-8
+  }
   
   return []
 }
@@ -131,11 +166,15 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
   const [birthYear, setBirthYear] = useState<string>('')
   
   const years = useMemo(() => {
-    return Array.from(new Set(photoAlbums.map(album => album.year))).sort((a, b) => b - a)
+    const yearSet = new Set<string>()
+    photoAlbums.forEach(album => {
+      yearSet.add(`${album.startYear}-${album.endYear}`)
+    })
+    return Array.from(yearSet).sort((a, b) => b.localeCompare(a))
   }, [photoAlbums])
   
   // Counter animations - all end at 1500ms with staggered delays
-  const takkenCounter = useCountUp(6, 1500, 0)
+  const takkenCounter = useCountUp(7, 1500, 0)
   const yearsCounter = useCountUp(years.length, 1400, 100)
   const albumsCounter = useCountUp(photoAlbums.length, 1300, 200)
   
@@ -149,7 +188,7 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
     
     // Filter by year
     if (selectedYear !== 'all') {
-      filtered = filtered.filter(album => album.year === parseInt(selectedYear))
+      filtered = filtered.filter(album => `${album.startYear}-${album.endYear}` === selectedYear)
     }
     
     // Filter by birth year
@@ -157,7 +196,7 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
       const birthYearNum = parseInt(birthYear)
       if (!isNaN(birthYearNum)) {
         filtered = filtered.filter(album => {
-          const possibleTakken = calculateTakByBirthYear(birthYearNum, album.year)
+          const possibleTakken = calculateTakByBirthYear(birthYearNum, album.startYear, photoAlbums)
           return possibleTakken.includes(album.tak) || album.tak === 'groepsactiviteit'
         })
       }
@@ -293,16 +332,16 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
               <div>
                 <Label htmlFor="year-filter" className="flex items-center mb-2">
                   <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                  Filter op jaar
+                  Filter op scoutsjaar
                 </Label>
                 <Select value={selectedYear} onValueChange={setSelectedYear}>
                   <SelectTrigger className="bg-white border-input hover:border-primary focus:border-primary transition-all duration-200">
-                    <SelectValue placeholder={selectedYear === 'all' ? 'Alle jaren' : selectedYear} />
+                    <SelectValue placeholder={selectedYear === 'all' ? 'Alle scoutsjaren' : selectedYear} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Alle jaren</SelectItem>
+                    <SelectItem value="all">Alle scoutsjaren</SelectItem>
                     {years.map(year => (
-                      <SelectItem key={year} value={year.toString()}>
+                      <SelectItem key={year} value={year}>
                         {year}
                       </SelectItem>
                     ))}
@@ -361,15 +400,19 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
                       <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
                         {album.name}
                       </h3>
-                      {album.location && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          📍 {album.location}
-                        </p>
-                      )}
+                      <div className="h-5 mt-1">
+                        {album.location ? (
+                          <p className="text-sm text-muted-foreground">
+                            📍 {album.location}
+                          </p>
+                        ) : (
+                          <div></div>
+                        )}
+                      </div>
                       <div className="flex items-center justify-between mt-2 text-sm text-muted-foreground">
                         <span className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
-                          {album.year}
+                          {album.startYear}-{album.endYear}
                         </span>
                         <span>{takLabels[album.tak]}</span>
                       </div>

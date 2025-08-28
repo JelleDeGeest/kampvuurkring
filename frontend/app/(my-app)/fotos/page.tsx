@@ -10,7 +10,7 @@ interface FotosPageGlobal {
   title: string
   subtitle: string
   banner?: {
-    id: string
+    id: number | string
     alt: string
     url: string
     filename: string
@@ -61,7 +61,7 @@ async function getFotosPageData(): Promise<FotosPageGlobal | null> {
     console.warn('Database not available during build, using default fotos page data')
     return {
       title: 'Fotoalbums',
-      subtitle: 'Herbeleef onze avonturen! Bekijk foto\'s van kampen, weekends en activiteiten.'
+      subtitle: 'Herbeleef onze avonturen!'
     }
   }
 }

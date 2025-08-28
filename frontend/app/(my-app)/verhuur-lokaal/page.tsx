@@ -16,7 +16,7 @@ interface VerhuurPageGlobal {
   title: string
   subtitle: string
   banner?: {
-    id: string
+    id: number | string
     alt: string
     url: string
     filename: string
