@@ -1325,6 +1325,18 @@ export interface InschrijvenPage {
    * Upload een banner voor de inschrijven pagina.
    */
   banner?: (number | null) | Media;
+  /**
+   * Upload een decoratieve afbeelding die wordt getoond tussen "Lid worden" en "Waarom lid worden/blijven?" secties.
+   */
+  decorativeImage?: (number | null) | Media;
+  /**
+   * Upload een decoratieve afbeelding die wordt getoond tussen "Onze takken" en "Praktische informatie" secties.
+   */
+  decorativeImage2?: (number | null) | Media;
+  /**
+   * Upload een decoratieve afbeelding die wordt gebruikt als achtergrond voor de final CTA sectie.
+   */
+  decorativeImage3?: (number | null) | Media;
   ctaButtonText: string;
   ctaButtonUrl: string;
   ctaSubtext?: string | null;
@@ -1506,6 +1518,9 @@ export interface InschrijvenPageSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
   banner?: T;
+  decorativeImage?: T;
+  decorativeImage2?: T;
+  decorativeImage3?: T;
   ctaButtonText?: T;
   ctaButtonUrl?: T;
   ctaSubtext?: T;

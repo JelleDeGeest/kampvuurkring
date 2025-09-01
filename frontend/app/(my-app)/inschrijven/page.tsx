@@ -10,6 +10,8 @@ import MapPin from 'lucide-react/dist/esm/icons/map-pin'
 import Heart from 'lucide-react/dist/esm/icons/heart'
 import Star from 'lucide-react/dist/esm/icons/star'
 import Sparkles from 'lucide-react/dist/esm/icons/sparkles'
+import Euro from 'lucide-react/dist/esm/icons/euro'
+import Shirt from 'lucide-react/dist/esm/icons/shirt'
 import getPayloadClient from '@/lib/getPayload'
 import { draftMode } from 'next/headers'
 import PreviewControls from '@/components/PreviewControls'
@@ -91,6 +93,10 @@ const SmallIconComponent = ({ icon }: { icon: string }) => {
       return <Calendar className="mr-2 h-5 w-5 text-primary" />
     case 'mapPin':
       return <MapPin className="mr-2 h-5 w-5 text-primary" />
+    case 'euro':
+      return <Euro className="mr-2 h-5 w-5 text-primary" />
+    case 'shirt':
+      return <Shirt className="mr-2 h-5 w-5 text-primary" />
     default:
       return null
   }
@@ -116,6 +122,9 @@ export default async function InschrijvenPage() {
       ctaButtonText: 'Schrijf je nu in!',
       ctaButtonUrl: 'https://scouts-sint-johannes.stamhoofd.be',
       ctaSubtext: 'Via ons online inschrijvingssysteem Stamhoofd',
+      decorativeImage: null, // Can be set to an image object with url and alt properties
+      decorativeImage2: null, // Can be set to an image object with url and alt properties
+      decorativeImage3: null, // Can be set to an image object with url and alt properties
       whyJoinTitle: 'Waarom lid worden/blijven?',
       whyJoinReasons: [
         {
@@ -139,12 +148,6 @@ export default async function InschrijvenPage() {
           description: 'Kom buiten, ontdek de natuur en leer haar respecteren',
         },
       ],
-      existingMembersSection: {
-        title: 'Lid worden',
-        content: 'Wilt uw zoon/dochter graag in de scouts? Of twijfelt hij/zij nog?\n\nIeder kind mag steeds tweemaal proberen, nadien dient uw zoon/dochter te beslissen of hij al dan niet lid wil worden van de onze scouts.\nBij het tabblad \'agenda/ratel\' vind je steeds terug waar en wanneer er vergadering plaatsvindt.',
-        infoBoxTitle: 'Hoe schrijf ik mijn kind in?',
-        infoBoxContent: 'Leden die vorig jaar al ingeschreven waren kunnen zich inloggen op de website van stamhoofd. (https://scouts-sint-johannes.stamhoofd.be) Daar kun je de gegevens van het lid controleren. Wanneer je het lidgeld betaald hebt, is je kind ingeschreven. Zijn er binnen je gezin nieuwe leden? Dan klik je bij \'inschrijven\' \'nieuw lid toevoegen\'.\n\nNieuwe leden maken een account aan op stamhoofd. (https://scouts-sint-johannes.stamhoofd.be) Daar kom je terecht op de pagina waar je je zoon/dochter kunt inschrijven met zijn/haar gegevens. Je kunt meerdere kinderen inschrijven onder hetzelfde account. Wanneer dat gebeurt is, ga je naar het tabblad \'afrekeningen\'. Daar zie je onderaan de pagina hoeveel je moet overschrijven naar het juiste rekeningnummer. Dat blijft even staan totdat wij de betaling goedkeurden, wat soms eventjes kan duren. Bij vragen kun je ons steeds bereiken via groepsleiding@scoutssintjohannes.be.\n\nHoeveel bedraagt het lidgeld?\n\nHet lidgeld bedraagt 45 euro per kind.\nVanaf 3 kinderen ingeschreven in de scouts bedraagt het 35 euro per kind.\nHet lidgeld is voor de verzekering die vanuit Scouts en Gidsen Vlaanderen gevraagd wordt.\n\nEr is ook een mogelijkheid voor verminderd lidgeld. We willen ieder kind de kans geven om lid te worden van scouting. Geld mag daarbij geen rol spelen. Voor wie het financieel wat moeilijker is, bestaat het verminderd lidgeld. Je betaalt dan 15 euro lidgeld.',
-      },
       divisionsTitle: 'Onze takken',
       divisionsSubtitle: 'Bij de scouts is er voor elke leeftijd een aangepast programma. Ontdek welke tak bij jouw leeftijd past!',
       practicalInfoTitle: 'Praktische informatie',
@@ -247,42 +250,53 @@ export default async function InschrijvenPage() {
       )}
       
       <main className="flex-1">
-        {/* CTA Section */}
-        <section className="container px-4 lg:px-12 pt-6 pb-16">
-          <div className="text-center">
-            {/* Playful CTA Button */}
-            <div className="relative inline-block">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-              <a 
-                href={pageData.ctaButtonUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="relative"
-              >
-                <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-200">
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  {pageData.ctaButtonText}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </a>
+
+        {/* Lid worden Section */}
+        <section className="pt-4 pb-8">
+          <div className="container px-4 lg:px-12">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl font-bold mb-6 text-primary">Lid worden</h2>
+              <div className="text-lg text-muted-foreground leading-relaxed whitespace-pre-line mb-8">
+                Wilt uw zoon/dochter graag in de scouts? Of twijfelt hij/zij nog?
+
+Ieder kind mag steeds tweemaal proberen, nadien dient uw zoon/dochter te beslissen of hij al dan niet lid wil worden van de onze scouts.
+Bij het tabblad 'agenda/ratel' vind je steeds terug waar en wanneer er vergadering plaatsvindt.
+              </div>
+              
+              {/* CTA Button */}
+              <div className="relative inline-block">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+                <a 
+                  href={pageData.ctaButtonUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="relative"
+                >
+                  <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-200">
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    {pageData.ctaButtonText}
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </a>
+              </div>
+              
+              {pageData.ctaSubtext && (
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {pageData.ctaSubtext}
+                </p>
+              )}
             </div>
-            
-            {pageData.ctaSubtext && (
-              <p className="mt-4 text-sm text-muted-foreground">
-                {pageData.ctaSubtext}
-              </p>
-            )}
           </div>
         </section>
 
         {/* Why Join Section */}
         {pageData.whyJoinReasons && pageData.whyJoinReasons.length > 0 && (
-          <section className="py-16">
-            <div className="container">
-              <h2 className="text-3xl font-bold text-center mb-12">{pageData.whyJoinTitle}</h2>
+          <section className="pt-4 pb-8">
+            <div className="container px-4 lg:px-12">
+              <h2 className="text-3xl font-bold text-center mb-8 text-primary">{pageData.whyJoinTitle}</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {pageData.whyJoinReasons.map((reason: any, index: number) => (
-                  <div key={index} className="text-center p-6">
+                  <div key={index} className="text-center p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                       <IconComponent icon={reason.icon} />
                     </div>
@@ -295,52 +309,98 @@ export default async function InschrijvenPage() {
           </section>
         )}
 
-        {/* Info for existing members */}
-        {pageData.existingMembersSection && (
-          <section className="py-16 bg-secondary/10">
-            <div className="container">
-              <div className="max-w-3xl mx-auto text-center">
-                <h2 className="text-3xl font-bold mb-6">{pageData.existingMembersSection.title}</h2>
-                <p className="text-lg text-muted-foreground mb-8">
-                  {pageData.existingMembersSection.content}
-                </p>
-                <div className="bg-white p-6 rounded-lg shadow-sm">
-                  <h3 className="text-xl font-semibold mb-3">{pageData.existingMembersSection.infoBoxTitle}</h3>
-                  <p className="text-muted-foreground">
-                    {pageData.existingMembersSection.infoBoxContent}
-                  </p>
-                </div>
-              </div>
+        {/* Decorative Image Section */}
+        <section className="container px-4 lg:px-12 pb-8">
+          <div className="relative w-full h-[400px] md:h-[500px] lg:h-[550px] rounded-2xl overflow-hidden">
+            {/* Image */}
+            <div className="absolute inset-0">
+              {pageData.decorativeImage ? (
+                <Image
+                  src={`${PAYLOAD_URL}${pageData.decorativeImage.url}`}
+                  alt={pageData.decorativeImage.alt || 'Scouts activities'}
+                  fill
+                  className="object-cover"
+                />
+              ) : pageData.banner ? (
+                <Image
+                  src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                  alt={pageData.banner.alt || 'Scouts activities'}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />
+              )}
             </div>
-          </section>
-        )}
+            
+            {/* Light overlay for better visual flow */}
+            <div className="absolute inset-0 bg-black/10" />
+          </div>
+        </section>
+
 
         {/* Divisions Section */}
-        <section className="py-16 bg-gray-50">
-          <div className="container">
-            <h2 className="text-3xl font-bold text-center mb-4">{pageData.divisionsTitle}</h2>
-            <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+        <section className="pt-4 pb-8">
+          <div className="container px-4 lg:px-12">
+            <h2 className="text-3xl font-bold text-center mb-6 text-primary">{pageData.divisionsTitle}</h2>
+            <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
               {pageData.divisionsSubtitle}
             </p>
             <TakkenAccordion className="max-w-4xl mx-auto" />
           </div>
         </section>
 
+        {/* Second Decorative Image Section */}
+        <section className="container px-4 lg:px-12 pb-8">
+          <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
+            {/* Image */}
+            <div className="absolute inset-0">
+              {pageData.decorativeImage2 ? (
+                <Image
+                  src={`${PAYLOAD_URL}${pageData.decorativeImage2.url}`}
+                  alt={pageData.decorativeImage2.alt || 'Scouts activities'}
+                  fill
+                  className="object-cover"
+                />
+              ) : pageData.decorativeImage ? (
+                <Image
+                  src={`${PAYLOAD_URL}${pageData.decorativeImage.url}`}
+                  alt={pageData.decorativeImage.alt || 'Scouts activities'}
+                  fill
+                  className="object-cover"
+                />
+              ) : pageData.banner ? (
+                <Image
+                  src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                  alt={pageData.banner.alt || 'Scouts activities'}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />
+              )}
+            </div>
+            
+            {/* Light overlay for better visual flow */}
+            <div className="absolute inset-0 bg-black/10" />
+          </div>
+        </section>
+
         {/* Practical Info Section */}
         {pageData.practicalInfo && pageData.practicalInfo.length > 0 && (
-          <section className="py-16">
-            <div className="container">
-              <h2 className="text-3xl font-bold text-center mb-12">{pageData.practicalInfoTitle}</h2>
-              <div className="max-w-3xl mx-auto space-y-8">
+          <section className="pt-4 pb-8">
+            <div className="container px-4 lg:px-12">
+              <h2 className="text-3xl font-bold text-center mb-8 text-primary">{pageData.practicalInfoTitle}</h2>
+              <div className="max-w-4xl mx-auto space-y-6">
                 {pageData.practicalInfo.map((info: any, index: number) => (
-                  <div key={index}>
-                    <h3 className="text-xl font-semibold mb-3 flex items-center">
+                  <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <h3 className="text-xl font-semibold mb-4 flex items-center text-primary">
                       {info.icon && <SmallIconComponent icon={info.icon} />}
                       {info.title}
                     </h3>
-                    <p className="text-muted-foreground whitespace-pre-line">
+                    <div className="text-muted-foreground whitespace-pre-line leading-relaxed">
                       {info.content}
-                    </p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -348,32 +408,64 @@ export default async function InschrijvenPage() {
           </section>
         )}
 
-        {/* Final CTA Section */}
+        {/* Final CTA Section with Background Image */}
         {pageData.finalCtaSection && (
-          <section className="py-20 bg-primary/5">
-            <div className="container text-center">
-              <h2 className="text-3xl font-bold mb-6">{pageData.finalCtaSection.title}</h2>
-              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto whitespace-pre-line">
-                {pageData.finalCtaSection.content}
-              </p>
-              
-              <a 
-                href={pageData.ctaButtonUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-200">
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  {pageData.finalCtaSection.buttonText}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </a>
-              
-              <div className="mt-8 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                <span>Heb je vragen?</span>
-                <Link href="/contact" className="text-primary hover:underline font-medium">
-                  Contacteer ons
-                </Link>
+          <section className="pt-4 pb-20">
+            <div className="container px-4 lg:px-12">
+              <div className="relative w-full h-[400px] md:h-[450px] lg:h-[500px] rounded-2xl overflow-hidden">
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  {pageData.decorativeImage3 ? (
+                    <Image
+                      src={`${PAYLOAD_URL}${pageData.decorativeImage3.url}`}
+                      alt={pageData.decorativeImage3.alt || 'Scouts final CTA background'}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : pageData.banner ? (
+                    <Image
+                      src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                      alt={pageData.banner.alt || 'Scouts final CTA background'}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />
+                  )}
+                </div>
+                
+                
+                {/* Content overlay positioned on the right side */}
+                <div className="absolute inset-0 flex items-center justify-center md:justify-end px-4 md:pr-12 lg:pr-16">
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4 md:p-6 lg:p-8 text-center md:text-right text-white max-w-sm md:max-w-lg w-full md:w-auto">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                      {pageData.finalCtaSection.title}
+                    </h2>
+                    <p className="text-base md:text-lg mb-6 whitespace-pre-line">
+                      {pageData.finalCtaSection.content}
+                    </p>
+                    
+                    <a 
+                      href={pageData.ctaButtonUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-block mb-4"
+                    >
+                      <Button size="lg" className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 transform hover:scale-105 transition-all duration-200 shadow-xl">
+                        <Sparkles className="mr-2 h-5 w-5" />
+                        {pageData.finalCtaSection.buttonText}
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </a>
+                    
+                    <div className="flex items-center justify-center md:justify-end gap-4 text-sm">
+                      <span>Heb je vragen?</span>
+                      <Link href="/contact" className="text-white hover:text-primary-foreground underline font-medium">
+                        Contacteer ons
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>

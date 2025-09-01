@@ -117,18 +117,17 @@ export default function TakkenAccordion({ className }: TakkenAccordionProps) {
       {takkenData.map((tak) => (
         <div
           key={tak.name}
-          className="rounded-lg border border-border/50 shadow-sm overflow-hidden"
-          style={{ backgroundColor: tak.bgColor }}
+          className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200"
         >
           {/* Header */}
           <button
             onClick={() => toggleTak(tak.name)}
-            className="w-full p-6 text-left transition-all duration-200 hover:bg-black/5 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer group"
+            className="w-full p-6 text-left transition-all duration-200 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer group"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div 
-                  className="w-16 h-16 p-2 rounded-full shadow-sm group-hover:shadow-md transition-shadow"
+                  className="w-16 h-16 p-2 rounded-full shadow-sm group-hover:shadow-md transition-all duration-200"
                   style={{ backgroundColor: tak.color }}
                 >
                   <Image
@@ -168,8 +167,13 @@ export default function TakkenAccordion({ className }: TakkenAccordionProps) {
           </button>
 
           {/* Content */}
-          {openTak === tak.name && (
-            <div className="px-6 pt-4 pb-6 space-y-4 bg-white/50">
+          <div 
+            className={cn(
+              "overflow-hidden transition-all duration-300 ease-in-out",
+              openTak === tak.name ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+            )}
+          >
+            <div className="px-6 pt-4 pb-6 space-y-4 bg-gray-50/50 border-t border-gray-100">
               <div>
                 <p className="text-gray-700 leading-relaxed">{tak.description}</p>
               </div>
@@ -209,7 +213,7 @@ export default function TakkenAccordion({ className }: TakkenAccordionProps) {
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       ))}
     </div>

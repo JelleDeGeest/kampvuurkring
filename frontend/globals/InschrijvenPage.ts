@@ -57,6 +57,36 @@ export const InschrijvenPage: GlobalConfig = {
       },
     },
     {
+      name: 'decorativeImage',
+      type: 'upload',
+      label: 'Decoratieve Afbeelding',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Upload een decoratieve afbeelding die wordt getoond tussen "Lid worden" en "Waarom lid worden/blijven?" secties.',
+      },
+    },
+    {
+      name: 'decorativeImage2',
+      type: 'upload',
+      label: 'Decoratieve Afbeelding 2',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Upload een decoratieve afbeelding die wordt getoond tussen "Onze takken" en "Praktische informatie" secties.',
+      },
+    },
+    {
+      name: 'decorativeImage3',
+      type: 'upload',
+      label: 'Decoratieve Afbeelding 3',
+      relationTo: 'media',
+      required: false,
+      admin: {
+        description: 'Upload een decoratieve afbeelding die wordt gebruikt als achtergrond voor de final CTA sectie.',
+      },
+    },
+    {
       name: 'ctaButtonText',
       label: 'CTA Knop Tekst',
       type: 'text',
@@ -227,10 +257,12 @@ export const InschrijvenPage: GlobalConfig = {
           content: 'Onze lokalen bevinden zich in het hart van onze gemeente. Het exacte adres ontvang je na inschrijving.',
         },
         {
+          icon: 'euro',
           title: 'Lidgeld',
           content: 'Het jaarlijkse lidgeld bedraagt €50. Dit omvat verzekering, activiteiten en het lidmaatschap bij Scouts en Gidsen Vlaanderen. Voor bestaande leden: vergeet niet je lidgeld te vernieuwen voor het nieuwe scoutsjaar!',
         },
         {
+          icon: 'shirt',
           title: 'Uniform',
           content: 'Elk lid draagt een scouts uniform bestaande uit een beige hemd en groene broek/rok. Das en kentekens van de groep kan je bij ons aankopen.',
         },
