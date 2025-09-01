@@ -81,6 +81,7 @@ export interface Config {
     camps: Camp;
     enrollments: Enrollment;
     photoAlbums: PhotoAlbum;
+    lokaalFotos: LokaalFoto;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -102,6 +103,7 @@ export interface Config {
     camps: CampsSelect<false> | CampsSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     photoAlbums: PhotoAlbumsSelect<false> | PhotoAlbumsSelect<true>;
+    lokaalFotos: LokaalFotosSelect<false> | LokaalFotosSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -751,6 +753,44 @@ export interface PhotoAlbum {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lokaalFotos".
+ */
+export interface LokaalFoto {
+  id: number;
+  title: string;
+  /**
+   * Upload een foto van het lokaal of faciliteit
+   */
+  image: number | Media;
+  /**
+   * Kies de categorie waar deze foto bij hoort
+   */
+  category:
+    | 'exterieur'
+    | 'slaaplokalen'
+    | 'keuken'
+    | 'eetzaal'
+    | 'vergaderlokaal'
+    | 'sanitair'
+    | 'buitenruimte'
+    | 'tentengrond'
+    | 'speelterrein'
+    | 'parking'
+    | 'overige';
+  description?: string | null;
+  /**
+   * Lagere nummers komen eerst in de gallery (0, 1, 2, ...)
+   */
+  order: number;
+  /**
+   * Uitgevinkt = foto wordt niet getoond in de gallery
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -828,6 +868,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'photoAlbums';
         value: number | PhotoAlbum;
+      } | null)
+    | ({
+        relationTo: 'lokaalFotos';
+        value: number | LokaalFoto;
       } | null)
     | ({
         relationTo: 'users';
@@ -1243,6 +1287,20 @@ export interface PhotoAlbumsSelect<T extends boolean = true> {
   link?: T;
   location?: T;
   coverImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lokaalFotos_select".
+ */
+export interface LokaalFotosSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  category?: T;
+  description?: T;
+  order?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -26,6 +26,7 @@ import { Media } from './collections/Media'
 import { BannerImages } from './collections/BannerImages'
 import { LeidersBanners } from './collections/LeidersBanners'
 import PhotoAlbums from './collections/PhotoAlbums'
+import LokaalFotos from './collections/LokaalFotos'
 
 export default buildConfig({
   collections: [
@@ -42,7 +43,8 @@ export default buildConfig({
     Weekends,
     Camps,
     Enrollments,
-    PhotoAlbums
+    PhotoAlbums,
+    LokaalFotos
     // Add other collections here
   ],
   globals: [
