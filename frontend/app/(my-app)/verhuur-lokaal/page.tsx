@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Header from "@/components/header"
 import Image from "next/image"
-import { Calendar, MapPin, Users, House, Utensils, ShowerHead, Tent, Phone, Mail } from "lucide-react"
+// Removed lucide-react icons temporarily due to build issues
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
 import { ContactForm } from './contact-form.client'
@@ -217,40 +217,35 @@ export default async function VerhuurLokaalPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <House className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold">Slaaplokalen</h4>
+                    <h4 className="font-semibold">🏠 Slaaplokalen</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">Er zijn 3 lokalen die je kan gebruiken om te slapen, je moet wel zelf matjes of veldbedden voorzien.</p>
                 </div>
                 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Utensils className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold">Keuken</h4>
+                    <h4 className="font-semibold">🍴 Keuken</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">Kookvuur met 6 grote pitten, oven, dubbele lavabo, werkblad en koelkast. Kookmateriaal en eetgerief voor max. 60 personen voorzien.</p>
                 </div>
                 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold">Eetzaal / daglokaal</h4>
+                    <h4 className="font-semibold">🍽️ Eetzaal / daglokaal</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">Grote zaal voor maaltijden en dagactiviteiten.</p>
                 </div>
                 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold">Vergaderlokaal</h4>
+                    <h4 className="font-semibold">👥 Vergaderlokaal</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">Enkel beschikbaar tijdens de zomervakantie.</p>
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <ShowerHead className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold">Sanitair</h4>
+                    <h4 className="font-semibold">🚿 Sanitair</h4>
                   </div>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p><strong>Mannen:</strong> 1 pissoir, 2 toiletten, 1 lavabo</p>
@@ -261,8 +256,7 @@ export default async function VerhuurLokaalPage() {
                 
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Tent className="h-4 w-4 text-primary" />
-                    <h4 className="font-semibold">Buitenruimte</h4>
+                    <h4 className="font-semibold">⛺ Buitenruimte</h4>
                   </div>
                   <div className="text-sm text-muted-foreground">
                     <p className="mb-2"><strong>Tentengrond:</strong> 5 are</p>
@@ -300,8 +294,7 @@ export default async function VerhuurLokaalPage() {
                   {/* Location Info */}
                   <div>
                     <h3 className="text-xl font-semibold mb-4 flex items-center text-primary">
-                      <MapPin className="mr-2 h-5 w-5" />
-                      Ligging & adres
+                      📍 Ligging & adres
                     </h3>
                     <div className="text-muted-foreground space-y-4">
                       <p>Landelijk gelegen aan de rand van St-Gillis-Waas op 1 kilometer van het centrum.</p>
@@ -367,8 +360,7 @@ export default async function VerhuurLokaalPage() {
               
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  <h3 className="text-xl font-semibold text-primary">Google Calendar</h3>
+                  <h3 className="text-xl font-semibold text-primary">📅 Google Calendar</h3>
                 </div>
                 <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center text-muted-foreground">
                   Google Calendar embed will be placed here
@@ -400,13 +392,11 @@ export default async function VerhuurLokaalPage() {
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-center md:justify-end gap-2">
-                        <Phone className="h-4 w-4" />
-                        <a href="tel:03/770.74.29" className="hover:underline">03/770.74.29</a>
+                        <a href="tel:03/770.74.29" className="hover:underline">📞 03/770.74.29</a>
                       </div>
                       <div className="flex items-center justify-center md:justify-end gap-2">
-                        <Mail className="h-4 w-4" />
                         <a href="mailto:Lokaalverhuur@scoutssintjohannes.be" className="hover:underline text-sm">
-                          Lokaalverhuur@scoutssintjohannes.be
+                          ✉️ Lokaalverhuur@scoutssintjohannes.be
                         </a>
                       </div>
                     </div>
