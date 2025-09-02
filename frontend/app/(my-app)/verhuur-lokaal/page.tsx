@@ -255,7 +255,7 @@ export default async function VerhuurLokaalPage() {
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p><strong>Mannen:</strong> 1 pissoir, 2 toiletten, 1 lavabo</p>
                     <p><strong>Vrouwen:</strong> 3 toiletten, 2 lavabo's</p>
-                    <p><strong>Badkamer:</strong> 3 lavabo's, 2 douches (38°)</p>
+                    <p><strong>Badkamer:</strong> 1 grote lavabo, 3 douches (38°)</p>
                   </div>
                 </div>
                 

@@ -146,14 +146,6 @@ export default function Gallery({ images }: GalleryProps) {
               />
             </button>
           ))}
-          
-          {/* Grey placeholders for remaining slots */}
-          {Array.from({ length: Math.max(0, 36 - images.length) }).map((_, index) => (
-            <div
-              key={`placeholder-${index}`}
-              className="w-14 h-14 rounded-md bg-gray-200 opacity-30"
-            />
-          ))}
         </div>
         
         {/* Image counter - visible on small and medium screens */}
