@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import getPayloadClient from '@/lib/getPayload'
 import { draftMode } from 'next/headers'
-import Header from '@/components/header'
 import Footer from '@/app/(my-app)/components/Footer'
 import { Card } from '@/components/ui/card'
 import { Calendar, MapPin, Users } from 'lucide-react'
@@ -132,7 +131,6 @@ export default async function TakActivitiesPage({ params }: Props) {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {isEnabled && <PreviewControls />}
-      <Header />
       
       <main className="flex-1">
         {/* Hero Section with tak color */}

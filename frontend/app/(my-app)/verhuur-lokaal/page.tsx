@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import Header from "@/components/header"
 import Image from "next/image"
 import Home from 'lucide-react/dist/esm/icons/home'
 import Phone from 'lucide-react/dist/esm/icons/phone'
@@ -112,9 +111,7 @@ export default async function VerhuurLokaalPage() {
   
   const finalImages = galleryImages.length > 0 ? galleryImages : fallbackImages
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Header />
-      
+    <>
       {/* Banner Section */}
       {verhuurPageData?.banner ? (
         <section className="container px-4 lg:px-12 pt-8">
@@ -402,8 +399,7 @@ export default async function VerhuurLokaalPage() {
 
 
 
-
       </main>
-    </div>
+    </>
   )
 } 

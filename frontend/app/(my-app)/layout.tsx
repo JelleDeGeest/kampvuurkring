@@ -5,6 +5,9 @@ import { primaryFont, secondaryFont, headingFont } from "@/fonts"
 import { ThemeProvider } from "@/components/theme-provider"
 import Footer from "./components/Footer"
 import { CategorySelectionProvider } from "@/hooks/CategorySelectionContext"
+import Header from "@/components/header"
+import PageTransition from "@/components/PageTransition"
+import { TransitionProvider } from "@/components/TransitionProvider"
 
 export default function RootLayout({
   children,
@@ -27,12 +30,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <CategorySelectionProvider>
-            <div className="flex flex-col min-h-screen">
-              {children}
-              <Footer />
-            </div>
-          </CategorySelectionProvider>
+          <TransitionProvider>
+            <CategorySelectionProvider>
+              <div className="min-h-dvh flex flex-col">
+                <Header />
+                <PageTransition className="flex-1">
+                  {children}
+                </PageTransition>
+                <Footer />
+              </div>
+            </CategorySelectionProvider>
+          </TransitionProvider>
         </ThemeProvider>
       </body>
     </html>

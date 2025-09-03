@@ -1,4 +1,3 @@
-import Header from "@/components/header"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -107,7 +106,6 @@ export default async function LeidingPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
       
       {/* Banner Section */}
       {leidersPageData?.banner ? (

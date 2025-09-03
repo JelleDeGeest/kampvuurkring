@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import Header from "@/components/header"
 import Image from "next/image"
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
@@ -61,7 +60,6 @@ export default async function ContactPage() {
   
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header />
       
       {/* Banner Section */}
       {contactPageData?.banner ? (

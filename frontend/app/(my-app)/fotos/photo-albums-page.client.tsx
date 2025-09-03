@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import Header from "@/components/header"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -207,7 +206,6 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
   
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header />
       
       {/* Banner Section */}
       {fotosPageData?.banner ? (

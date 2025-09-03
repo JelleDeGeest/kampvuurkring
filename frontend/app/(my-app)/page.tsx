@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 
 import { draftMode } from 'next/headers'
-import Header from '@/components/header'
 import { EventCarousel } from '@/components/event-carousel'
 import PreviewControls from '@/components/PreviewControls'
 import ActivitiesSection from '@/components/ActivitiesSection.client'
@@ -26,25 +25,21 @@ export default async function Home() {
       )}
 
       <DraftModeProvider isDraftMode={inDraftMode}>
-        <div className="flex min-h-screen flex-col bg-background">
-          <Header />
-
-          <main className="flex-1">
-            <section className="container px-4 lg:px-12 pt-8">
-              <EventCarousel />
-            </section>
-
-            <section className="container px-4 lg:px-12 py-6 md:py-8">
-              <div className="flex flex-col-reverse lg:flex-row gap-6">
-                <ActivitiesSection />
-
-              <div className="w-full lg:w-1/3">
-                <BelangrijkeDataBlock />
-              </div>
-            </div>
+        <main className="flex-1">
+          <section className="container px-4 lg:px-12 pt-8">
+            <EventCarousel />
           </section>
-        </main>
-      </div>
+
+          <section className="container px-4 lg:px-12 py-6 md:py-8">
+            <div className="flex flex-col-reverse lg:flex-row gap-6">
+              <ActivitiesSection />
+
+            <div className="w-full lg:w-1/3">
+              <BelangrijkeDataBlock />
+            </div>
+          </div>
+        </section>
+      </main>
       </DraftModeProvider>
     </>
   )

@@ -4,7 +4,6 @@ import getPayloadClient from '@/lib/getPayload'
 import { LexicalRenderer } from '@/components/LexicalRenderer'
 import PreviewControls from '@/components/PreviewControls'
 import { DynamicForm } from '@/components/DynamicForm'
-import Header from '@/components/header'
 import Footer from '@/app/(my-app)/components/Footer'
 import RefreshOnSave from '@/components/RefreshOnSave'
 import PreviewSwitcher from '@/components/PreviewSwitcher'
@@ -117,7 +116,6 @@ export default async function EnrollmentPage({ params }: Props) {
             <PreviewSwitcher />
           </>
         )}
-        <Header />
         <main className="flex-1">
           <div className="container mx-auto px-4 py-8">
             <h1 className="text-4xl font-bold text-primary mb-4">Inschrijvingen gesloten</h1>
@@ -143,7 +141,6 @@ export default async function EnrollmentPage({ params }: Props) {
               <PreviewSwitcher />
             </>
           )}
-          <Header />
           <main className="flex-1">
             <div className="container mx-auto px-4 py-8">
               <h1 className="text-4xl font-bold text-primary mb-4">Inschrijvingen gesloten</h1>
@@ -192,7 +189,6 @@ export default async function EnrollmentPage({ params }: Props) {
           <PreviewSwitcher />
         </>
       )}
-      <Header />
       
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 max-w-4xl">

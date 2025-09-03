@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import Header from '@/components/header'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'
@@ -178,7 +177,6 @@ export default async function InschrijvenPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {isEnabled && <PreviewControls />}
-      <Header />
       
       {/* Banner Section */}
       {pageData.banner ? (

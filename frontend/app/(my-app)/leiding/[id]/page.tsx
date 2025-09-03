@@ -1,4 +1,3 @@
-import Header from "@/components/header"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 
@@ -131,7 +130,6 @@ export default async function LeiderPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Header />
       <main className="flex-1">
         <section className="container px-4 lg:px-12 pt-8">
           {/* Homepage-style banner with nature background */}
