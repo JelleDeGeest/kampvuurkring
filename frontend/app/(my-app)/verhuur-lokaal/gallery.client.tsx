@@ -29,10 +29,10 @@ export default function Gallery({ images }: GalleryProps) {
   
   const [currentIndex, setCurrentIndex] = useState(0)
   const [imageA, setImageA] = useState(images[0])
-  const [imageB, setImageB] = useState<GalleryImage | null>(null)
+  const [imageB, setImageB] = useState<GalleryImage>(images[0]) // Initialize with the same image
   const [showB, setShowB] = useState(false)
   
-  const selectedImage = showB && imageB ? imageB : imageA
+  const selectedImage = showB ? imageB : imageA
   
   const changeImage = (newIndex: number) => {
     const newImage = images[newIndex]
@@ -86,17 +86,15 @@ export default function Gallery({ images }: GalleryProps) {
           />
           
           {/* Image B */}
-          {imageB && (
-            <Image
-              src={imageB.src}
-              alt={imageB.alt}
-              fill
-              className={`absolute object-cover transition-opacity duration-700 ease-in-out ${
-                showB ? 'opacity-100' : 'opacity-0'
-              }`}
-              priority
-            />
-          )}
+          <Image
+            src={imageB.src}
+            alt={imageB.alt}
+            fill
+            className={`absolute object-cover transition-opacity duration-700 ease-in-out ${
+              showB ? 'opacity-100' : 'opacity-0'
+            }`}
+            priority
+          />
           
           {/* Navigation arrows - visible on all screens */}
           <button

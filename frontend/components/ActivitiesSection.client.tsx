@@ -110,6 +110,20 @@ export default function ActivitiesSection() {
       }, 50)
     }
   }, [isLoadingActivities, initialLoadComplete, initialFetchDone])
+  
+  // Fallback to ensure loading completes even if no activities
+  useEffect(() => {
+    if (!isLoadingActivities && !initialLoadComplete && !initialFetchDone) {
+      // If activities have finished loading but initialFetchDone is never true
+      // (can happen when there are no activities), set it complete anyway
+      const timeout = setTimeout(() => {
+        setInitialLoadComplete(true)
+        setInitialFadeIn(true)
+        setHasCheckedEmpty(true)
+      }, 1000)
+      return () => clearTimeout(timeout)
+    }
+  }, [isLoadingActivities, initialLoadComplete, initialFetchDone])
 
   // 4️⃣ Reset initial‐page flag after fade
   useEffect(() => {
@@ -133,12 +147,11 @@ export default function ActivitiesSection() {
           transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
         }
 
-  // No‐activities message condition
+  // No‐activities message condition - simplified
   const showNoActivitiesMessage =
-    initialLoadComplete &&
     filteredActivities.length === 0 &&
-    !isLoadingActivities &&
-    (hasCheckedEmpty || initialFadeIn)
+    allActivities.length === 0 &&
+    !isLoadingActivities
 
   // ─── New: load weekends & camps ───
   const { data: importantDates, isLoading: loadingDates } =
@@ -279,21 +292,27 @@ export default function ActivitiesSection() {
       <CategoryFilter />
 
       {/* loader for activities */}
-      {(isLoadingActivities || loadingDates) && !initialLoadComplete && (
+      {isLoadingActivities && (
         <div className="flex items-center justify-center py-20 text-muted-foreground">
           <Loader2 className="animate-spin h-6 w-6 mr-2" /> Activiteiten laden...
         </div>
       )}
 
-      <div style={getContentStyle()}>
-        {filteredActivities.length > 0 ? (
-          <DateGroups acts={filteredActivities} />
-        ) : (
-          <div className="py-20 text-center text-muted-foreground">
-            Geen activiteiten gevonden voor de geselecteerde categorieën.
-          </div>
-        )}
-      </div>
+      {!isLoadingActivities && (
+        <div style={getContentStyle()}>
+          {filteredActivities.length > 0 ? (
+            <DateGroups acts={filteredActivities} />
+          ) : showNoActivitiesMessage ? (
+            <div className="py-20 text-center text-muted-foreground">
+              Hier worden binnenkort de activiteiten toegevoegd.
+            </div>
+          ) : (
+            <div className="py-20 text-center text-muted-foreground">
+              Geen activiteiten gevonden voor de geselecteerde categorieën.
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

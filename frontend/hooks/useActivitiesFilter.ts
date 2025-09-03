@@ -42,7 +42,10 @@ export function useActivitiesFilter() {
   const filterActivities = useCallback((categories: CategoryValue[]) => {
     setActiveFilters(categories);
     
-    if (allActivities.length === 0) return;
+    if (allActivities.length === 0) {
+      setIsLoading(false);
+      return;
+    }
     
     // Handle initial filtering differently than subsequent filtering
     if (isFirstFilter) {
@@ -126,7 +129,11 @@ export function useActivitiesFilter() {
           setAllActivities(fetchedActivities);
           setInitialFetchDone(true);
           
-          // Important: The loading state will remain true until filterActivities is called
+          // If there are no activities, immediately set loading to false
+          if (fetchedActivities.length === 0) {
+            setIsLoading(false);
+          }
+          // Otherwise, the loading state will remain true until filterActivities is called
           // This prevents showing unfiltered results briefly
         }
       } catch (err: any) {
