@@ -120,7 +120,7 @@ export default function Gallery({ images }: GalleryProps) {
       {/* Thumbnail Grid - Right side on large screens, counter on small screens */}
       <div className="xl:col-span-1">
         {/* Thumbnail grid - only visible on larger screens */}
-        <div className="hidden xl:grid grid-cols-4 gap-x-1 gap-y-3 xl:h-[600px] content-between">
+        <div className="hidden xl:grid grid-cols-4 gap-x-1 gap-y-3 xl:h-[600px] content-start">
           {/* Actual images */}
           {images.slice(0, 36).map((image) => (
             <button

@@ -351,16 +351,44 @@ export default async function VerhuurLokaalPage() {
           </div>
         </section>
 
-        {/* Decorative Image Section 2 */}
-        <section className="container px-4 lg:px-12 pb-8">
-          <div className="relative w-full h-[400px] rounded-2xl overflow-hidden">
-            <div className="absolute inset-0">
-              <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />
+        {/* Pricing Section */}
+        <section className="pt-4 pb-8">
+          <div className="container px-4 lg:px-12">
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-3xl font-bold text-center mb-6 text-primary">Prijzen en waarborg</h2>
+              
+              <div className="max-w-2xl mx-auto space-y-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-lg mb-3 text-foreground">Tarieven</h3>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>Prijs: € 5,50 per nacht per persoon, met een minimum van € 150,00 per nacht.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>Vergoeding van water, gas en elektriciteit volgens verbruik.</span>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-lg mb-3 text-foreground">Waarborg</h3>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>€ 300 voor kort verblijf (tot 2 overnachtingen)</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>€ 500 voor lang verblijf (vanaf 3 overnachtingen)</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <div className="absolute inset-0 bg-black/10" />
           </div>
         </section>
-
 
         {/* Calendar Section */}
         <section id="reserveren" className="pt-4 pb-8">
