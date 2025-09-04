@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useTransition } from "react"
+import React, { createContext, useContext, useState } from "react"
 import { useRouter } from "next/navigation"
 
 interface TransitionContextType {
@@ -12,7 +12,6 @@ const TransitionContext = createContext<TransitionContextType | null>(null)
 
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   const navigate = (href: string) => {
@@ -29,17 +28,15 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     
     // Wait for fade out, then navigate
     setTimeout(() => {
-      startTransition(() => {
-        router.push(href)
-        setTimeout(() => {
-          setIsTransitioning(false)
-        }, 50)
-      })
+      router.push(href)
+      setTimeout(() => {
+        setIsTransitioning(false)
+      }, 250)
     }, 200) // Match fade duration
   }
 
   return (
-    <TransitionContext.Provider value={{ navigate, isTransitioning: isTransitioning || isPending }}>
+    <TransitionContext.Provider value={{ navigate, isTransitioning }}>
       {children}
     </TransitionContext.Provider>
   )
