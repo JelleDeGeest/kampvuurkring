@@ -32,7 +32,12 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_SERVER_URL?.replace(/^https?:\/\//, '') || 'localhost',
+        hostname: 'www.scoutssintjohannes.be',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'scoutssintjohannes.be',
         pathname: '/**',
       },
     ],

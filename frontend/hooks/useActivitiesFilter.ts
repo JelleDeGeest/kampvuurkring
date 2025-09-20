@@ -123,7 +123,15 @@ export function useActivitiesFilter() {
         if (!isMounted) return;
         
         const data = await res.json();
-        const fetchedActivities = data?.docs ?? [];
+        const allFetchedActivities = data?.docs ?? [];
+        
+        // Filter to only include upcoming activities (not past ones)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const fetchedActivities = allFetchedActivities.filter((activity: Activity) => {
+          const compareDate = activity.endDate ? new Date(activity.endDate) : new Date(activity.startDate);
+          return compareDate >= today;
+        });
         
         if (isMounted) {
           setAllActivities(fetchedActivities);
