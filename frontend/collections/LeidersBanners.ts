@@ -3,13 +3,14 @@ import { CollectionConfig } from 'payload'
 export const LeidersBanners: CollectionConfig = {
   slug: 'leiders-banners',
   labels: {
-    singular: 'Leiders Banner',
-    plural: 'Leiders Banners',
+    singular: 'Takken Banner',
+    plural: 'Takken Banner',
   },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'updatedAt'],
-    description: 'Banner afbeeldingen voor individuele leider pagina\'s. Wijs banners toe aan takken via de "Leiders Tak Banners" global.'
+    description: 'Banner afbeeldingen voor individuele leider pagina\'s. Wijs banners toe aan takken via de "Leiders Tak Banners" global.',
+    group: 'Media',
   },
   access: {
     read: () => true,
@@ -18,7 +19,6 @@ export const LeidersBanners: CollectionConfig = {
     delete: () => true,
   },
   upload: {
-    staticDir: 'leiders-banners',
     mimeTypes: ['image/*'],
     imageSizes: [
       {

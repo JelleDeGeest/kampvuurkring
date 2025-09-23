@@ -2,10 +2,12 @@ import type { GlobalConfig } from 'payload'
 
 export const FotosPage: GlobalConfig = {
   slug: 'fotosPage',
+  label: 'Fotos',
   access: {
     read: () => true,
   },
   admin: {
+    group: 'Pagina\'s',
     // Add live preview for the fotos page
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/fotos`,
     livePreview: {

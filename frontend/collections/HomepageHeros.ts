@@ -4,6 +4,7 @@ export const HomepageHeros: CollectionConfig = {
   slug: 'homepage-heros',
   admin: {
     useAsTitle: 'title',
+    group: 'Collecties',
   },
   access: {
     read: () => true,

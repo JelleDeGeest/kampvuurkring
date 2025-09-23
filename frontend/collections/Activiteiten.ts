@@ -19,6 +19,7 @@ export const Activiteiten: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'division', 'startDate'],
+    group: 'Ratel',
     components: {
       beforeListTable: ['/components/ActivitiesOverviewLink#ActivitiesOverviewLinkField'],
     },

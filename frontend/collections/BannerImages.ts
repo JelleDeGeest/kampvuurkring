@@ -3,13 +3,14 @@ import { CollectionConfig } from 'payload'
 export const BannerImages: CollectionConfig = {
   slug: 'banner-images',
   labels: {
-    singular: 'Banner Afbeelding',
-    plural: 'Banner Afbeeldingen',
+    singular: 'Andere Banner',
+    plural: 'Andere Banner',
   },
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'updatedAt'],
-    description: 'Banner afbeeldingen voor weekends en kampen'
+    description: 'Banner afbeeldingen voor weekends en kampen',
+    group: 'Media',
   },
   access: {
     read: () => true,
@@ -18,7 +19,6 @@ export const BannerImages: CollectionConfig = {
     delete: () => true,
   },
   upload: {
-    staticDir: 'banner-images',
     mimeTypes: ['image/*'],
     imageSizes: [
       {

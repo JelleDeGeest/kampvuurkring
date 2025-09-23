@@ -10,6 +10,7 @@ export const Enrollments: CollectionConfig = {
     useAsTitle: 'participantEmail',
     defaultColumns: ['participantEmail', 'targetTitle', 'targetType', 'numberOfChildren', 'createdAt'],
     description: 'Inschrijvingen voor activiteiten, weekends en kampen',
+    group: 'Collecties',
   },
   access: {
     read: () => true,

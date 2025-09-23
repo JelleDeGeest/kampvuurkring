@@ -2,10 +2,12 @@ import type { GlobalConfig } from 'payload'
 
 export const VerhuurPage: GlobalConfig = {
   slug: 'verhuurPage',
+  label: 'Verhuur',
   access: {
     read: () => true,
   },
   admin: {
+    group: 'Pagina\'s',
     // Add live preview for the verhuur page
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/verhuur`,
     livePreview: {

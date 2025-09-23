@@ -3,7 +3,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Leiders: CollectionConfig = {
   slug: 'leiders',
-  admin: { useAsTitle: 'name' },
+  admin: {
+    useAsTitle: 'name',
+    group: 'Collecties',
+  },
   access: { read: () => true },
   fields: [
     { name: 'name', label: 'Naam', type: 'text', required: true },

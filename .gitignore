@@ -23,6 +23,16 @@ postgres-data-prod/
 *.backup
 *.old
 
+# Database backup files
+*.sql
+*_backup.sql
+*backup*.sql
+complete_database*.sql
+payload_backup*.sql
+scouts_backup*.sql
+kampvuurkring_backup*.sql
+full_payload_backup*.sql
+
 # Scripts
 docker-compose-prod.sh
 scripts/cleanup-dangling-media.sql

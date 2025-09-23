@@ -67,21 +67,21 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    media: Media;
-    'banner-images': BannerImage;
-    'leiders-banners': LeidersBanner;
     activiteiten: Activiteiten;
-    leiders: Leider;
-    'leiders-foto': LeidersFoto;
-    'random-afbeeldingen': RandomAfbeeldingen;
-    'homepage-hero-images': HomepageHeroImage;
-    'homepage-heros': HomepageHero;
     events: Event;
     weekends: Weekend;
     camps: Camp;
-    enrollments: Enrollment;
+    leiders: Leider;
     photoAlbums: PhotoAlbum;
-    lokaalFotos: LokaalFoto;
+    enrollments: Enrollment;
+    'homepage-heros': HomepageHero;
+    'lokaal-fotos': LokaalFoto;
+    media: Media;
+    'banner-images': BannerImage;
+    'leiders-banners': LeidersBanner;
+    'homepage-hero-images': HomepageHeroImage;
+    'leiders-foto': LeidersFoto;
+    'lokaal-media': LokaalMedia;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -89,21 +89,21 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    media: MediaSelect<false> | MediaSelect<true>;
-    'banner-images': BannerImagesSelect<false> | BannerImagesSelect<true>;
-    'leiders-banners': LeidersBannersSelect<false> | LeidersBannersSelect<true>;
     activiteiten: ActiviteitenSelect<false> | ActiviteitenSelect<true>;
-    leiders: LeidersSelect<false> | LeidersSelect<true>;
-    'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
-    'random-afbeeldingen': RandomAfbeeldingenSelect<false> | RandomAfbeeldingenSelect<true>;
-    'homepage-hero-images': HomepageHeroImagesSelect<false> | HomepageHeroImagesSelect<true>;
-    'homepage-heros': HomepageHerosSelect<false> | HomepageHerosSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     weekends: WeekendsSelect<false> | WeekendsSelect<true>;
     camps: CampsSelect<false> | CampsSelect<true>;
-    enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    leiders: LeidersSelect<false> | LeidersSelect<true>;
     photoAlbums: PhotoAlbumsSelect<false> | PhotoAlbumsSelect<true>;
-    lokaalFotos: LokaalFotosSelect<false> | LokaalFotosSelect<true>;
+    enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
+    'homepage-heros': HomepageHerosSelect<false> | HomepageHerosSelect<true>;
+    'lokaal-fotos': LokaalFotosSelect<false> | LokaalFotosSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    'banner-images': BannerImagesSelect<false> | BannerImagesSelect<true>;
+    'leiders-banners': LeidersBannersSelect<false> | LeidersBannersSelect<true>;
+    'homepage-hero-images': HomepageHeroImagesSelect<false> | HomepageHeroImagesSelect<true>;
+    'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
+    'lokaal-media': LokaalMediaSelect<false> | LokaalMediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -114,21 +114,19 @@ export interface Config {
   };
   globals: {
     infoPage: InfoPage;
-    inschrijvenPage: InschrijvenPage;
-    leidersPage: LeidersPage;
-    leidersDivisionBanners: LeidersDivisionBanner;
-    fotosPage: FotosPage;
     contactPage: ContactPage;
+    fotosPage: FotosPage;
+    leidersPage: LeidersPage;
     verhuurPage: VerhuurPage;
+    leidersDivisionBanners: LeidersDivisionBanner;
   };
   globalsSelect: {
     infoPage: InfoPageSelect<false> | InfoPageSelect<true>;
-    inschrijvenPage: InschrijvenPageSelect<false> | InschrijvenPageSelect<true>;
-    leidersPage: LeidersPageSelect<false> | LeidersPageSelect<true>;
-    leidersDivisionBanners: LeidersDivisionBannersSelect<false> | LeidersDivisionBannersSelect<true>;
-    fotosPage: FotosPageSelect<false> | FotosPageSelect<true>;
     contactPage: ContactPageSelect<false> | ContactPageSelect<true>;
+    fotosPage: FotosPageSelect<false> | FotosPageSelect<true>;
+    leidersPage: LeidersPageSelect<false> | LeidersPageSelect<true>;
     verhuurPage: VerhuurPageSelect<false> | VerhuurPageSelect<true>;
+    leidersDivisionBanners: LeidersDivisionBannersSelect<false> | LeidersDivisionBannersSelect<true>;
   };
   locale: null;
   user: User & {
@@ -155,120 +153,6 @@ export interface UserAuthOperations {
   unlock: {
     email: string;
     password: string;
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid
-   */
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-}
-/**
- * Banner afbeeldingen voor weekends en kampen
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "banner-images".
- */
-export interface BannerImage {
-  id: number;
-  /**
-   * Geef de banner een duidelijke naam (bv. "Zomerkamp Bos", "Winterkamp Bergen")
-   */
-  name: string;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
-   */
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * Banner afbeeldingen voor individuele leider pagina's. Wijs banners toe aan takken via de "Leiders Tak Banners" global.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leiders-banners".
- */
-export interface LeidersBanner {
-  id: number;
-  /**
-   * Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")
-   */
-  name: string;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
-   */
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    banner?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
   };
 }
 /**
@@ -363,38 +247,17 @@ export interface Activiteiten {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Algemene media opslag voor random afbeeldingen en documenten
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leiders".
+ * via the `definition` "media".
  */
-export interface Leider {
+export interface Media {
   id: number;
-  name: string;
-  takken: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'groepsleiding' | 'gestopt')[];
   /**
-   * Als het 1e leidingsjaar bvb 2024-2025, vul dan 2024 in
+   * Beschrijving van de afbeelding voor toegankelijkheid
    */
-  year: number;
-  /**
-   * Vul hier het eerste jaar in waarin de leider stopt (bv. 2024).
-   */
-  stopYear?: number | null;
-  totem?: string | null;
-  totemBeschrijving?: string | null;
-  description?: string | null;
-  image?: (number | null) | LeidersFoto;
-  phoneNumber: string;
-  email: string;
-  kapoenenNaam?: string | null;
-  wouterNaam?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leiders-foto".
- */
-export interface LeidersFoto {
-  id: number;
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -406,78 +269,6 @@ export interface LeidersFoto {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-  sizes?: {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "random-afbeeldingen".
- */
-export interface RandomAfbeeldingen {
-  id: number;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "homepage-hero-images".
- */
-export interface HomepageHeroImage {
-  id: number;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "homepage-heros".
- */
-export interface HomepageHero {
-  id: number;
-  name: string;
-  /**
-   * Used for ordering/priority (lower numbers appear first)
-   */
-  presence: number;
-  homeHeroImage: number | HomepageHeroImage;
-  /**
-   * If one of Title, Description, or Button is filled in, all must be filled in
-   */
-  title?: string | null;
-  /**
-   * If one of Title, Description, or Button is filled in, all must be filled in
-   */
-  description?: string | null;
-  /**
-   * If one of Title, Description, or Button is filled in, all must be filled in
-   */
-  button?: {
-    text?: string | null;
-    /**
-     * URL where the button should link to
-     */
-    link?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -591,6 +382,52 @@ export interface Weekend {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Banner afbeeldingen voor weekends en kampen
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banner-images".
+ */
+export interface BannerImage {
+  id: number;
+  /**
+   * Geef de banner een duidelijke naam (bv. "Zomerkamp Bos", "Winterkamp Bergen")
+   */
+  name: string;
+  /**
+   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "camps".
  */
@@ -671,6 +508,74 @@ export interface Camp {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leiders".
+ */
+export interface Leider {
+  id: number;
+  name: string;
+  takken: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'groepsleiding' | 'gestopt')[];
+  /**
+   * Als het 1e leidingsjaar bvb 2024-2025, vul dan 2024 in
+   */
+  year: number;
+  /**
+   * Vul hier het eerste jaar in waarin de leider stopt (bv. 2024).
+   */
+  stopYear?: number | null;
+  totem?: string | null;
+  totemBeschrijving?: string | null;
+  description?: string | null;
+  image?: (number | null) | LeidersFoto;
+  phoneNumber: string;
+  email: string;
+  kapoenenNaam?: string | null;
+  wouterNaam?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leiders-foto".
+ */
+export interface LeidersFoto {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photoAlbums".
+ */
+export interface PhotoAlbum {
+  id: number;
+  name: string;
+  startYear: number;
+  endYear: number;
+  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'jowos' | 'groepsactiviteit';
+  link: string;
+  /**
+   * Optioneel: waar is dit album genomen?
+   */
+  location?: string | null;
+  /**
+   * Beste is een groepsfoto in landscape formaat
+   */
+  coverImage: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Inschrijvingen voor activiteiten, weekends en kampen
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -731,29 +636,59 @@ export interface Enrollment {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "photoAlbums".
+ * via the `definition` "homepage-heros".
  */
-export interface PhotoAlbum {
+export interface HomepageHero {
   id: number;
   name: string;
-  startYear: number;
-  endYear: number;
-  tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'jowos' | 'groepsactiviteit';
-  link: string;
   /**
-   * Optioneel: waar is dit album genomen?
+   * Used for ordering/priority (lower numbers appear first)
    */
-  location?: string | null;
+  presence: number;
+  homeHeroImage: number | HomepageHeroImage;
   /**
-   * Beste is een groepsfoto in landscape formaat
+   * If one of Title, Description, or Button is filled in, all must be filled in
    */
-  coverImage: number | Media;
+  title?: string | null;
+  /**
+   * If one of Title, Description, or Button is filled in, all must be filled in
+   */
+  description?: string | null;
+  /**
+   * If one of Title, Description, or Button is filled in, all must be filled in
+   */
+  button?: {
+    text?: string | null;
+    /**
+     * URL where the button should link to
+     */
+    link?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lokaalFotos".
+ * via the `definition` "homepage-hero-images".
+ */
+export interface HomepageHeroImage {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {};
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lokaal-fotos".
  */
 export interface LokaalFoto {
   id: number;
@@ -761,7 +696,7 @@ export interface LokaalFoto {
   /**
    * Upload een foto van het lokaal of faciliteit
    */
-  image: number | Media;
+  image: number | LokaalMedia;
   /**
    * Kies de categorie waar deze foto bij hoort
    */
@@ -790,13 +725,119 @@ export interface LokaalFoto {
   createdAt: string;
 }
 /**
+ * Media opslag voor lokaal verhuur foto's en documenten
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lokaal-media".
+ */
+export interface LokaalMedia {
+  id: number;
+  /**
+   * Beschrijving van de afbeelding voor toegankelijkheid
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    gallery?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * Banner afbeeldingen voor individuele leider pagina's. Wijs banners toe aan takken via de "Leiders Tak Banners" global.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leiders-banners".
+ */
+export interface LeidersBanner {
+  id: number;
+  /**
+   * Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")
+   */
+  name: string;
+  /**
+   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
+   */
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    banner?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  name: string;
+  /**
+   * Selecteer de rollen voor deze gebruiker
+   */
+  roles?: ('admin' | 'editor' | 'user')[] | null;
+  phone?: string | null;
+  lastLogin?: string | null;
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -814,40 +855,8 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'banner-images';
-        value: number | BannerImage;
-      } | null)
-    | ({
-        relationTo: 'leiders-banners';
-        value: number | LeidersBanner;
-      } | null)
-    | ({
         relationTo: 'activiteiten';
         value: number | Activiteiten;
-      } | null)
-    | ({
-        relationTo: 'leiders';
-        value: number | Leider;
-      } | null)
-    | ({
-        relationTo: 'leiders-foto';
-        value: number | LeidersFoto;
-      } | null)
-    | ({
-        relationTo: 'random-afbeeldingen';
-        value: number | RandomAfbeeldingen;
-      } | null)
-    | ({
-        relationTo: 'homepage-hero-images';
-        value: number | HomepageHeroImage;
-      } | null)
-    | ({
-        relationTo: 'homepage-heros';
-        value: number | HomepageHero;
       } | null)
     | ({
         relationTo: 'events';
@@ -862,16 +871,48 @@ export interface PayloadLockedDocument {
         value: number | Camp;
       } | null)
     | ({
-        relationTo: 'enrollments';
-        value: number | Enrollment;
+        relationTo: 'leiders';
+        value: number | Leider;
       } | null)
     | ({
         relationTo: 'photoAlbums';
         value: number | PhotoAlbum;
       } | null)
     | ({
-        relationTo: 'lokaalFotos';
+        relationTo: 'enrollments';
+        value: number | Enrollment;
+      } | null)
+    | ({
+        relationTo: 'homepage-heros';
+        value: number | HomepageHero;
+      } | null)
+    | ({
+        relationTo: 'lokaal-fotos';
         value: number | LokaalFoto;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'banner-images';
+        value: number | BannerImage;
+      } | null)
+    | ({
+        relationTo: 'leiders-banners';
+        value: number | LeidersBanner;
+      } | null)
+    | ({
+        relationTo: 'homepage-hero-images';
+        value: number | HomepageHeroImage;
+      } | null)
+    | ({
+        relationTo: 'leiders-foto';
+        value: number | LeidersFoto;
+      } | null)
+    | ({
+        relationTo: 'lokaal-media';
+        value: number | LokaalMedia;
       } | null)
     | ({
         relationTo: 'users';
@@ -918,6 +959,233 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activiteiten_select".
+ */
+export interface ActiviteitenSelect<T extends boolean = true> {
+  title?: T;
+  division?: T;
+  startDate?: T;
+  endDate?: T;
+  description?: T;
+  enrollmentSettings?:
+    | T
+    | {
+        enabled?: T;
+        closed?: T;
+        hideButton?: T;
+        closedMessage?: T;
+        enrollmentLink?: T;
+        infoDocument?: T;
+        customQuestions?:
+          | T
+          | {
+              question?: T;
+              required?: T;
+              id?: T;
+            };
+        enrollmentDeadline?: T;
+        customMessage?: T;
+        isPaid?: T;
+        pricePerChild?: T;
+        paymentInstructions?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  startDate?: T;
+  endDate?: T;
+  description?: T;
+  buttonText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "weekends_select".
+ */
+export interface WeekendsSelect<T extends boolean = true> {
+  title?: T;
+  division?: T;
+  startDate?: T;
+  endDate?: T;
+  bannerImage?: T;
+  enrollmentSettings?:
+    | T
+    | {
+        enabled?: T;
+        closed?: T;
+        hideButton?: T;
+        closedMessage?: T;
+        enrollmentLink?: T;
+        infoDocument?: T;
+        customQuestions?:
+          | T
+          | {
+              question?: T;
+              required?: T;
+              id?: T;
+            };
+        enrollmentDeadline?: T;
+        customMessage?: T;
+        isPaid?: T;
+        pricePerChild?: T;
+        paymentInstructions?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "camps_select".
+ */
+export interface CampsSelect<T extends boolean = true> {
+  title?: T;
+  division?: T;
+  startDate?: T;
+  endDate?: T;
+  bannerImage?: T;
+  enrollmentSettings?:
+    | T
+    | {
+        enabled?: T;
+        closed?: T;
+        hideButton?: T;
+        closedMessage?: T;
+        enrollmentLink?: T;
+        infoDocument?: T;
+        customQuestions?:
+          | T
+          | {
+              question?: T;
+              required?: T;
+              id?: T;
+            };
+        enrollmentDeadline?: T;
+        customMessage?: T;
+        isPaid?: T;
+        pricePerChild?: T;
+        paymentInstructions?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leiders_select".
+ */
+export interface LeidersSelect<T extends boolean = true> {
+  name?: T;
+  takken?: T;
+  year?: T;
+  stopYear?: T;
+  totem?: T;
+  totemBeschrijving?: T;
+  description?: T;
+  image?: T;
+  phoneNumber?: T;
+  email?: T;
+  kapoenenNaam?: T;
+  wouterNaam?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "photoAlbums_select".
+ */
+export interface PhotoAlbumsSelect<T extends boolean = true> {
+  name?: T;
+  startYear?: T;
+  endYear?: T;
+  tak?: T;
+  link?: T;
+  location?: T;
+  coverImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enrollments_select".
+ */
+export interface EnrollmentsSelect<T extends boolean = true> {
+  participantEmail?: T;
+  targetType?: T;
+  targetId?: T;
+  targetTitle?: T;
+  numberOfChildren?: T;
+  children?:
+    | T
+    | {
+        participantInfo?:
+          | T
+          | {
+              firstName?: T;
+              lastName?: T;
+            };
+        id?: T;
+      };
+  contactInfo?:
+    | T
+    | {
+        email?: T;
+      };
+  additionalOptions?:
+    | T
+    | {
+        comments?: T;
+        customAnswers?: T;
+      };
+  totalPrice?: T;
+  submittedAt?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage-heros_select".
+ */
+export interface HomepageHerosSelect<T extends boolean = true> {
+  name?: T;
+  presence?: T;
+  homeHeroImage?: T;
+  title?: T;
+  description?: T;
+  button?:
+    | T
+    | {
+        text?: T;
+        link?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lokaal-fotos_select".
+ */
+export interface LokaalFotosSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  category?: T;
+  description?: T;
+  order?: T;
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1025,59 +1293,21 @@ export interface LeidersBannersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "activiteiten_select".
+ * via the `definition` "homepage-hero-images_select".
  */
-export interface ActiviteitenSelect<T extends boolean = true> {
-  title?: T;
-  division?: T;
-  startDate?: T;
-  endDate?: T;
-  description?: T;
-  enrollmentSettings?:
-    | T
-    | {
-        enabled?: T;
-        closed?: T;
-        hideButton?: T;
-        closedMessage?: T;
-        enrollmentLink?: T;
-        infoDocument?: T;
-        customQuestions?:
-          | T
-          | {
-              question?: T;
-              required?: T;
-              id?: T;
-            };
-        enrollmentDeadline?: T;
-        customMessage?: T;
-        isPaid?: T;
-        pricePerChild?: T;
-        paymentInstructions?: T;
-      };
+export interface HomepageHeroImagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leiders_select".
- */
-export interface LeidersSelect<T extends boolean = true> {
-  name?: T;
-  takken?: T;
-  year?: T;
-  stopYear?: T;
-  totem?: T;
-  totemBeschrijving?: T;
-  description?: T;
-  image?: T;
-  phoneNumber?: T;
-  email?: T;
-  kapoenenNaam?: T;
-  wouterNaam?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?: T | {};
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1099,9 +1329,10 @@ export interface LeidersFotoSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "random-afbeeldingen_select".
+ * via the `definition` "lokaal-media_select".
  */
-export interface RandomAfbeeldingenSelect<T extends boolean = true> {
+export interface LokaalMediaSelect<T extends boolean = true> {
+  alt?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1113,204 +1344,55 @@ export interface RandomAfbeeldingenSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-  sizes?: T | {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "homepage-hero-images_select".
- */
-export interface HomepageHeroImagesSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?: T | {};
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "homepage-heros_select".
- */
-export interface HomepageHerosSelect<T extends boolean = true> {
-  name?: T;
-  presence?: T;
-  homeHeroImage?: T;
-  title?: T;
-  description?: T;
-  button?:
+  sizes?:
     | T
     | {
-        text?: T;
-        link?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events_select".
- */
-export interface EventsSelect<T extends boolean = true> {
-  title?: T;
-  startDate?: T;
-  endDate?: T;
-  description?: T;
-  buttonText?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "weekends_select".
- */
-export interface WeekendsSelect<T extends boolean = true> {
-  title?: T;
-  division?: T;
-  startDate?: T;
-  endDate?: T;
-  bannerImage?: T;
-  enrollmentSettings?:
-    | T
-    | {
-        enabled?: T;
-        closed?: T;
-        hideButton?: T;
-        closedMessage?: T;
-        enrollmentLink?: T;
-        infoDocument?: T;
-        customQuestions?:
+        thumbnail?:
           | T
           | {
-              question?: T;
-              required?: T;
-              id?: T;
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
             };
-        enrollmentDeadline?: T;
-        customMessage?: T;
-        isPaid?: T;
-        pricePerChild?: T;
-        paymentInstructions?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "camps_select".
- */
-export interface CampsSelect<T extends boolean = true> {
-  title?: T;
-  division?: T;
-  startDate?: T;
-  endDate?: T;
-  bannerImage?: T;
-  enrollmentSettings?:
-    | T
-    | {
-        enabled?: T;
-        closed?: T;
-        hideButton?: T;
-        closedMessage?: T;
-        enrollmentLink?: T;
-        infoDocument?: T;
-        customQuestions?:
+        card?:
           | T
           | {
-              question?: T;
-              required?: T;
-              id?: T;
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
             };
-        enrollmentDeadline?: T;
-        customMessage?: T;
-        isPaid?: T;
-        pricePerChild?: T;
-        paymentInstructions?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "enrollments_select".
- */
-export interface EnrollmentsSelect<T extends boolean = true> {
-  participantEmail?: T;
-  targetType?: T;
-  targetId?: T;
-  targetTitle?: T;
-  numberOfChildren?: T;
-  children?:
-    | T
-    | {
-        participantInfo?:
+        gallery?:
           | T
           | {
-              firstName?: T;
-              lastName?: T;
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
             };
-        id?: T;
       };
-  contactInfo?:
-    | T
-    | {
-        email?: T;
-      };
-  additionalOptions?:
-    | T
-    | {
-        comments?: T;
-        customAnswers?: T;
-      };
-  totalPrice?: T;
-  submittedAt?: T;
-  status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "photoAlbums_select".
- */
-export interface PhotoAlbumsSelect<T extends boolean = true> {
-  name?: T;
-  startYear?: T;
-  endYear?: T;
-  tak?: T;
-  link?: T;
-  location?: T;
-  coverImage?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lokaalFotos_select".
- */
-export interface LokaalFotosSelect<T extends boolean = true> {
-  title?: T;
-  image?: T;
-  category?: T;
-  description?: T;
-  order?: T;
-  isActive?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  roles?: T;
+  phone?: T;
+  lastLogin?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -1358,29 +1440,9 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface InfoPage {
   id: number;
   title: string;
-  intro: string;
-  pillars?:
-    | {
-        heading: string;
-        body: string;
-        id?: string | null;
-      }[]
-    | null;
-  heroImage: number | RandomAfbeeldingen;
-  _status?: ('draft' | 'published') | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "inschrijvenPage".
- */
-export interface InschrijvenPage {
-  id: number;
-  title: string;
   subtitle: string;
   /**
-   * Upload een banner voor de inschrijven pagina.
+   * Upload een banner voor de info pagina.
    */
   banner?: (number | null) | Media;
   /**
@@ -1435,12 +1497,12 @@ export interface InschrijvenPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leidersPage".
+ * via the `definition` "contactPage".
  */
-export interface LeidersPage {
+export interface ContactPage {
   id: number;
   /**
-   * De hoofdtitel die op de leiders pagina wordt weergegeven
+   * De hoofdtitel die op de contact pagina wordt weergegeven
    */
   title: string;
   /**
@@ -1448,40 +1510,9 @@ export interface LeidersPage {
    */
   subtitle?: string | null;
   /**
-   * Upload een banner voor de hoofdpagina van leiding. Deze is apart van de banners voor individuele leider pagina's.
+   * Upload een banner voor de contact pagina.
    */
   banner?: (number | null) | Media;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * Upload of selecteer banners voor elke tak op individuele leider pagina's
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leidersDivisionBanners".
- */
-export interface LeidersDivisionBanner {
-  id: number;
-  /**
-   * Banner die wordt weergegeven op individuele Kapoenen leider pagina's
-   */
-  kapoenenBanner?: (number | null) | Media;
-  /**
-   * Banner die wordt weergegeven op individuele Wouters leider pagina's
-   */
-  woutersBanner?: (number | null) | Media;
-  /**
-   * Banner die wordt weergegeven op individuele Jonggivers leider pagina's
-   */
-  jonggiversBanner?: (number | null) | Media;
-  /**
-   * Banner die wordt weergegeven op individuele Givers leider pagina's
-   */
-  giversBanner?: (number | null) | Media;
-  /**
-   * Banner die wordt weergegeven op individuele Jin leider pagina's
-   */
-  jinBanner?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1508,12 +1539,12 @@ export interface FotosPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contactPage".
+ * via the `definition` "leidersPage".
  */
-export interface ContactPage {
+export interface LeidersPage {
   id: number;
   /**
-   * De hoofdtitel die op de contact pagina wordt weergegeven
+   * De hoofdtitel die op de leiders pagina wordt weergegeven
    */
   title: string;
   /**
@@ -1521,7 +1552,7 @@ export interface ContactPage {
    */
   subtitle?: string | null;
   /**
-   * Upload een banner voor de contact pagina.
+   * Upload een banner voor de hoofdpagina van leiding. Deze is apart van de banners voor individuele leider pagina's.
    */
   banner?: (number | null) | Media;
   updatedAt?: string | null;
@@ -1549,30 +1580,41 @@ export interface VerhuurPage {
   createdAt?: string | null;
 }
 /**
+ * Upload of selecteer banners voor elke tak op individuele leider pagina's
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leidersDivisionBanners".
+ */
+export interface LeidersDivisionBanner {
+  id: number;
+  /**
+   * Banner die wordt weergegeven op individuele Kapoenen leider pagina's. Upload naar Takken Banner collectie en selecteer hier.
+   */
+  kapoenenBanner?: (number | null) | LeidersBanner;
+  /**
+   * Banner die wordt weergegeven op individuele Wouters leider pagina's. Upload naar Takken Banner collectie en selecteer hier.
+   */
+  woutersBanner?: (number | null) | LeidersBanner;
+  /**
+   * Banner die wordt weergegeven op individuele Jonggivers leider pagina's. Upload naar Takken Banner collectie en selecteer hier.
+   */
+  jonggiversBanner?: (number | null) | LeidersBanner;
+  /**
+   * Banner die wordt weergegeven op individuele Givers leider pagina's. Upload naar Takken Banner collectie en selecteer hier.
+   */
+  giversBanner?: (number | null) | LeidersBanner;
+  /**
+   * Banner die wordt weergegeven op individuele Jin leider pagina's. Upload naar Takken Banner collectie en selecteer hier.
+   */
+  jinBanner?: (number | null) | LeidersBanner;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "infoPage_select".
  */
 export interface InfoPageSelect<T extends boolean = true> {
-  title?: T;
-  intro?: T;
-  pillars?:
-    | T
-    | {
-        heading?: T;
-        body?: T;
-        id?: T;
-      };
-  heroImage?: T;
-  _status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "inschrijvenPage_select".
- */
-export interface InschrijvenPageSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
   banner?: T;
@@ -1624,26 +1666,12 @@ export interface InschrijvenPageSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leidersPage_select".
+ * via the `definition` "contactPage_select".
  */
-export interface LeidersPageSelect<T extends boolean = true> {
+export interface ContactPageSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
   banner?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "leidersDivisionBanners_select".
- */
-export interface LeidersDivisionBannersSelect<T extends boolean = true> {
-  kapoenenBanner?: T;
-  woutersBanner?: T;
-  jonggiversBanner?: T;
-  giversBanner?: T;
-  jinBanner?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1662,9 +1690,9 @@ export interface FotosPageSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "contactPage_select".
+ * via the `definition` "leidersPage_select".
  */
-export interface ContactPageSelect<T extends boolean = true> {
+export interface LeidersPageSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
   banner?: T;
@@ -1680,6 +1708,20 @@ export interface VerhuurPageSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
   banner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leidersDivisionBanners_select".
+ */
+export interface LeidersDivisionBannersSelect<T extends boolean = true> {
+  kapoenenBanner?: T;
+  woutersBanner?: T;
+  jonggiversBanner?: T;
+  giversBanner?: T;
+  jinBanner?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

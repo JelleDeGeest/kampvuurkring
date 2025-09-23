@@ -2,10 +2,12 @@ import type { GlobalConfig } from 'payload'
 
 export const ContactPage: GlobalConfig = {
   slug: 'contactPage',
+  label: 'Contact',
   access: {
     read: () => true,
   },
   admin: {
+    group: 'Pagina\'s',
     // Add live preview for the contact page
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/contact`,
     livePreview: {

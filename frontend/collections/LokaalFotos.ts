@@ -1,15 +1,15 @@
 import { CollectionConfig } from 'payload'
 
 const LokaalFotos: CollectionConfig = {
-  slug: 'lokaalFotos',
+  slug: 'lokaal-fotos',
   labels: {
-    singular: 'Lokaal Foto',
-    plural: 'Lokaal Foto\'s',
+    singular: 'Lokaal',
+    plural: 'Lokaal',
   },
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'order', 'image'],
-    group: 'Verhuur',
+    group: 'Collecties',
   },
   access: {
     read: () => true,
@@ -31,7 +31,7 @@ const LokaalFotos: CollectionConfig = {
       name: 'image',
       type: 'upload',
       label: 'Afbeelding',
-      relationTo: 'media',
+      relationTo: 'lokaal-media',
       required: true,
       admin: {
         description: 'Upload een foto van het lokaal of faciliteit',

@@ -1,11 +1,29 @@
 services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik-dev
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+    ports:
+      - "80:80"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - app-network
+    restart: unless-stopped
+
   frontend:
     container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Direct access for development
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
@@ -14,15 +32,103 @@ services:
     volumes:
       - ./frontend:/usr/src/app
       - ./frontend/media:/usr/src/app/media
+      - ./frontend/banner-images:/usr/src/app/banner-images
+      - ./frontend/homepage-hero-images:/usr/src/app/homepage-hero-images
+      - ./frontend/leiders-foto:/usr/src/app/leiders-foto
       - /usr/src/app/node_modules
       - /usr/src/app/.next
-      - /usr/src/app/media-leiding
     env_file:
       - .env
     entrypoint: []
     command: ["npm", "run", "dev"]
     depends_on:
       - db
+      - traefik
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dev-site.rule=Host(`localhost`)"
+      - "traefik.http.routers.dev-site.entrypoints=web"
+      - "traefik.http.routers.dev-site.priority=1"
+      - "traefik.http.services.dev-site.loadbalancer.server.port=3000"
+
+  # MinIO S3-compatible object storage
+  minio:
+    image: minio/minio:latest
+    container_name: minio-dev
+    ports:
+      - "9000:9000"   # MinIO API
+      - "9001:9001"   # MinIO Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+      MINIO_DOMAIN: localhost:9000
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # MinIO client for bucket setup
+  minio-setup:
+    image: minio/mc:latest
+    container_name: minio-setup-dev
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin123 &&
+      mc rb local/media --force || true &&
+      mc rb local/banner-images --force || true &&
+      mc rb local/leiders-banners --force || true &&
+      mc rb local/homepage-heros --force || true &&
+      mc rb local/homepage-hero-images --force || true &&
+      mc rb local/leiders-foto --force || true &&
+      mc rb local/lokaal-fotos --force || true &&
+      mc rb local/random-afbeelding --force || true &&
+      mc rb local/random-afbeeldingen --force || true &&
+      mc rb local/media-leiding --force || true &&
+      mc rb local/random --force || true &&
+      mc rb local/andere-banner --force || true &&
+      mc rb local/takken-banner --force || true &&
+      mc rb local/homepage-banner --force || true &&
+      mc rb local/leiding --force || true &&
+      mc rb local/lokaal --force || true &&
+      mc mb local/media --ignore-existing &&
+      mc mb local/banner-images --ignore-existing &&
+      mc mb local/leiders-banners --ignore-existing &&
+      mc mb local/homepage-hero-images --ignore-existing &&
+      mc mb local/leiders-foto --ignore-existing &&
+      mc mb local/lokaal-fotos --ignore-existing &&
+      mc anonymous set public local/media &&
+      mc anonymous set public local/banner-images &&
+      mc anonymous set public local/leiders-banners &&
+      mc anonymous set public local/homepage-hero-images &&
+      mc anonymous set public local/leiders-foto &&
+      mc anonymous set public local/lokaal-fotos &&
+      echo 'MinIO buckets created and configured!'
+      "
+    networks:
+      - app-network
+
+  # Static file server for media (keep for now during transition)
+  media-server:
+    image: nginx:alpine
+    container_name: media-server-dev
+    ports:
+      - "8081:80"  # Direct access for testing
+    volumes:
+      - ./frontend/media:/usr/share/nginx/html/media:ro
+      - ./frontend/banner-images:/usr/share/nginx/html/banner-images:ro
+      - ./frontend/homepage-hero-images:/usr/share/nginx/html/homepage-hero-images:ro
+      - ./frontend/leiders-foto:/usr/share/nginx/html/leiders-foto:ro
     networks:
       - app-network
 
@@ -86,3 +192,4 @@ networks:
 
 volumes:
   data:
+  minio-data:

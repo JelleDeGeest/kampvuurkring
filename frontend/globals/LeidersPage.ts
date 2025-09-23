@@ -2,10 +2,12 @@ import type { GlobalConfig } from 'payload'
 
 export const LeidersPage: GlobalConfig = {
   slug: 'leidersPage',
+  label: 'Leiding',
   access: {
     read: () => true,
   },
   admin: {
+    group: 'Pagina\'s',
     // Add live preview for the leiders page
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/leiding`,
     livePreview: {

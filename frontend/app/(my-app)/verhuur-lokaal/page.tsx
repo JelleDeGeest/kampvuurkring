@@ -63,7 +63,7 @@ async function getLokaalFotos(): Promise<any[]> {
     const payload = await getPayloadHMR({ config })
     
     const result = await payload.find({
-      collection: 'lokaalFotos',
+      collection: 'lokaal-fotos',
       depth: 2,
       where: {
         isActive: {

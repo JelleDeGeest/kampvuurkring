@@ -9,6 +9,7 @@ const PhotoAlbums: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'startYear', 'endYear', 'tak'],
+    group: 'Collecties',
   },
   access: {
     read: () => true,

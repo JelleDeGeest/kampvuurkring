@@ -27,7 +27,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # First install all dependencies
-RUN npm ci --omit=optional --legacy-peer-deps
+RUN npm install --omit=optional --legacy-peer-deps
 
 # Then explicitly install sharp with proper platform flags
 RUN npm uninstall sharp || true && \

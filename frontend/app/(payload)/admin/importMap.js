@@ -24,6 +24,7 @@ import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { EnrollmentResponsesLinkField as EnrollmentResponsesLinkField_d8c4ae29cc2231ba73781d7658c93774 } from '../../../components/EnrollmentResponsesLink'
 import { ActivitiesOverviewLinkField as ActivitiesOverviewLinkField_35e8881b76949adcae2c976f26674c81 } from '../../../components/ActivitiesOverviewLink'
+import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 export const importMap = {
   "/components/ActivityDateSuggestion#ActivityDateSuggestion": ActivityDateSuggestion_ca560487b261f462841b5ec612ebf5f8,
@@ -51,5 +52,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/EnrollmentResponsesLink#EnrollmentResponsesLinkField": EnrollmentResponsesLinkField_d8c4ae29cc2231ba73781d7658c93774,
-  "/components/ActivitiesOverviewLink#ActivitiesOverviewLinkField": ActivitiesOverviewLinkField_35e8881b76949adcae2c976f26674c81
+  "/components/ActivitiesOverviewLink#ActivitiesOverviewLinkField": ActivitiesOverviewLinkField_35e8881b76949adcae2c976f26674c81,
+  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

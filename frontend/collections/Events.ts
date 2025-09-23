@@ -4,7 +4,10 @@ import { CollectionConfig } from 'payload'
 export const Events: CollectionConfig = {
   slug: 'events',
   labels: { singular: 'Evenement', plural: 'Evenementen' },
-  admin: { defaultColumns: ['title', 'startDate', 'endDate'] },
+  admin: {
+    defaultColumns: ['title', 'startDate', 'endDate'],
+    group: 'Ratel',
+  },
   access: { read: () => true },          // publieke read
   fields: [
     { name: 'title', type: 'text', required: true },

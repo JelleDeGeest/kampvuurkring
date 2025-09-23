@@ -11,9 +11,10 @@ export const Weekends: CollectionConfig = {
     },
     maxPerDoc: 30,
   },
-  admin: { 
+  admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'division', 'startDate'],
+    group: 'Ratel',
     preview: (doc) => {
       const enrollmentSettings = doc?.enrollmentSettings as { enabled?: boolean } | undefined
       if (!enrollmentSettings?.enabled) return null

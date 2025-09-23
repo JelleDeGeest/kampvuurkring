@@ -5,8 +5,11 @@ import fs from 'fs/promises'
 
 export const LeidersFoto: CollectionConfig = {
   slug: 'leiders-foto',
+  labels: {
+    singular: 'Leiding',
+    plural: 'Leiding',
+  },
   upload: {
-    staticDir: path.resolve(process.cwd(), 'leiders-foto'), // Updated directory for uploads
     mimeTypes: ['image/*'], // Allow only images
     // Disable Payload's default imageSizes
     imageSizes: [],
@@ -14,7 +17,7 @@ export const LeidersFoto: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'filename',
-    group: 'Media', // Keeping it in the Media group
+    group: 'Media', // Leiding photos in Media group
   },
   access: {
     // Define access control as needed
@@ -26,7 +29,7 @@ export const LeidersFoto: CollectionConfig = {
   hooks: {
     // Process image after it's been uploaded and saved
     afterChange: [
-      async ({ doc, req, operation }) => {
+      async ({ doc, operation }) => {
         if (operation === 'create') {
           try {
             console.log('Resizing image to 180x180...');

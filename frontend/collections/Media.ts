@@ -3,14 +3,17 @@ import { CollectionConfig } from 'payload'
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: {
-    singular: 'Media',
-    plural: 'Media',
+    singular: 'Random',
+    plural: 'Random',
+  },
+  admin: {
+    group: 'Media',
+    description: 'Algemene media opslag voor random afbeeldingen en documenten',
   },
   access: {
     read: () => true,
   },
   upload: {
-    staticDir: 'media',
     mimeTypes: ['image/*', 'application/pdf'],
   },
   fields: [
