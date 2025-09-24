@@ -74,16 +74,24 @@ export const Weekends: CollectionConfig = {
         },
       },
     },
-    { 
-      name: 'endDate', 
+    {
+      name: 'endDate',
       label: 'Eind Datum',
-      type: 'date', 
+      type: 'date',
       required: true,
       admin: {
         date: {
           displayFormat: 'dd/MM/yyyy',
           pickerAppearance: 'dayOnly',
         },
+      },
+    },
+    {
+      name: 'description',
+      label: 'Beschrijving',
+      type: 'richText',
+      admin: {
+        description: 'Optionele beschrijving van het weekend',
       },
     },
     {

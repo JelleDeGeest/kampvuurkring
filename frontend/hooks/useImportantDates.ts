@@ -8,6 +8,7 @@ export interface EventItem {
   title: string
   startDate: string
   endDate?: string
+  description?: any // Rich text field
   button?: {
     text?: string
     url?: string
@@ -31,7 +32,7 @@ interface ImportantDates {
 }
 
 const base = process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ''
-const qs   = '?limit=100&sort=startDate'
+const qs   = '?limit=100&sort=startDate&depth=2'
 
 const isUpcoming = (start: string, end?: string) => {
   const today = new Date()

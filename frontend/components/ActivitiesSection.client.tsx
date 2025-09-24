@@ -172,9 +172,9 @@ export default function ActivitiesSection() {
           id:        `event-${e.startDate}-${e.id}`,
           title:     e.title,
           startDate: e.startDate,
-          endDate:   e.endDate || e.startDate, 
+          endDate:   e.endDate || e.startDate,
           division:  'event',
-          description: { root: { children: [] } },
+          description: e.description || { root: { children: [] } },
           button:    e.button
         }))
 
@@ -191,7 +191,7 @@ export default function ActivitiesSection() {
               startDate:  w.startDate,
               endDate:    w.endDate || w.startDate,
               division:   div, // Single division for this card
-              description: { root: { children: [] } },
+              description: w.description || { root: { children: [] } },
               bannerImage: w.bannerImage,
               button:     w.button,
               enrollmentSettings: w.enrollmentSettings
@@ -206,7 +206,7 @@ export default function ActivitiesSection() {
             startDate:  w.startDate,
             endDate:    w.endDate || w.startDate,
             division:   w.division,
-            description: { root: { children: [] } },
+            description: w.description || { root: { children: [] } },
             button:     w.button,
             enrollmentSettings: w.enrollmentSettings
           });
@@ -226,7 +226,7 @@ export default function ActivitiesSection() {
               startDate:  c.startDate,
               endDate:    c.endDate || c.startDate,
               division:   div, // Single division for this card
-              description: { root: { children: [] } },
+              description: c.description || { root: { children: [] } },
               bannerImage: c.bannerImage,
               button:     c.button,
               enrollmentSettings: c.enrollmentSettings
@@ -241,7 +241,7 @@ export default function ActivitiesSection() {
             startDate:  c.startDate,
             endDate:    c.endDate || c.startDate,
             division:   c.division,
-            description: { root: { children: [] } },
+            description: c.description || { root: { children: [] } },
             button:     c.button,
             enrollmentSettings: c.enrollmentSettings
           });
