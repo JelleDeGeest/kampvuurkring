@@ -97,7 +97,6 @@ export const Activiteiten: CollectionConfig = {
     },
     {
       name: 'endDate',
-      
       label: 'Eind Datum en Tijd',
       type: 'date',
       required: true,

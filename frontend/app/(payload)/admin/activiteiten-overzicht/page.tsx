@@ -59,11 +59,11 @@ export default function ActiviteitenOverzichtPage() {
     try {
       setLoading(true)
       const response = await fetch(`/api/activiteiten/weekly-overview?weeks=${weeks}`)
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch overview')
       }
-      
+
       const result = await response.json()
       setData(result)
     } catch (err) {
@@ -72,6 +72,7 @@ export default function ActiviteitenOverzichtPage() {
       setLoading(false)
     }
   }
+
 
   if (loading) {
     return (
@@ -159,7 +160,12 @@ export default function ActiviteitenOverzichtPage() {
                       {hasActivities ? (
                         <div className="activity-info">
                           {activities.map((activity, index) => (
-                            <div key={activity.id} className="activity-item">
+                            <div
+                              key={activity.id}
+                              className="activity-item clickable"
+                              onClick={() => window.open(`/admin/collections/activiteiten/${activity.id}`, '_blank')}
+                              style={{ cursor: 'pointer' }}
+                            >
                               <div className="activity-title">{activity.title}</div>
                               <div className="activity-time">
                                 {activity.dayOfWeek} {activity.startTime} - {activity.endTime}

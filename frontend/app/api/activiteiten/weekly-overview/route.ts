@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import getPayloadClient from '@/lib/getPayload'
 import { startOfWeek, endOfWeek, addWeeks, format, isWithinInterval } from 'date-fns'
+import { formatInTimeZone } from 'date-fns-tz'
 import { nl } from 'date-fns/locale/nl'
 
 export async function GET(request: NextRequest) {
@@ -84,9 +85,9 @@ export async function GET(request: NextRequest) {
                   title: activity.title,
                   startDate: activity.startDate,
                   endDate: activity.endDate,
-                  dayOfWeek: format(activityStart, 'EEEE', { locale: nl }),
-                  startTime: format(activityStart, 'HH:mm', { locale: nl }),
-                  endTime: format(new Date(activity.endDate), 'HH:mm', { locale: nl }),
+                  dayOfWeek: formatInTimeZone(activityStart, 'Europe/Brussels', 'EEEE', { locale: nl }),
+                  startTime: formatInTimeZone(activityStart, 'Europe/Brussels', 'HH:mm'),
+                  endTime: formatInTimeZone(new Date(activity.endDate), 'Europe/Brussels', 'HH:mm'),
                 })
               }
             })
