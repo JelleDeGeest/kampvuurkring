@@ -395,7 +395,18 @@ export default async function VerhuurLokaalPage() {
           <div className="container px-4 lg:px-12">
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-3xl font-bold text-center mb-4 text-primary">Reserveren</h2>
-              
+
+              {/* Warning banner */}
+              <div className="flex justify-center mb-3">
+                <div className="bg-red-100 px-4 py-2 rounded-full inline-block">
+                  <div className="flex items-center">
+                    <div className="text-red-800">
+                      <p className="font-semibold">🚫 Opgelet: we verhuren niet aan leidingsweekends</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Contact info above map */}
               <div className="text-center space-y-2 mb-4">
                 <div className="flex flex-col sm:flex-row sm:justify-center gap-4">
@@ -411,7 +422,7 @@ export default async function VerhuurLokaalPage() {
                   Controleer hieronder onze beschikbaarheid en mail naar bovenstaand adres om je verhuur aan te vragen.
                 </p>
               </div>
-              
+
               <div className="rounded-lg overflow-hidden">
                 <iframe
                   src="https://calendar.google.com/calendar/embed?src=vzwscoutssintjohannes%40gmail.com&ctz=Europe%2FBrussels"
