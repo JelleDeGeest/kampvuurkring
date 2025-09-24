@@ -3,8 +3,7 @@ export const dynamic = 'force-dynamic'
 import { draftMode } from 'next/headers'
 import { EventCarousel } from '@/components/event-carousel'
 import PreviewControls from '@/components/PreviewControls'
-import ActivitiesSection from '@/components/ActivitiesSection.client'
-import BelangrijkeDataBlock from '@/components/BelangrijkeDataBlock'
+import SectionToggle from '@/components/SectionToggle.client'
 import RefreshOnSave from '@/components/RefreshOnSave'
 import PreviewSwitcher from '@/components/PreviewSwitcher'
 import PreviewSessionManager from '@/components/PreviewSessionManager'
@@ -31,14 +30,8 @@ export default async function Home() {
           </section>
 
           <section className="container px-4 lg:px-12 py-6 md:py-8">
-            <div className="flex flex-col-reverse lg:flex-row gap-6">
-              <ActivitiesSection />
-
-            <div className="w-full lg:w-1/3">
-              <BelangrijkeDataBlock />
-            </div>
-          </div>
-        </section>
+            <SectionToggle />
+          </section>
       </main>
       </DraftModeProvider>
     </>
