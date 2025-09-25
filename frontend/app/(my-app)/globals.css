@@ -84,9 +84,13 @@
   html {
     /* Force scrollbar to always be visible to prevent layout shift */
     overflow-y: scroll;
+    /* Prevent horizontal scrolling completely */
+    overflow-x: hidden;
   }
   body {
     @apply bg-background text-foreground;
+    /* Also prevent horizontal scrolling on body */
+    overflow-x: hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {

@@ -129,13 +129,13 @@ export default async function LeiderPage({
   const divisionBanner = primaryDivision ? await fetchDivisionBanner(primaryDivision) : null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background overflow-x-hidden">
       <main className="flex-1">
         <section className="container px-4 lg:px-12 pt-8">
           {/* Homepage-style banner with nature background */}
           <div className="relative w-full h-[300px] md:h-[367px] lg:h-[400px] rounded-2xl overflow-visible">
             {/* Container for outer glow effect */}
-            <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
+            <div className="absolute inset-y-[-30px] left-[-50px] right-[-50px] pointer-events-none z-0">
               <div className="absolute inset-0">
                 {/* Glow effect */}
                 <div 
