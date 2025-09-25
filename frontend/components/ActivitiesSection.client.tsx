@@ -390,7 +390,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                           </span>
                         </div>
                       </CardHeader>
-                      <CardContent className="pt-0 pb-1 px-4">
+                      <CardContent className="pt-0 pb-3 px-4">
                         <div className="text-muted-foreground leading-relaxed">
                           <PayloadRichText content={act.description} />
                         </div>

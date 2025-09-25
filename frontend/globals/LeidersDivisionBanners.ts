@@ -10,6 +10,10 @@ export const LeidersDivisionBanners: GlobalConfig = {
   admin: {
     description: 'Upload of selecteer banners voor elke tak op individuele leider pagina\'s',
     group: 'Collecties',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   fields: [
     {

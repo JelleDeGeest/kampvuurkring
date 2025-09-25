@@ -9,6 +9,10 @@ export const Media: CollectionConfig = {
   admin: {
     group: 'Media',
     description: 'Algemene media opslag voor random afbeeldingen en documenten',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

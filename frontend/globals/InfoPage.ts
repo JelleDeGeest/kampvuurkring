@@ -16,6 +16,10 @@ export const InfoPage: GlobalConfig = {
   },
   admin: {
     group: 'Pagina\'s',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
     // Preview in a new tab (paper-airplane icon)
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/preview/info`,
 

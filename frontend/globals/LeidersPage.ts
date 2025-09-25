@@ -8,6 +8,10 @@ export const LeidersPage: GlobalConfig = {
   },
   admin: {
     group: 'Pagina\'s',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
     // Add live preview for the leiders page
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/leiding`,
     livePreview: {

@@ -10,6 +10,10 @@ const LokaalFotos: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'order', 'image'],
     group: 'Collecties',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

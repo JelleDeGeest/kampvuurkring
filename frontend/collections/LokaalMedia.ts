@@ -10,6 +10,10 @@ export const LokaalMedia: CollectionConfig = {
     group: 'Media',
     description: 'Media opslag voor lokaal verhuur foto\'s en documenten',
     useAsTitle: 'filename',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

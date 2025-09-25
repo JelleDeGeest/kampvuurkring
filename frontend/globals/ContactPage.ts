@@ -8,6 +8,10 @@ export const ContactPage: GlobalConfig = {
   },
   admin: {
     group: 'Pagina\'s',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
     // Add live preview for the contact page
     preview: () => `${process.env.NEXT_PUBLIC_SITE_URL}/contact`,
     livePreview: {

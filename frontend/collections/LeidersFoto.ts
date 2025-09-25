@@ -18,6 +18,10 @@ export const LeidersFoto: CollectionConfig = {
   admin: {
     useAsTitle: 'filename',
     group: 'Media', // Leiding photos in Media group
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     // Define access control as needed

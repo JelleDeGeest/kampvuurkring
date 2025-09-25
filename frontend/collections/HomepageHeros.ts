@@ -5,6 +5,10 @@ export const HomepageHeros: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     group: 'Collecties',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

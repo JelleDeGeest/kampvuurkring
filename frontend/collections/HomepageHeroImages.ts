@@ -14,6 +14,10 @@ export const HomepageHeroImages: CollectionConfig = {
   admin: {
     useAsTitle: 'filename',
     group: 'Media', // Homepage Banner images in Media group
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     // Define access control as needed

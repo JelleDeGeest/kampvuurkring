@@ -175,7 +175,7 @@ function Section({
             kind === 'event' ? (
               <div key={it.id} className="flex items-start gap-4 border-l-4 pl-3 py-2 border-primary">
                 <div
-                  className="p-0.5 border rounded flex items-center justify-center"
+                  className="p-0.5 border rounded flex items-center justify-center mt-4"
                   style={{
                     backgroundColor: `${eventIcon.color}20`,
                     borderColor: eventIcon.color,
@@ -197,7 +197,7 @@ function Section({
                     <div className="mt-1">
                       <button
                         onClick={() => toggleExpanded(it.id)}
-                        className="flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
+                        className="flex items-center text-sm text-primary hover:text-primary/80 transition-colors -ml-0.5 focus:outline-none"
                       >
                         <ChevronRight
                           className={`h-4 w-4 mr-1 transition-transform duration-200 ${
@@ -224,7 +224,7 @@ function Section({
                     <div className="mt-2">
                       <a
                         href={it.enrollmentSettings.enrollmentLink}
-                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none"
                       >
                         Info/Inschrijven
                       </a>
@@ -238,7 +238,7 @@ function Section({
                         href={it.button.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none"
                       >
                         {it.button.text}
                       </a>
@@ -275,7 +275,7 @@ function PeriodRow({
     <div className="flex items-start gap-4 border-l-4 pl-3 py-2 border-primary">
       {meta?.isImage && (
         <div
-          className="p-0.5 border rounded flex items-center justify-center"
+          className="p-0.5 border rounded flex items-center justify-center mt-4"
           style={{
             backgroundColor: `${meta.color}20`,
             borderColor: meta.color,
@@ -296,31 +296,6 @@ function PeriodRow({
           {meta?.name ?? item.division}
         </div>
 
-        {/* Show "Meer informatie" only if there's actual content */}
-        {hasActualContent(item.description) && (
-          <div className="mt-1">
-            <button
-              onClick={() => toggleExpanded(item.id)}
-              className="flex items-center text-sm text-primary hover:text-primary/80 transition-colors"
-            >
-              <ChevronRight
-                className={`h-4 w-4 mr-1 transition-transform duration-200 ${
-                  expandedItemId === item.id ? 'rotate-90' : 'rotate-0'
-                }`}
-              />
-              Meer informatie
-            </button>
-            <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                expandedItemId === item.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-              }`}
-            >
-              <div className="text-sm text-muted-foreground mt-2">
-                <PayloadRichText content={item.description} />
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Add enrollment button if enrollments are enabled and button not hidden */}
         {item.enrollmentSettings?.enabled && 

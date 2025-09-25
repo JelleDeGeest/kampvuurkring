@@ -11,6 +11,10 @@ export const LeidersBanners: CollectionConfig = {
     defaultColumns: ['name', 'updatedAt'],
     description: 'Banner afbeeldingen voor individuele leider pagina\'s. Wijs banners toe aan takken via de "Leiders Tak Banners" global.',
     group: 'Media',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

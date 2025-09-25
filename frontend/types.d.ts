@@ -295,9 +295,18 @@ export interface Event {
     [k: string]: unknown;
   } | null;
   /**
-   * Bijvoorbeeld: "Inschrijven", "Meer info", "Aanmelden"
+   * ⚠️ Vul beide velden in of laat beide leeg. Button wordt alleen getoond wanneer zowel tekst als URL zijn opgegeven.
    */
-  buttonText?: string | null;
+  button?: {
+    /**
+     * Bijvoorbeeld: "Inschrijven", "Meer info", "Aanmelden". ⚠️ Verplicht als URL wordt opgegeven.
+     */
+    text?: string | null;
+    /**
+     * Volledige URL (bijvoorbeeld: https://example.com/inschrijven). ⚠️ Verplicht als button tekst wordt opgegeven.
+     */
+    url?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -311,6 +320,24 @@ export interface Weekend {
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
+  /**
+   * Optionele beschrijving van het weekend
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Kies een banner afbeelding voor dit weekend uit de banner collectie
    */
@@ -437,6 +464,24 @@ export interface Camp {
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
   startDate: string;
   endDate: string;
+  /**
+   * Optionele beschrijving van het kamp
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
    * Kies een banner afbeelding voor dit kamp uit de banner collectie
    */
@@ -830,7 +875,7 @@ export interface User {
   /**
    * Selecteer de rollen voor deze gebruiker
    */
-  roles?: ('admin' | 'editor' | 'user')[] | null;
+  roles?: ('admin' | 'gebruiker')[] | null;
   phone?: string | null;
   lastLogin?: string | null;
   updatedAt: string;
@@ -1005,7 +1050,12 @@ export interface EventsSelect<T extends boolean = true> {
   startDate?: T;
   endDate?: T;
   description?: T;
-  buttonText?: T;
+  button?:
+    | T
+    | {
+        text?: T;
+        url?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1018,6 +1068,7 @@ export interface WeekendsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  description?: T;
   bannerImage?: T;
   enrollmentSettings?:
     | T
@@ -1054,6 +1105,7 @@ export interface CampsSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  description?: T;
   bannerImage?: T;
   enrollmentSettings?:
     | T

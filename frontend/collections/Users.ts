@@ -14,6 +14,10 @@ export const Users: CollectionConfig = {
     useAsTitle: 'email',
     defaultColumns: ['name', 'email', 'roles'],
     group: 'Admin',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     create: () => true,
@@ -49,19 +53,15 @@ export const Users: CollectionConfig = {
       type: 'select',
       label: 'Rollen',
       hasMany: true,
-      defaultValue: ['user'],
+      defaultValue: ['gebruiker'],
       options: [
         {
           label: 'Admin',
           value: 'admin',
         },
         {
-          label: 'Editor',
-          value: 'editor',
-        },
-        {
           label: 'Gebruiker',
-          value: 'user',
+          value: 'gebruiker',
         },
       ],
       admin: {

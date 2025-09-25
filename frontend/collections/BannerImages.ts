@@ -11,6 +11,10 @@ export const BannerImages: CollectionConfig = {
     defaultColumns: ['name', 'updatedAt'],
     description: 'Banner afbeeldingen voor weekends en kampen',
     group: 'Media',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

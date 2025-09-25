@@ -10,6 +10,10 @@ const PhotoAlbums: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'startYear', 'endYear', 'tak'],
     group: 'Collecties',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: {
     read: () => true,

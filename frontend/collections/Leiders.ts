@@ -6,6 +6,10 @@ export const Leiders: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     group: 'Collecties',
+    hidden: ({ user }) => {
+      // Hide from regular users, show to admins
+      return !user?.roles?.includes('admin')
+    },
   },
   access: { read: () => true },
   fields: [
