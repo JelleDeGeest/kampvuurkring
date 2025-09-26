@@ -35,9 +35,11 @@ export default function RootLayout({
             <CategorySelectionProvider>
               <div className="min-h-dvh flex flex-col">
                 <Header />
-                <PageTransition className="flex-1">
-                  {children}
-                </PageTransition>
+                <div className="flex-1 overflow-x-hidden">
+                  <PageTransition className="flex-1">
+                    {children}
+                  </PageTransition>
+                </div>
                 <Footer />
               </div>
             </CategorySelectionProvider>

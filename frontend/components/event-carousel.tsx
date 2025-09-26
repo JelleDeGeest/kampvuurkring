@@ -84,7 +84,7 @@ export function EventCarousel() {
               }}
             >
               {/* Horizontally extended glow effect with lower quality for performance */}
-              <div 
+              <div
                 style={{
                   position: 'absolute',
                   inset: '0',

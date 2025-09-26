@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import type { JSX } from "react"
 
 interface Leider {
   id: string
@@ -127,6 +128,56 @@ export default async function LeiderPage({
   // Determine which division banner to show
   const primaryDivision = getPrimaryDivision(leider.takken || []);
   const divisionBanner = primaryDivision ? await fetchDivisionBanner(primaryDivision) : null;
+  const activeDivisions = (leider.takken || []).filter((tak) => tak !== 'gestopt' && divisionData[tak]);
+
+  const renderDivisionBadges = (className = '', showDivider = true) => {
+    if (activeDivisions.length === 0) return null;
+
+    return (
+      <div className={`flex flex-wrap items-center gap-x-1.5 gap-y-0.5 ${className}`}>
+        {showDivider && (
+          <span
+            className="hidden h-8 w-px bg-primary rounded-full md:block"
+            aria-hidden="true"
+          />
+        )}
+        {activeDivisions.map((tak, index) => {
+          const division = divisionData[tak];
+          if (!division) return null;
+
+          return (
+            <div
+              key={tak}
+              className="flex items-center text-sm text-muted-foreground"
+            >
+              {index > 0 && (
+                <span className="mx-1 text-muted-foreground" aria-hidden="true">
+                  &
+                </span>
+              )}
+              <div className="relative h-8 w-8">
+                <div 
+                  className="absolute inset-0 rounded"
+                  style={{ 
+                    backgroundColor: division.color,
+                    maskImage: `url(${division.icon})`,
+                    maskSize: 'contain',
+                    maskRepeat: 'no-repeat',
+                    maskPosition: 'center',
+                    WebkitMaskImage: `url(${division.icon})`,
+                    WebkitMaskSize: 'contain',
+                    WebkitMaskRepeat: 'no-repeat',
+                    WebkitMaskPosition: 'center'
+                  }}
+                />
+              </div>
+              <span className="ml-2">{division.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -195,9 +246,9 @@ export default async function LeiderPage({
         <section className="container px-4 lg:px-12 -mt-24 relative z-20 pb-12">
           <div className="max-w-3xl mx-auto">
             <div className="bg-card rounded-2xl shadow-lg p-6 md:p-8">
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-8">
+              <div className="flex flex-col md:flex-row items-center md:items-center gap-4 md:gap-8">
                 {/* Profile Image - inside the card on the left */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 mx-auto md:mx-0">
                   <div className="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-muted shadow-xl bg-muted">
                     {leider.image?.url ? (
                       <Image
@@ -218,110 +269,63 @@ export default async function LeiderPage({
                 </div>
 
                 {/* Name, Title and Contact Info - to the right of image */}
-                <div className="flex-1">
+                <div className="flex-1 w-full md:flex md:flex-col md:justify-center">
                   {/* Name with Division badge inline */}
-                  <div className="mb-4 text-center md:text-left">
+                  <div className="mb-1 text-center md:text-left">
                     {/* Show special name if in Kapoenen or Wouters */}
-                    {(leider.takken?.includes('kapoenen') && leider.kapoenenNaam) || 
+                    {(leider.takken?.includes('kapoenen') && leider.kapoenenNaam) ||
                      (leider.takken?.includes('wouters') && leider.wouterNaam) ? (
-                      <>
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-1">
-                          <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                            {leider.takken?.includes('kapoenen') && leider.kapoenenNaam 
-                              ? leider.kapoenenNaam 
-                              : leider.wouterNaam}
-                          </h1>
-                          {/* Division badges - subtle style */}
-                          {leider.takken && leider.takken.length > 0 && (
-                            <>
-                              {leider.takken.filter(tak => tak !== 'gestopt').map((tak) => {
-                                const division = divisionData[tak];
-                                if (!division) return null;
-                                
-                                return (
-                                  <div
-                                    key={tak}
-                                    className="flex items-center text-sm"
-                                  >
-                                    <div className="ml-3 mr-3 h-6 w-px bg-border" />
-                                    <div className="w-8 h-8 relative">
-                                      <div 
-                                        className="absolute inset-0 rounded"
-                                        style={{ 
-                                          backgroundColor: division.color,
-                                          maskImage: `url(${division.icon})`,
-                                          maskSize: 'contain',
-                                          maskRepeat: 'no-repeat',
-                                          maskPosition: 'center',
-                                          WebkitMaskImage: `url(${division.icon})`,
-                                          WebkitMaskSize: 'contain',
-                                          WebkitMaskRepeat: 'no-repeat',
-                                          WebkitMaskPosition: 'center'
-                                        }}
-                                      />
-                                    </div>
-                                    <span className="ml-2 text-muted-foreground">{division.label}</span>
-                                  </div>
-                                );
-                              })}
-                            </>
-                          )}
+                      <div className="flex flex-col items-center md:items-start gap-0.5 md:gap-1.5 text-center md:text-left">
+                        {/* Desktop: Special name with divider, real name, then divisions */}
+                        <div className="hidden md:block w-full">
+                          <div className="flex items-center gap-x-2">
+                            <h1 className="text-3xl md:text-4xl font-bold text-foreground">
+                              {leider.takken?.includes('kapoenen') && leider.kapoenenNaam
+                                ? leider.kapoenenNaam
+                                : leider.wouterNaam}
+                            </h1>
+                            <span className="h-8 w-px bg-primary rounded-full" aria-hidden="true" />
+                            <p className="text-lg text-foreground/70 leading-tight md:leading-normal">
+                              {leider.name}
+                            </p>
+                          </div>
+                          {renderDivisionBadges('flex flex-nowrap justify-start mt-1 gap-x-2', false)}
                         </div>
-                        <p className="text-lg text-foreground/70">{leider.name}</p>
-                        <p className="text-md text-muted-foreground">{leider.totem}</p>
-                      </>
+                        {/* Mobile: Special name */}
+                        <h1 className="text-3xl font-bold text-foreground md:hidden">
+                          {leider.takken?.includes('kapoenen') && leider.kapoenenNaam
+                            ? leider.kapoenenNaam
+                            : leider.wouterNaam}
+                        </h1>
+                        {/* Mobile: Real name */}
+                        <p className="text-lg text-foreground/70 leading-tight md:hidden">
+                          {leider.name}
+                        </p>
+                        {/* Mobile: Divisions */}
+                        {renderDivisionBadges('justify-center md:hidden mt-1', false)}
+                        {/* Totem */}
+                        <p className="text-md text-muted-foreground leading-tight md:leading-normal">
+                          {leider.totem}
+                        </p>
+                      </div>
                     ) : (
                       <>
-                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-1">
+                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-1.5 gap-y-0.5 mb-1 text-center md:text-left md:gap-x-2 md:gap-y-1">
                           <h1 className="text-3xl md:text-4xl font-bold text-foreground">
                             {leider.name}
                           </h1>
-                          {/* Division badges - subtle style */}
-                          {leider.takken && leider.takken.length > 0 && (
-                            <>
-                              {leider.takken.filter(tak => tak !== 'gestopt').map((tak) => {
-                                const division = divisionData[tak];
-                                if (!division) return null;
-                                
-                                return (
-                                  <div
-                                    key={tak}
-                                    className="flex items-center text-sm"
-                                  >
-                                    <div className="ml-3 mr-3 h-6 w-px bg-border" />
-                                    <div className="w-8 h-8 relative">
-                                      <div 
-                                        className="absolute inset-0 rounded"
-                                        style={{ 
-                                          backgroundColor: division.color,
-                                          maskImage: `url(${division.icon})`,
-                                          maskSize: 'contain',
-                                          maskRepeat: 'no-repeat',
-                                          maskPosition: 'center',
-                                          WebkitMaskImage: `url(${division.icon})`,
-                                          WebkitMaskSize: 'contain',
-                                          WebkitMaskRepeat: 'no-repeat',
-                                          WebkitMaskPosition: 'center'
-                                        }}
-                                      />
-                                    </div>
-                                    <span className="ml-2 text-muted-foreground">{division.label}</span>
-                                  </div>
-                                );
-                              })}
-                            </>
-                          )}
+                          {renderDivisionBadges('hidden md:flex md:ml-3 md:gap-x-2 md:gap-y-1')}
                         </div>
-                        <p className="text-md text-muted-foreground">{leider.totem}</p>
+                        {renderDivisionBadges('justify-center md:hidden mt-1')}
+                        <p className="text-md text-muted-foreground leading-tight md:leading-normal md:mt-1">{leider.totem}</p>
                       </>
                     )}
                   </div>
 
                   {/* Contact Information */}
-                  <div className="space-y-2 text-sm">
+                  <div className="mt-1 space-y-1 text-sm text-center md:text-left leading-tight md:leading-normal">
                     {leider.phoneNumber && (
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">Telefoon:</span>
+                      <div className="flex justify-center md:justify-start">
                         <a 
                           href={`tel:${leider.phoneNumber}`}
                           className="text-primary hover:underline"
@@ -331,8 +335,7 @@ export default async function LeiderPage({
                       </div>
                     )}
                     {leider.email && (
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">Email:</span>
+                      <div className="flex justify-center md:justify-start">
                         <a 
                           href={`mailto:${leider.email}`}
                           className="text-primary hover:underline"

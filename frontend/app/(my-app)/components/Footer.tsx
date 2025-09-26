@@ -70,23 +70,23 @@ export default function Footer() {
             </p>
             <div className="space-y-2 text-sm">
               <div>
-                <span className="font-medium text-primary/80">Kapoenen:</span> 
+                <span className="font-medium text-primary/80">Kapoenen:</span>{' '}
                 <span className="text-muted-foreground">6-8 jaar</span>
               </div>
               <div>
-                <span className="font-medium text-primary/80">Wouters:</span> 
+                <span className="font-medium text-primary/80">Wouters:</span>{' '}
                 <span className="text-muted-foreground">8-11 jaar</span>
               </div>
               <div>
-                <span className="font-medium text-primary/80">Jonggivers:</span> 
+                <span className="font-medium text-primary/80">Jonggivers:</span>{' '}
                 <span className="text-muted-foreground">11-14 jaar</span>
               </div>
               <div>
-                <span className="font-medium text-primary/80">Givers:</span> 
+                <span className="font-medium text-primary/80">Givers:</span>{' '}
                 <span className="text-muted-foreground">14-17 jaar</span>
               </div>
               <div>
-                <span className="font-medium text-primary/80">Jin:</span> 
+                <span className="font-medium text-primary/80">Jin:</span>{' '}
                 <span className="text-muted-foreground">17-18 jaar</span>
               </div>
             </div>
