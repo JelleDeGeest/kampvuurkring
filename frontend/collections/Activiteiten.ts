@@ -84,28 +84,49 @@ export const Activiteiten: CollectionConfig = {
       },
     },
     {
-      name: 'startDate',
-      label: 'Start Datum en Tijd',
-      type: 'date',
-      required: true,
-      admin: {
-        date: {
-          displayFormat: 'dd/MM/yyyy HH:mm',
-          pickerAppearance: 'dayAndTime',
+      type: 'row',
+      fields: [
+        {
+          name: 'startDate',
+          label: 'Start Datum en Tijd',
+          type: 'date',
+          required: true,
+          admin: {
+            width: '33%',
+            description: 'Als je wilt aanduiden dat het geen scouts is kies dan start en einddatum in een bepaalde dag en duid het geen scouts vakje aan',
+            date: {
+              displayFormat: 'dd/MM/yyyy HH:mm',
+              pickerAppearance: 'dayAndTime',
+            },
+          },
         },
-      },
-    },
-    {
-      name: 'endDate',
-      label: 'Eind Datum en Tijd',
-      type: 'date',
-      required: true,
-      admin: {
-        date: {
-          displayFormat: 'dd/MM/yyyy HH:mm',
-          pickerAppearance: 'dayAndTime',
+        {
+          name: 'endDate',
+          label: 'Eind Datum en Tijd',
+          type: 'date',
+          required: true,
+          admin: {
+            width: '33%',
+            date: {
+              displayFormat: 'dd/MM/yyyy HH:mm',
+              pickerAppearance: 'dayAndTime',
+            },
+          },
         },
-      },
+        {
+          name: 'geenScouts',
+          label: 'Geen Scouts',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            width: '33%',
+            style: {
+              marginTop: '1.5rem',
+            },
+            description: 'Vink aan als er geen scouts aanwezig zijn bij deze activiteit',
+          },
+        },
+      ],
     },
     {
       name: 'description',

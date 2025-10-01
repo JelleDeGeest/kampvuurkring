@@ -163,8 +163,15 @@ export interface Activiteiten {
   id: number;
   title: string;
   division: ('kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin')[];
+  /**
+   * Als je wilt aanduiden dat het geen scouts is kies dan start en einddatum in een bepaalde dag en duid het geen scouts vakje aan
+   */
   startDate: string;
   endDate: string;
+  /**
+   * Vink aan als er geen scouts aanwezig zijn bij deze activiteit
+   */
+  geenScouts?: boolean | null;
   description?: {
     root: {
       type: string;
@@ -1014,6 +1021,7 @@ export interface ActiviteitenSelect<T extends boolean = true> {
   division?: T;
   startDate?: T;
   endDate?: T;
+  geenScouts?: T;
   description?: T;
   enrollmentSettings?:
     | T

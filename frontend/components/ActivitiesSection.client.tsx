@@ -458,19 +458,21 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                             )}
                           </div>
                           <div className="flex flex-col justify-center">
-                            <span className="text-sm text-muted-foreground leading-tight">
+                            <span className="text-sm leading-tight">
                               {isSpecialEvent ? (
-                                <>
+                                <span className="text-muted-foreground">
                                   {format(new Date(act.startDate), "d MMM yyyy", { locale: nl })}
-                                  {act.endDate && act.endDate !== act.startDate && 
+                                  {act.endDate && act.endDate !== act.startDate &&
                                     ` - ${format(new Date(act.endDate), "d MMM yyyy", { locale: nl })}`}
-                                </>
+                                </span>
+                              ) : act.geenScouts ? (
+                                <span className="text-red-600 font-semibold">Geen Scouts</span>
                               ) : (
-                                <>
+                                <span className="text-muted-foreground">
                                   {format(new Date(act.startDate), "HH:mm")} –{' '}
                                   {act.endDate &&
                                     format(new Date(act.endDate), "HH:mm")}
-                                </>
+                                </span>
                               )}
                             </span>
                             <CardTitle className="text-lg font-bold leading-tight text-gray-700">

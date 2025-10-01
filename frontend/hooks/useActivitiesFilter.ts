@@ -11,6 +11,7 @@ export interface Activity {
   startDate: string;
   endDate: string;
   description: { root: any };
+  geenScouts?: boolean; // Flag to indicate no scouts present
   bannerImage?: any; // Media object or ID
   button?: {
     text?: string;
