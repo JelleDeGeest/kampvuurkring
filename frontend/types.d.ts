@@ -262,6 +262,14 @@ export interface Activiteiten {
 export interface Media {
   id: number;
   /**
+   * Standaard ingevuld met de originele bestandsnaam
+   */
+  displayName?: string | null;
+  /**
+   * The original name of the uploaded file
+   */
+  originalFilename?: string | null;
+  /**
    * Beschrijving van de afbeelding voor toegankelijkheid
    */
   alt?: string | null;
@@ -276,6 +284,80 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    'sm-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -424,6 +506,10 @@ export interface Weekend {
 export interface BannerImage {
   id: number;
   /**
+   * The original name of the uploaded file
+   */
+  originalFilename?: string | null;
+  /**
    * Geef de banner een duidelijke naam (bv. "Zomerkamp Bos", "Winterkamp Bergen")
    */
   name: string;
@@ -443,7 +529,7 @@ export interface BannerImage {
   focalX?: number | null;
   focalY?: number | null;
   sizes?: {
-    card?: {
+    'sm-avif'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -451,7 +537,63 @@ export interface BannerImage {
       filesize?: number | null;
       filename?: string | null;
     };
-    thumbnail?: {
+    'sm-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-jpeg'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -592,6 +734,14 @@ export interface Leider {
  */
 export interface LeidersFoto {
   id: number;
+  /**
+   * Standaard ingevuld met de originele bestandsnaam
+   */
+  displayName?: string | null;
+  /**
+   * The original name of the uploaded file
+   */
+  originalFilename?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -603,7 +753,80 @@ export interface LeidersFoto {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-  sizes?: {};
+  sizes?: {
+    'sm-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -725,6 +948,14 @@ export interface HomepageHero {
  */
 export interface HomepageHeroImage {
   id: number;
+  /**
+   * Standaard ingevuld met de originele bestandsnaam
+   */
+  displayName?: string | null;
+  /**
+   * The original name of the uploaded file
+   */
+  originalFilename?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -736,7 +967,80 @@ export interface HomepageHeroImage {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
-  sizes?: {};
+  sizes?: {
+    'sm-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -785,6 +1089,14 @@ export interface LokaalFoto {
 export interface LokaalMedia {
   id: number;
   /**
+   * Standaard ingevuld met de originele bestandsnaam
+   */
+  displayName?: string | null;
+  /**
+   * The original name of the uploaded file
+   */
+  originalFilename?: string | null;
+  /**
    * Beschrijving van de afbeelding voor toegankelijkheid
    */
   alt?: string | null;
@@ -800,7 +1112,7 @@ export interface LokaalMedia {
   focalX?: number | null;
   focalY?: number | null;
   sizes?: {
-    thumbnail?: {
+    'sm-avif'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -808,7 +1120,7 @@ export interface LokaalMedia {
       filesize?: number | null;
       filename?: string | null;
     };
-    card?: {
+    'sm-webp'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -816,7 +1128,55 @@ export interface LokaalMedia {
       filesize?: number | null;
       filename?: string | null;
     };
-    gallery?: {
+    'sm-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-jpeg'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -834,6 +1194,10 @@ export interface LokaalMedia {
  */
 export interface LeidersBanner {
   id: number;
+  /**
+   * The original name of the uploaded file
+   */
+  originalFilename?: string | null;
   /**
    * Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")
    */
@@ -854,7 +1218,7 @@ export interface LeidersBanner {
   focalX?: number | null;
   focalY?: number | null;
   sizes?: {
-    banner?: {
+    'sm-avif'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -862,7 +1226,63 @@ export interface LeidersBanner {
       filesize?: number | null;
       filename?: string | null;
     };
-    thumbnail?: {
+    'sm-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'sm-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'md-jpeg'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-avif'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-webp'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    'lg-jpeg'?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -1252,6 +1672,8 @@ export interface LokaalFotosSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  displayName?: T;
+  originalFilename?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1264,12 +1686,107 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        'sm-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "banner-images_select".
  */
 export interface BannerImagesSelect<T extends boolean = true> {
+  originalFilename?: T;
   name?: T;
   alt?: T;
   updatedAt?: T;
@@ -1286,7 +1803,7 @@ export interface BannerImagesSelect<T extends boolean = true> {
   sizes?:
     | T
     | {
-        card?:
+        'sm-avif'?:
           | T
           | {
               url?: T;
@@ -1296,7 +1813,77 @@ export interface BannerImagesSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
-        thumbnail?:
+        'sm-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-jpeg'?:
           | T
           | {
               url?: T;
@@ -1313,6 +1900,7 @@ export interface BannerImagesSelect<T extends boolean = true> {
  * via the `definition` "leiders-banners_select".
  */
 export interface LeidersBannersSelect<T extends boolean = true> {
+  originalFilename?: T;
   name?: T;
   alt?: T;
   updatedAt?: T;
@@ -1329,7 +1917,7 @@ export interface LeidersBannersSelect<T extends boolean = true> {
   sizes?:
     | T
     | {
-        banner?:
+        'sm-avif'?:
           | T
           | {
               url?: T;
@@ -1339,7 +1927,77 @@ export interface LeidersBannersSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
-        thumbnail?:
+        'sm-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-jpeg'?:
           | T
           | {
               url?: T;
@@ -1356,6 +2014,8 @@ export interface LeidersBannersSelect<T extends boolean = true> {
  * via the `definition` "homepage-hero-images_select".
  */
 export interface HomepageHeroImagesSelect<T extends boolean = true> {
+  displayName?: T;
+  originalFilename?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1367,13 +2027,108 @@ export interface HomepageHeroImagesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-  sizes?: T | {};
+  sizes?:
+    | T
+    | {
+        'sm-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leiders-foto_select".
  */
 export interface LeidersFotoSelect<T extends boolean = true> {
+  displayName?: T;
+  originalFilename?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1385,13 +2140,108 @@ export interface LeidersFotoSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-  sizes?: T | {};
+  sizes?:
+    | T
+    | {
+        'sm-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'sm-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "lokaal-media_select".
  */
 export interface LokaalMediaSelect<T extends boolean = true> {
+  displayName?: T;
+  originalFilename?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1407,7 +2257,7 @@ export interface LokaalMediaSelect<T extends boolean = true> {
   sizes?:
     | T
     | {
-        thumbnail?:
+        'sm-avif'?:
           | T
           | {
               url?: T;
@@ -1417,7 +2267,7 @@ export interface LokaalMediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
-        card?:
+        'sm-webp'?:
           | T
           | {
               url?: T;
@@ -1427,7 +2277,67 @@ export interface LokaalMediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
-        gallery?:
+        'sm-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'md-jpeg'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-avif'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-webp'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        'lg-jpeg'?:
           | T
           | {
               url?: T;

@@ -1,4 +1,4 @@
-import Image from "next/image"
+import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
 import { notFound } from "next/navigation"
 import type { JSX } from "react"
 
@@ -13,17 +13,10 @@ interface Leider {
   kapoenenNaam?: string
   wouterNaam?: string
   takken?: string[]
-  image?: {
-    url: string
-  }
+  image?: PayloadImage
 }
 
-interface LeidersBanner {
-  id: string
-  name: string
-  alt: string
-  url: string
-}
+type LeidersBanner = (PayloadImage & { id: string; name?: string })
 
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
@@ -77,16 +70,10 @@ async function fetchDivisionBanner(division: string): Promise<LeidersBanner | nu
     if (!bannerField) return null;
     
     // Return the banner data if it exists
-    const banner = data[bannerField];
+    const banner = data[bannerField] as LeidersBanner | undefined;
     if (!banner) return null;
-    
-    // Return the banner with all necessary fields
-    return {
-      id: banner.id,
-      name: banner.name || '',
-      alt: banner.alt || banner.name || '',
-      url: banner.url || '',
-    };
+
+    return banner;
   } catch (error) {
     console.warn(`Error fetching banner for division ${division}:`, error);
     return null;
@@ -214,11 +201,12 @@ export default async function LeiderPage({
                 /* Banner image */
                 <>
                   <div className="absolute inset-0">
-                    <Image
-                      src={`${PAYLOAD_URL}${divisionBanner.url}`}
-                      alt={divisionBanner.alt}
+                    <ResponsiveImage
+                      media={divisionBanner}
+                      alt={divisionBanner.alt || divisionBanner.name || 'Divisiebanner'}
                       fill
                       className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                       priority
                     />
                   </div>
@@ -251,11 +239,12 @@ export default async function LeiderPage({
                 <div className="flex-shrink-0 mx-auto md:mx-0">
                   <div className="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-muted shadow-xl bg-muted">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 60vw, 160px"
                         className="object-cover w-full h-full"
                       />
                     ) : (

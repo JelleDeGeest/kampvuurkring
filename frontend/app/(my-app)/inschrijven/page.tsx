@@ -1,7 +1,8 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
+import { ResponsiveImage, type PayloadImage } from '@/components/ResponsiveImage'
+import { selectMediaVariantUrl, resolveMediaUrl } from '@/lib/mediaHelpers'
 import ArrowRight from 'lucide-react/dist/esm/icons/arrow-right'
 import Users from 'lucide-react/dist/esm/icons/users'
 import Calendar from 'lucide-react/dist/esm/icons/calendar'
@@ -111,6 +112,7 @@ export default async function InschrijvenPage() {
     pageData = await payload.findGlobal({
       slug: 'inschrijvenPage',
       draft: isEnabled,
+      depth: 1,
     })
   } catch (error) {
     console.error('Error fetching page data:', error)
@@ -174,6 +176,15 @@ export default async function InschrijvenPage() {
     }
   }
 
+  const resolveMediaUrlWithFallback = (media?: PayloadImage | null) =>
+    selectMediaVariantUrl(media, {
+      sizePreference: ['lg', 'md', 'sm'],
+      formatPreference: ['avif', 'webp', 'jpeg', 'jpg'],
+      baseUrl: PAYLOAD_URL,
+    }) ?? resolveMediaUrl(media?.url, PAYLOAD_URL)
+
+  const bannerImageUrl = resolveMediaUrlWithFallback(pageData?.banner as PayloadImage | null)
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {isEnabled && <PreviewControls />}
@@ -192,7 +203,7 @@ export default async function InschrijvenPage() {
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${pageData.banner.url})`,
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${pageData.banner.url}`})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -207,11 +218,12 @@ export default async function InschrijvenPage() {
             <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
               {/* Banner image */}
               <div className="absolute inset-0">
-                <Image
-                  src={`${PAYLOAD_URL}${pageData.banner.url}`}
-                  alt={pageData.banner.alt}
+                <ResponsiveImage
+                  media={pageData.banner}
+                  alt={pageData.banner.alt || pageData.title}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                   priority
                 />
               </div>
@@ -313,18 +325,20 @@ Bij het tabblad 'agenda/ratel' vind je steeds terug waar en wanneer er vergaderi
             {/* Image */}
             <div className="absolute inset-0">
               {pageData.decorativeImage ? (
-                <Image
-                  src={`${PAYLOAD_URL}${pageData.decorativeImage.url}`}
+                <ResponsiveImage
+                  media={pageData.decorativeImage}
                   alt={pageData.decorativeImage.alt || 'Scouts activities'}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
                 />
               ) : pageData.banner ? (
-                <Image
-                  src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                <ResponsiveImage
+                  media={pageData.banner}
                   alt={pageData.banner.alt || 'Scouts activities'}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />
@@ -354,25 +368,28 @@ Bij het tabblad 'agenda/ratel' vind je steeds terug waar en wanneer er vergaderi
             {/* Image */}
             <div className="absolute inset-0">
               {pageData.decorativeImage2 ? (
-                <Image
-                  src={`${PAYLOAD_URL}${pageData.decorativeImage2.url}`}
+                <ResponsiveImage
+                  media={pageData.decorativeImage2}
                   alt={pageData.decorativeImage2.alt || 'Scouts activities'}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               ) : pageData.decorativeImage ? (
-                <Image
-                  src={`${PAYLOAD_URL}${pageData.decorativeImage.url}`}
+                <ResponsiveImage
+                  media={pageData.decorativeImage}
                   alt={pageData.decorativeImage.alt || 'Scouts activities'}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               ) : pageData.banner ? (
-                <Image
-                  src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                <ResponsiveImage
+                  media={pageData.banner}
                   alt={pageData.banner.alt || 'Scouts activities'}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                 />
               ) : (
                 <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />
@@ -414,18 +431,20 @@ Bij het tabblad 'agenda/ratel' vind je steeds terug waar en wanneer er vergaderi
                 {/* Background Image */}
                 <div className="absolute inset-0">
                   {pageData.decorativeImage3 ? (
-                    <Image
-                      src={`${PAYLOAD_URL}${pageData.decorativeImage3.url}`}
+                    <ResponsiveImage
+                      media={pageData.decorativeImage3}
                       alt={pageData.decorativeImage3.alt || 'Scouts final CTA background'}
                       fill
                       className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
                     />
                   ) : pageData.banner ? (
-                    <Image
-                      src={`${PAYLOAD_URL}${pageData.banner.url}`}
+                    <ResponsiveImage
+                      media={pageData.banner}
                       alt={pageData.banner.alt || 'Scouts final CTA background'}
                       fill
                       className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 60vw"
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20" />

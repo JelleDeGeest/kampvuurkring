@@ -78,30 +78,30 @@ export const HomepageHeros: CollectionConfig = {
   hooks: {
     beforeValidate: [
       ({ data }) => {
-        // Check if any of the title, description, or button fields are filled
-        const hasTitle = Boolean(data.title);
-        const hasDescription = Boolean(data.description);
-        const hasButtonText = data.button && Boolean(data.button.text);
-        const hasButtonLink = data.button && Boolean(data.button.link);
-        
-        // If any of them are filled, all must be filled
-        if (hasTitle || hasDescription || hasButtonText || hasButtonLink) {
-          if (!hasTitle) {
-            throw new Error('Title is required when Description or Button is filled in');
-          }
-          if (!hasDescription) {
-            throw new Error('Description is required when Title or Button is filled in');
-          }
-          if (!hasButtonText) {
-            throw new Error('Button Text is required when Title or Description is filled in');
-          }
-          if (!hasButtonLink) {
-            throw new Error('Button Link is required when Title or Description is filled in');
-          }
+        if (!data) return data
+
+        const title = typeof data.title === 'string' ? data.title.trim() : ''
+        const description = typeof data.description === 'string' ? data.description.trim() : ''
+        const buttonText = typeof data.button?.text === 'string' ? data.button.text.trim() : ''
+        const buttonLink = typeof data.button?.link === 'string' ? data.button.link.trim() : ''
+
+        if (!title) data.title = undefined
+        if (!description) data.description = undefined
+        if (data.button) {
+          if (!buttonText) data.button.text = undefined
+          if (!buttonLink) data.button.link = undefined
         }
-        
-        return data;
-      }
-    ]
-  }
-} 
+
+        if (buttonText && !buttonLink) {
+          throw new Error('Button Link is required when Button Text is provided')
+        }
+
+        if (buttonLink && !buttonText) {
+          throw new Error('Button Text is required when Button Link is provided')
+        }
+
+        return data
+      },
+    ],
+  },
+}

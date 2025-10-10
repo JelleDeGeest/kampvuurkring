@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, displayNameField, imageVariantSizes } from '../lib/mediaHooks'
 
 export const HomepageHeroImages: CollectionConfig = {
   slug: 'homepage-hero-images',
@@ -8,11 +9,16 @@ export const HomepageHeroImages: CollectionConfig = {
   },
   upload: {
     mimeTypes: ['image/*'], // Allow only images
-    // Disable image sizes for now to fix upload
-    imageSizes: [],
+    imageSizes: imageVariantSizes,
+  },
+  hooks: {
+    beforeOperation: [prepareUniqueFilename],
+    afterChange: [copyCDN],
+    afterDelete: [cleanupCDN],
   },
   admin: {
-    useAsTitle: 'filename',
+    useAsTitle: 'displayName',
+    defaultColumns: ['displayName', 'originalFilename', 'updatedAt'],
     group: 'Media', // Homepage Banner images in Media group
     hidden: ({ user }) => {
       // Hide from regular users, show to admins
@@ -24,6 +30,7 @@ export const HomepageHeroImages: CollectionConfig = {
     read: () => true, // Example: Allow public read access
   },
   fields: [
-
+    displayNameField,
+    originalFilenameField,
   ],
 } 

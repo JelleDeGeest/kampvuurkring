@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
 import Link from "next/link"
 
 // Force dynamic rendering to avoid database connection during build
@@ -10,22 +11,13 @@ interface Leider {
   totem: string
   kapoenenNaam?: string
   wouterNaam?: string
-  image?: {
-    url: string
-  }
+  image?: PayloadImage
 }
 
 interface LeidersPageGlobal {
   title: string
   subtitle: string
-  banner?: {
-    id: string
-    alt: string
-    url: string
-    filename: string
-    width?: number
-    height?: number
-  }
+  banner?: (PayloadImage & { id: string })
 }
 
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
@@ -136,11 +128,12 @@ export default async function LeidingPage() {
             <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
               {/* Banner image */}
               <div className="absolute inset-0">
-                <Image
-                  src={`${PAYLOAD_URL}${leidersPageData.banner.url}`}
+                <ResponsiveImage
+                  media={leidersPageData.banner}
                   alt={leidersPageData.banner.alt}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                   priority
                 />
               </div>
@@ -198,11 +191,12 @@ export default async function LeidingPage() {
                 <Link key={`kapoenen-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 45vw, 160px"
                         className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
@@ -238,11 +232,12 @@ export default async function LeidingPage() {
                 <Link key={`wouters-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 45vw, 160px"
                         className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
@@ -278,11 +273,12 @@ export default async function LeidingPage() {
                 <Link key={`jonggivers-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 45vw, 160px"
                         className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
@@ -318,11 +314,12 @@ export default async function LeidingPage() {
                 <Link key={`givers-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 45vw, 160px"
                         className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
@@ -358,11 +355,12 @@ export default async function LeidingPage() {
                 <Link key={`jin-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 45vw, 160px"
                         className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (
@@ -398,11 +396,12 @@ export default async function LeidingPage() {
                 <Link key={`groepsleiding-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
                   <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
                     {leider.image?.url ? (
-                      <Image
-                        src={`${PAYLOAD_URL}${leider.image.url}`}
+                      <ResponsiveImage
+                        media={leider.image}
                         alt={leider.name}
                         width={160}
                         height={160}
+                        sizes="(max-width: 768px) 45vw, 160px"
                         className="object-cover group-hover:brightness-110 transition-all duration-200"
                       />
                     ) : (

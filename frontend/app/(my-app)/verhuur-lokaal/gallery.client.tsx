@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { ResponsiveImage, type PayloadImage } from '@/components/ResponsiveImage'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface GalleryImage {
-  id: number
-  src: string
+  id: number | string
+  media?: PayloadImage
+  src?: string
   alt: string
   title: string
   description?: string
@@ -75,26 +76,48 @@ export default function Gallery({ images }: GalleryProps) {
       <div className="xl:col-span-3">
         <div className="group relative w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden bg-gray-100">
           {/* Image A */}
-          <Image
-            src={imageA.src}
-            alt={imageA.alt}
-            fill
-            className={`absolute object-cover transition-opacity duration-700 ease-in-out ${
-              showB ? 'opacity-0' : 'opacity-100'
-            }`}
-            priority
-          />
+          {imageA.media ? (
+            <ResponsiveImage
+              media={imageA.media}
+              alt={imageA.alt}
+              fill
+              className="object-cover"
+              pictureClassName={`absolute transition-opacity duration-700 ease-in-out ${
+                showB ? 'opacity-0' : 'opacity-100'
+              }`}
+              sizes="(min-width: 1280px) 75vw, 100vw"
+            />
+          ) : (
+            <img
+              src={imageA.src}
+              alt={imageA.alt}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-in-out ${
+                showB ? 'opacity-0' : 'opacity-100'
+              }`}
+            />
+          )}
           
           {/* Image B */}
-          <Image
-            src={imageB.src}
-            alt={imageB.alt}
-            fill
-            className={`absolute object-cover transition-opacity duration-700 ease-in-out ${
-              showB ? 'opacity-100' : 'opacity-0'
-            }`}
-            priority
-          />
+          {imageB.media ? (
+            <ResponsiveImage
+              media={imageB.media}
+              alt={imageB.alt}
+              fill
+              className="object-cover"
+              pictureClassName={`absolute transition-opacity duration-700 ease-in-out ${
+                showB ? 'opacity-100' : 'opacity-0'
+              }`}
+              sizes="(min-width: 1280px) 75vw, 100vw"
+            />
+          ) : (
+            <img
+              src={imageB.src}
+              alt={imageB.alt}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-in-out ${
+                showB ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          )}
           
           {/* Navigation arrows - visible on all screens */}
           <button
@@ -135,13 +158,22 @@ export default function Gallery({ images }: GalleryProps) {
                   : 'opacity-80 hover:opacity-100 hover:scale-105'
               }`}
             >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                fill
-                className="object-cover"
-                sizes="64px"
-              />
+              {image.media ? (
+                <ResponsiveImage
+                  media={image.media}
+                  alt={image.alt}
+                  fill
+                  className="object-cover"
+                  pictureClassName="absolute inset-0"
+                  sizes="64px"
+                />
+              ) : (
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              )}
             </button>
           ))}
         </div>

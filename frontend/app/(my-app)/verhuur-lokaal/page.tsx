@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
-import Image from "next/image"
+import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
+import { selectMediaVariantUrl, resolveMediaUrl } from "@/lib/mediaHelpers"
 import Home from 'lucide-react/dist/esm/icons/home'
 import Phone from 'lucide-react/dist/esm/icons/phone'
 import Mail from 'lucide-react/dist/esm/icons/mail'
@@ -23,14 +24,7 @@ const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PU
 interface VerhuurPageGlobal {
   title: string
   subtitle: string
-  banner?: {
-    id: number | string
-    alt: string
-    url: string
-    filename: string
-    width?: number
-    height?: number
-  }
+  banner?: (PayloadImage & { id: number | string })
 }
 
 export const metadata: Metadata = {
@@ -86,21 +80,34 @@ export default async function VerhuurLokaalPage() {
   const lokaalFotos = await getLokaalFotos()
   
   // Transform CMS data to gallery format
-  const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
-  
-  const galleryImages = lokaalFotos.map((foto: any) => ({
-    id: foto.id,
-    src: `${PAYLOAD_URL}${foto.image.url}`,
-    alt: foto.image.alt || foto.title,
-    title: foto.title,
-    description: foto.description,
-    category: foto.category,
-  }))
+  const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000'
+
+  const bannerImageUrl = verhuurPageData?.banner
+    ? selectMediaVariantUrl(verhuurPageData.banner, {
+        sizePreference: ['lg', 'md', 'sm'],
+        formatPreference: ['avif', 'webp', 'jpeg', 'jpg'],
+        baseUrl: PAYLOAD_URL,
+      }) ?? resolveMediaUrl(verhuurPageData.banner.url, PAYLOAD_URL)
+    : undefined
+
+  const galleryImages = lokaalFotos.map((foto: any) => {
+    const media = foto.image as PayloadImage | undefined
+    return {
+      id: foto.id,
+      media,
+      src: resolveMediaUrl(media?.url, PAYLOAD_URL),
+      alt: media?.alt || foto.title,
+      title: foto.title,
+      description: foto.description,
+      category: foto.category,
+    }
+  })
   
   // Fallback images if no CMS data
   const fallbackImages = [
     {
       id: 1,
+      media: undefined,
       src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlmYTZiNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdlZW4gZm90b3MgZ2V1cGxvYWQ8L3RleHQ+PC9zdmc+',
       alt: 'Placeholder - geen foto\'s geüpload',
       title: 'Geen foto\'s beschikbaar',
@@ -126,7 +133,7 @@ export default async function VerhuurLokaalPage() {
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${verhuurPageData.banner.url})`,
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${verhuurPageData.banner.url}`})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -141,11 +148,12 @@ export default async function VerhuurLokaalPage() {
             <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
               {/* Banner image */}
               <div className="absolute inset-0">
-                <Image
-                  src={`${PAYLOAD_URL}${verhuurPageData.banner.url}`}
+                <ResponsiveImage
+                  media={verhuurPageData.banner}
                   alt={verhuurPageData.banner.alt || 'Banner afbeelding verhuur lokaal'}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                   priority
                 />
               </div>

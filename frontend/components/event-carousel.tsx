@@ -1,10 +1,14 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
+import { useState, useEffect, useCallback } from "react"
+import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react"
 import { useHomepageHeroes, Hero } from "@/hooks/useHomepageHeroes"
+import { selectMediaVariantUrl, resolveMediaUrl } from "@/lib/mediaHelpers"
+
+const HERO_SIZE_PREFERENCE = ['lg', 'md', 'sm'] as const
+const HERO_FORMAT_PREFERENCE = ['avif', 'webp', 'jpeg', 'jpg'] as const
 
 export function EventCarousel() {
   const { heroes, isLoading, error, hasCompleteInfo } = useHomepageHeroes()
@@ -12,15 +16,26 @@ export function EventCarousel() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set())
 
+  const getHeroImageUrl = useCallback(
+    (image?: PayloadImage | null) =>
+      selectMediaVariantUrl(image, {
+        sizePreference: Array.from(HERO_SIZE_PREFERENCE),
+        formatPreference: Array.from(HERO_FORMAT_PREFERENCE),
+      }) ?? resolveMediaUrl(image?.url),
+    [],
+  )
+
+
   // Preload next image
   useEffect(() => {
     if (heroes.length <= 1) return
     
     const nextIndex = (activeIndex + 1) % heroes.length
     const nextHero = heroes[nextIndex]
-    if (nextHero?.homeHeroImage?.url) {
+    const preloadUrl = getHeroImageUrl(nextHero?.homeHeroImage)
+    if (preloadUrl) {
       const img = new window.Image()
-      img.src = nextHero.homeHeroImage.url
+      img.src = preloadUrl
     }
   }, [activeIndex, heroes])
 
@@ -48,8 +63,14 @@ export function EventCarousel() {
     setIsAutoPlaying(false)
   }
 
-  const handleImageLoad = (url: string) => {
-    setImagesLoaded(prev => new Set(prev).add(url))
+  const handleImageLoad = (url?: string) => {
+    if (!url) return
+    setImagesLoaded((prev) => {
+      if (prev.has(url)) return prev
+      const next = new Set(prev)
+      next.add(url)
+      return next
+    })
   }
 
   // Loading state
@@ -73,7 +94,12 @@ export function EventCarousel() {
         {heroes.map((hero, index) => {
           const isActive = index === activeIndex;
           if (!isActive) return null;
-          
+
+          const backgroundUrl =
+            getHeroImageUrl(hero.homeHeroImage) ??
+            resolveMediaUrl(hero.homeHeroImage?.url) ??
+            hero.homeHeroImage.url
+
           return (
             <div
               key={`glow-${hero.id}`}
@@ -90,7 +116,7 @@ export function EventCarousel() {
                   inset: '0',
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${hero.homeHeroImage.url})`,
+                  backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${backgroundUrl})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -107,9 +133,10 @@ export function EventCarousel() {
       <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
         {heroes.map((hero, index) => {
           const isActive = index === activeIndex;
-          const imageUrl = hero.homeHeroImage.url;
-          const isImageLoaded = imagesLoaded.has(imageUrl);
-          
+          const imageUrl = getHeroImageUrl(hero.homeHeroImage);
+          const fallbackImageUrl = imageUrl ?? resolveMediaUrl(hero.homeHeroImage?.url);
+          const isImageLoaded = fallbackImageUrl ? imagesLoaded.has(fallbackImageUrl) : false;
+
           return (
             <div
               key={hero.id}
@@ -126,15 +153,14 @@ export function EventCarousel() {
               )}
               
               {/* Hero Image using Next.js Image component */}
-              <Image
-                src={imageUrl}
+              <ResponsiveImage
+                media={hero.homeHeroImage}
                 alt={hero.homeHeroImage.alt || hero.title || 'Hero image'}
                 fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                 priority={index === 0}
-                quality={85}
-                onLoad={() => handleImageLoad(imageUrl)}
+                onLoad={() => handleImageLoad(fallbackImageUrl)}
                 style={{
                   opacity: isImageLoaded ? 1 : 0,
                   transition: 'opacity 300ms ease-in-out',

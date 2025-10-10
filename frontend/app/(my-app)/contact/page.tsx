@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
-import Image from "next/image"
+import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
+import { selectMediaVariantUrl, resolveMediaUrl } from "@/lib/mediaHelpers"
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
 import KapoenenLogo from "@/public/logos/Kapoenen.svg"
@@ -18,14 +19,7 @@ const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PU
 interface ContactPageGlobal {
   title: string
   subtitle: string
-  banner?: {
-    id: number | string
-    alt: string
-    url: string
-    filename: string
-    width?: number
-    height?: number
-  }
+  banner?: (PayloadImage & { id: number | string })
 }
 
 
@@ -57,6 +51,15 @@ async function getContactPageData(): Promise<ContactPageGlobal | null> {
 
 export default async function ContactPage() {
   const contactPageData = await getContactPageData();
+
+  const bannerImageUrl = contactPageData?.banner
+    ? selectMediaVariantUrl(contactPageData.banner, {
+        sizePreference: ['lg', 'md', 'sm'],
+        formatPreference: ['avif', 'webp', 'jpeg', 'jpg'],
+        baseUrl: PAYLOAD_URL,
+      }) ?? resolveMediaUrl(contactPageData.banner.url, PAYLOAD_URL)
+    : undefined
+
   
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -75,7 +78,7 @@ export default async function ContactPage() {
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${contactPageData.banner.url})`,
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${contactPageData.banner.url}`})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -90,11 +93,12 @@ export default async function ContactPage() {
             <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
               {/* Banner image */}
               <div className="absolute inset-0">
-                <Image
-                  src={`${PAYLOAD_URL}${contactPageData.banner.url}`}
+                <ResponsiveImage
+                  media={contactPageData.banner}
                   alt={contactPageData.banner.alt}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                   priority
                 />
               </div>

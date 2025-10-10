@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import Image from "next/image"
+import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
+import { selectMediaVariantUrl, resolveMediaUrl } from "@/lib/mediaHelpers"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,20 +14,13 @@ import Users from 'lucide-react/dist/esm/icons/users'
 
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
-interface FotosPageGlobal {
+export interface FotosPageGlobal {
   title: string
   subtitle: string
-  banner?: {
-    id: number | string
-    alt: string
-    url: string
-    filename: string
-    width?: number
-    height?: number
-  }
+  banner?: (PayloadImage & { id: number | string })
 }
 
-interface PhotoAlbum {
+export interface PhotoAlbum {
   id: string
   name: string
   startYear: number
@@ -34,10 +28,7 @@ interface PhotoAlbum {
   tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'jowos' | 'groepsactiviteit'
   link: string
   location?: string
-  coverImage: {
-    url: string
-    alt?: string
-  }
+  coverImage: PayloadImage
 }
 
 interface PhotoAlbumsPageClientProps {
@@ -172,6 +163,18 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
     return Array.from(yearSet).sort((a, b) => b.localeCompare(a))
   }, [photoAlbums])
   
+  const bannerImageUrl = useMemo(() => {
+    if (!fotosPageData?.banner) return undefined
+
+    return (
+      selectMediaVariantUrl(fotosPageData.banner, {
+        sizePreference: ['lg', 'md', 'sm'],
+        formatPreference: ['avif', 'webp', 'jpeg', 'jpg'],
+        baseUrl: PAYLOAD_URL,
+      }) ?? resolveMediaUrl(fotosPageData.banner.url, PAYLOAD_URL)
+    )
+  }, [fotosPageData])
+
   // Counter animations - all end at 1500ms with staggered delays
   const takkenCounter = useCountUp(7, 1500, 0)
   const yearsCounter = useCountUp(years.length, 1400, 100)
@@ -221,7 +224,7 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${fotosPageData.banner.url})`,
+                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${fotosPageData.banner.url}`})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -236,11 +239,12 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
             <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
               {/* Banner image */}
               <div className="absolute inset-0">
-                <Image
-                  src={`${PAYLOAD_URL}${fotosPageData.banner.url}`}
+                <ResponsiveImage
+                  media={fotosPageData.banner}
                   alt={fotosPageData.banner.alt}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                   priority
                 />
               </div>
@@ -383,9 +387,10 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
                   <CardContent className="p-0">
                     <div className="aspect-[16/10] w-full overflow-hidden relative">
                       {album.coverImage?.url ? (
-                        <img
-                          src={album.coverImage.url}
+                        <ResponsiveImage
+                          media={album.coverImage}
                           alt={album.coverImage.alt || album.name}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                         />
                       ) : (

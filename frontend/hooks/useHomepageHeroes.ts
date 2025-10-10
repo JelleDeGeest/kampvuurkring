@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
+import type { PayloadImage } from '@/components/ResponsiveImage';
 
 export interface Hero {
   id: string;
   // 'name' is used for identification in Payload CMS admin interface only, not for display
   name: string;
   presence: number;
-  homeHeroImage: {
-    url: string;
-    alt?: string;
-  };
+  homeHeroImage: PayloadImage;
   title?: string;
   description?: string;
   button?: {
@@ -33,7 +31,7 @@ export function useHomepageHeroes() {
         setIsLoading(true);
         
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/homepage-heros?sort=presence`,
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/homepage-heros?sort=presence&depth=1`,
           { signal: controller.signal, cache: "no-store" }
         );
         
@@ -44,14 +42,14 @@ export function useHomepageHeroes() {
         }
         
         const data = await res.json();
-        const fetchedHeroes = data?.docs ?? [];
+        const fetchedHeroes = (data?.docs ?? []) as Hero[];
         
         if (isMounted) {
           // Filter out heroes with presence = 0 and sort by presence (descending)
           const activeHeroes = fetchedHeroes
-            .filter((hero: Hero) => hero.presence > 0)
-            .sort((a: Hero, b: Hero) => b.presence - a.presence)
-            .map((hero: Hero) => {
+            .filter((hero) => hero.presence > 0)
+            .sort((a, b) => b.presence - a.presence)
+            .map((hero) => {
               // If title is not set, use name as title
               if (!hero.title) {
                 return {

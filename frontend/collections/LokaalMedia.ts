@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, displayNameField, imageVariantSizes } from '../lib/mediaHooks'
 
 export const LokaalMedia: CollectionConfig = {
   slug: 'lokaal-media',
@@ -9,7 +10,8 @@ export const LokaalMedia: CollectionConfig = {
   admin: {
     group: 'Media',
     description: 'Media opslag voor lokaal verhuur foto\'s en documenten',
-    useAsTitle: 'filename',
+    useAsTitle: 'displayName',
+    defaultColumns: ['displayName', 'originalFilename', 'updatedAt'],
     hidden: ({ user }) => {
       // Hide from regular users, show to admins
       return !user?.roles?.includes('admin')
@@ -20,28 +22,16 @@ export const LokaalMedia: CollectionConfig = {
   },
   upload: {
     mimeTypes: ['image/*', 'application/pdf'],
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 400,
-        height: 300,
-        position: 'centre',
-      },
-      {
-        name: 'card',
-        width: 800,
-        height: 600,
-        position: 'centre',
-      },
-      {
-        name: 'gallery',
-        width: 1200,
-        height: 900,
-        position: 'centre',
-      },
-    ],
+    imageSizes: imageVariantSizes,
+  },
+  hooks: {
+    beforeOperation: [prepareUniqueFilename],
+    afterChange: [copyCDN],
+    afterDelete: [cleanupCDN],
   },
   fields: [
+    displayNameField,
+    originalFilenameField,
     {
       name: 'alt',
       type: 'text',

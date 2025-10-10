@@ -1,31 +1,18 @@
 import { Metadata } from 'next'
-import { PhotoAlbumsPageClient } from './photo-albums-page.client'
+import { PhotoAlbumsPageClient, type FotosPageGlobal, type PhotoAlbum } from './photo-albums-page.client'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import config from '@payload-config'
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
 
-interface FotosPageGlobal {
-  title: string
-  subtitle: string
-  banner?: {
-    id: number | string
-    alt: string
-    url: string
-    filename: string
-    width?: number
-    height?: number
-  }
-}
-
 export const metadata: Metadata = {
   title: "Foto's - Scouts Sint-Johannes",
   description: 'Bekijk onze fotoalbums van kampen, weekends en activiteiten',
 }
 
-async function getPhotoAlbums() {
-  let photoAlbums: any[] = []
+async function getPhotoAlbums(): Promise<PhotoAlbum[]> {
+  let photoAlbums: PhotoAlbum[] = []
   
   try {
     const payload = await getPayloadHMR({ config })
@@ -34,9 +21,10 @@ async function getPhotoAlbums() {
       collection: 'photoAlbums',
       limit: 1000,
       sort: '-year',
+      depth: 1,
     })
-    
-    photoAlbums = result.docs
+
+    photoAlbums = result.docs as PhotoAlbum[]
   } catch (error) {
     // During build time, database might not be available
     // Return empty array to allow the build to continue
@@ -69,11 +57,8 @@ async function getFotosPageData(): Promise<FotosPageGlobal | null> {
 export default async function PhotosPage() {
   const [fotosPageData, photoAlbums] = await Promise.all([
     getFotosPageData(),
-    getPhotoAlbums()
+    getPhotoAlbums(),
   ])
-  
-  return <PhotoAlbumsPageClient 
-    fotosPageData={fotosPageData} 
-    photoAlbums={photoAlbums as any} 
-  />
+
+  return <PhotoAlbumsPageClient fotosPageData={fotosPageData} photoAlbums={photoAlbums} />
 }

@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload'
+import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, imageVariantSizes } from '../lib/mediaHooks'
 
 export const LeidersBanners: CollectionConfig = {
   slug: 'leiders-banners',
@@ -24,22 +25,25 @@ export const LeidersBanners: CollectionConfig = {
   },
   upload: {
     mimeTypes: ['image/*'],
-    imageSizes: [
-      {
-        name: 'banner',
-        width: 1200,
-        height: 400,
-        position: 'centre',
-      },
-      {
-        name: 'thumbnail',
-        width: 400,
-        height: 133,
-        position: 'centre',
+    imageSizes: imageVariantSizes,
+  },
+  hooks: {
+    beforeOperation: [prepareUniqueFilename],
+    beforeChange: [
+      async ({ data, req, operation }) => {
+        // Auto-generate alt text if not provided
+        if (!data.alt && data.name) {
+          data.alt = `Banner afbeelding: ${data.name}`;
+        }
+
+        return data;
       },
     ],
+    afterChange: [copyCDN],
+    afterDelete: [cleanupCDN],
   },
   fields: [
+    originalFilenameField,
     {
       name: 'name',
       type: 'text',
@@ -58,16 +62,4 @@ export const LeidersBanners: CollectionConfig = {
       },
     },
   ],
-  hooks: {
-    beforeChange: [
-      async ({ data, req, operation }) => {
-        // Auto-generate alt text if not provided
-        if (!data.alt && data.name) {
-          data.alt = `Banner afbeelding: ${data.name}`;
-        }
-
-        return data;
-      },
-    ],
-  },
 }
