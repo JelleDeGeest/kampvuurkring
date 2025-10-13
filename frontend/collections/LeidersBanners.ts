@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, imageVariantSizes } from '../lib/mediaHooks'
+import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, imageVariantSizes, autoAltField, deriveMediaLabel } from '../lib/mediaHooks'
 
 export const LeidersBanners: CollectionConfig = {
   slug: 'leiders-banners',
@@ -29,36 +29,34 @@ export const LeidersBanners: CollectionConfig = {
   },
   hooks: {
     beforeOperation: [prepareUniqueFilename],
-    beforeChange: [
-      async ({ data, req, operation }) => {
-        // Auto-generate alt text if not provided
-        if (!data.alt && data.name) {
-          data.alt = `Banner afbeelding: ${data.name}`;
-        }
-
-        return data;
-      },
-    ],
     afterChange: [copyCDN],
     afterDelete: [cleanupCDN],
   },
   fields: [
     originalFilenameField,
+    autoAltField,
     {
       name: 'name',
       type: 'text',
       label: 'Banner Naam',
-      required: true,
+      required: false,
       admin: {
         description: 'Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")',
       },
-    },
-    {
-      name: 'alt',
-      type: 'text',
-      label: 'Alt tekst',
-      admin: {
-        description: 'Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)',
+      hooks: {
+        beforeValidate: [
+          ({ value, siblingData, originalDoc }: any) => {
+            if (typeof value === 'string' && value.trim().length > 0) {
+              return value
+            }
+
+            return (
+              deriveMediaLabel(siblingData) ||
+              deriveMediaLabel(originalDoc) ||
+              (typeof value === 'string' ? value : '')
+            )
+          },
+        ],
       },
     },
   ],

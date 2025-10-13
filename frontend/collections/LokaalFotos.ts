@@ -1,5 +1,7 @@
 import { CollectionConfig } from 'payload'
 
+import { hasValue } from '../lib/validation'
+
 const LokaalFotos: CollectionConfig = {
   slug: 'lokaal-fotos',
   labels: {
@@ -36,9 +38,23 @@ const LokaalFotos: CollectionConfig = {
       type: 'upload',
       label: 'Afbeelding',
       relationTo: 'lokaal-media',
-      required: true,
+      required: false,
       admin: {
         description: 'Upload een foto van het lokaal of faciliteit',
+      },
+      validate: (value, { operation, originalDoc }: any) => {
+        if (operation === 'create' && !hasValue(value)) {
+          return 'Upload een foto van het lokaal of faciliteit'
+        }
+
+        if (operation === 'update') {
+          const currentValue = hasValue(value) ? value : originalDoc?.image
+          if (!hasValue(currentValue)) {
+            return 'Upload een foto van het lokaal of faciliteit'
+          }
+        }
+
+        return true
       },
     },
     {

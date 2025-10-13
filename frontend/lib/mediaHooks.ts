@@ -18,14 +18,88 @@ const s3Client = new S3Client({
 const ORIGINALS_BUCKET = process.env.S3_ORIGINALS_BUCKET || 'media-original'
 const CDN_BUCKET = process.env.S3_CDN_BUCKET || 'media-cdn'
 
+export const deriveMediaLabel = (data?: Record<string, unknown>): string | undefined => {
+  if (!data) return undefined
+
+  const candidates = [
+    data.displayName,
+    data.name,
+    data.title,
+    data.originalFilename,
+    data.filename,
+  ]
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      return candidate.trim()
+    }
+  }
+
+  return undefined
+}
+
 export const displayNameField = {
   name: 'displayName',
   type: 'text' as const,
   label: 'Naam',
   admin: {
-    description: 'Standaard ingevuld met de originele bestandsnaam',
+    description: 'Automatisch ingevuld met de originele bestandsnaam (kan aangepast worden)',
   },
-}
+  hooks: {
+    beforeValidate: [
+      ({ value, siblingData, originalDoc }: any) => {
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return value
+        }
+
+        return (
+          deriveMediaLabel(siblingData) ||
+          deriveMediaLabel(originalDoc) ||
+          (typeof value === 'string' ? value : '')
+        )
+      },
+    ],
+    afterRead: [
+      ({ value, data }: any) => {
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return value
+        }
+
+        return deriveMediaLabel(data) || ''
+      },
+    ],
+  },
+} as const
+
+export const autoAltField = {
+  name: 'alt',
+  type: 'text' as const,
+  label: 'Alt tekst',
+  admin: {
+    hidden: true,
+    readOnly: true,
+  },
+  hooks: {
+    beforeValidate: [
+      ({ value, siblingData, originalDoc }: any) => {
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return value
+        }
+
+        return deriveMediaLabel(siblingData) || deriveMediaLabel(originalDoc) || ''
+      },
+    ],
+    afterRead: [
+      ({ value, data }: any) => {
+        if (typeof value === 'string' && value.trim().length > 0) {
+          return value
+        }
+
+        return deriveMediaLabel(data) || ''
+      },
+    ],
+  },
+} as const
 
 const dimensionPresets = [
   { key: 'sm', width: 480 },
@@ -101,13 +175,29 @@ export const prepareUniqueFilename = async ({ args, operation }: BeforeOperation
 
   normaliseFileName(file, uniqueFilename, originalFilename)
 
-  const nextData = {
+  const nextData: Record<string, any> = {
     ...(args.data || {}),
     originalFilename,
   }
 
-  if (!nextData.displayName) {
+  const shouldUseString = (value: unknown): value is string =>
+    typeof value === 'string' && value.trim().length > 0
+
+  if (!shouldUseString(nextData.displayName)) {
     nextData.displayName = originalFilename
+  }
+
+  if (!shouldUseString(nextData.name)) {
+    nextData.name = originalFilename
+  }
+
+  const altFallback =
+    (shouldUseString(nextData.displayName) && nextData.displayName) ||
+    (shouldUseString(nextData.name) && nextData.name) ||
+    originalFilename
+
+  if (!shouldUseString(nextData.alt)) {
+    nextData.alt = altFallback
   }
 
   args.data = nextData

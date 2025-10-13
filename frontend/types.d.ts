@@ -262,16 +262,13 @@ export interface Activiteiten {
 export interface Media {
   id: number;
   /**
-   * Standaard ingevuld met de originele bestandsnaam
+   * Automatisch ingevuld met de originele bestandsnaam (kan aangepast worden)
    */
   displayName?: string | null;
   /**
    * The original name of the uploaded file
    */
   originalFilename?: string | null;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid
-   */
   alt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -509,14 +506,11 @@ export interface BannerImage {
    * The original name of the uploaded file
    */
   originalFilename?: string | null;
+  alt?: string | null;
   /**
    * Geef de banner een duidelijke naam (bv. "Zomerkamp Bos", "Winterkamp Bergen")
    */
-  name: string;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
-   */
-  alt?: string | null;
+  name?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -735,7 +729,7 @@ export interface Leider {
 export interface LeidersFoto {
   id: number;
   /**
-   * Standaard ingevuld met de originele bestandsnaam
+   * Automatisch ingevuld met de originele bestandsnaam (kan aangepast worden)
    */
   displayName?: string | null;
   /**
@@ -846,7 +840,7 @@ export interface PhotoAlbum {
   /**
    * Beste is een groepsfoto in landscape formaat
    */
-  coverImage: number | Media;
+  coverImage?: (number | null) | Media;
   updatedAt: string;
   createdAt: string;
 }
@@ -920,7 +914,7 @@ export interface HomepageHero {
    * Used for ordering/priority (lower numbers appear first)
    */
   presence: number;
-  homeHeroImage: number | HomepageHeroImage;
+  homeHeroImage?: (number | null) | HomepageHeroImage;
   /**
    * If one of Title, Description, or Button is filled in, all must be filled in
    */
@@ -949,7 +943,7 @@ export interface HomepageHero {
 export interface HomepageHeroImage {
   id: number;
   /**
-   * Standaard ingevuld met de originele bestandsnaam
+   * Automatisch ingevuld met de originele bestandsnaam (kan aangepast worden)
    */
   displayName?: string | null;
   /**
@@ -1052,7 +1046,7 @@ export interface LokaalFoto {
   /**
    * Upload een foto van het lokaal of faciliteit
    */
-  image: number | LokaalMedia;
+  image?: (number | null) | LokaalMedia;
   /**
    * Kies de categorie waar deze foto bij hoort
    */
@@ -1089,16 +1083,13 @@ export interface LokaalFoto {
 export interface LokaalMedia {
   id: number;
   /**
-   * Standaard ingevuld met de originele bestandsnaam
+   * Automatisch ingevuld met de originele bestandsnaam (kan aangepast worden)
    */
   displayName?: string | null;
   /**
    * The original name of the uploaded file
    */
   originalFilename?: string | null;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid
-   */
   alt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1198,14 +1189,11 @@ export interface LeidersBanner {
    * The original name of the uploaded file
    */
   originalFilename?: string | null;
+  alt?: string | null;
   /**
    * Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")
    */
-  name: string;
-  /**
-   * Beschrijving van de afbeelding voor toegankelijkheid (automatisch ingevuld indien leeg)
-   */
-  alt?: string | null;
+  name?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1787,8 +1775,8 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface BannerImagesSelect<T extends boolean = true> {
   originalFilename?: T;
-  name?: T;
   alt?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1901,8 +1889,8 @@ export interface BannerImagesSelect<T extends boolean = true> {
  */
 export interface LeidersBannersSelect<T extends boolean = true> {
   originalFilename?: T;
-  name?: T;
   alt?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

@@ -1,5 +1,7 @@
 import { CollectionConfig } from 'payload'
 
+import { hasValue } from '../lib/validation'
+
 const PhotoAlbums: CollectionConfig = {
   slug: 'photoAlbums',
   labels: {
@@ -120,9 +122,23 @@ const PhotoAlbums: CollectionConfig = {
       type: 'upload',
       label: 'Cover Afbeelding',
       relationTo: 'media',
-      required: true,
+      required: false,
       admin: {
         description: 'Beste is een groepsfoto in landscape formaat',
+      },
+      validate: (value, { operation, originalDoc }: any) => {
+        if (operation === 'create' && !hasValue(value)) {
+          return 'Selecteer een cover afbeelding voor dit album'
+        }
+
+        if (operation === 'update') {
+          const currentValue = hasValue(value) ? value : originalDoc?.coverImage
+          if (!hasValue(currentValue)) {
+            return 'Selecteer een cover afbeelding voor dit album'
+          }
+        }
+
+        return true
       },
     },
   ],

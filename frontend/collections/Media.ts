@@ -1,5 +1,5 @@
 import { CollectionConfig } from 'payload'
-import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, displayNameField, imageVariantSizes } from '../lib/mediaHooks'
+import { prepareUniqueFilename, copyCDN, cleanupCDN, originalFilenameField, displayNameField, imageVariantSizes, autoAltField } from '../lib/mediaHooks'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -32,13 +32,6 @@ export const Media: CollectionConfig = {
   fields: [
     displayNameField,
     originalFilenameField,
-    {
-      name: 'alt',
-      type: 'text',
-      label: 'Alt tekst',
-      admin: {
-        description: 'Beschrijving van de afbeelding voor toegankelijkheid',
-      },
-    },
+    autoAltField,
   ],
 }

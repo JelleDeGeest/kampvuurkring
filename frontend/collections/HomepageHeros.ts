@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { hasValue } from '../lib/validation'
+
 export const HomepageHeros: CollectionConfig = {
   slug: 'homepage-heros',
   admin: {
@@ -28,8 +30,22 @@ export const HomepageHeros: CollectionConfig = {
       name: 'homeHeroImage',
       type: 'upload',
       relationTo: 'homepage-hero-images',
-      required: true,
+      required: false,
       label: 'Home Hero Image',
+      validate: (value, { operation, originalDoc }: any) => {
+        if (operation === 'create' && !hasValue(value)) {
+          return 'Selecteer een afbeelding voor de homepage banner'
+        }
+
+        if (operation === 'update') {
+          const currentValue = hasValue(value) ? value : originalDoc?.homeHeroImage
+          if (!hasValue(currentValue)) {
+            return 'Selecteer een afbeelding voor de homepage banner'
+          }
+        }
+
+        return true
+      },
     },
     {
       name: 'title',
