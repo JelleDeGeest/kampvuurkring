@@ -175,6 +175,19 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
     )
   }, [fotosPageData])
 
+  const resolvedBannerImageUrl = useMemo(
+    () => bannerImageUrl ?? resolveMediaUrl(fotosPageData?.banner?.url, PAYLOAD_URL),
+    [bannerImageUrl, fotosPageData],
+  )
+
+  const glowBackgroundImage = useMemo(
+    () =>
+      resolvedBannerImageUrl
+        ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${resolvedBannerImageUrl})`
+        : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)',
+    [resolvedBannerImageUrl],
+  )
+
   // Counter animations - all end at 1500ms with staggered delays
   const takkenCounter = useCountUp(7, 1500, 0)
   const yearsCounter = useCountUp(years.length, 1400, 100)
@@ -224,7 +237,7 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${fotosPageData.banner.url}`})`,
+                    backgroundImage: glowBackgroundImage,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -241,6 +254,7 @@ export function PhotoAlbumsPageClient({ fotosPageData, photoAlbums }: PhotoAlbum
               <div className="absolute inset-0">
                 <ResponsiveImage
                   media={fotosPageData.banner}
+                  fallbackUrl={resolvedBannerImageUrl}
                   alt={fotosPageData.banner.alt}
                   fill
                   className="object-cover"

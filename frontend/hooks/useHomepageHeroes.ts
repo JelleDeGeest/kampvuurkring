@@ -6,7 +6,7 @@ export interface Hero {
   // 'name' is used for identification in Payload CMS admin interface only, not for display
   name: string;
   presence: number;
-  homeHeroImage: PayloadImage;
+  homeHeroImage?: PayloadImage | null;
   title?: string;
   description?: string;
   button?: {

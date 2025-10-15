@@ -51,6 +51,14 @@ export type ResponsiveImageProps = Omit<
   baseUrl?: string
 }
 
+const PLACEHOLDER_SRC =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="9" viewBox="0 0 16 9"><rect width="16" height="9" fill="%23E5E7EB"/><g opacity="0.35" stroke="%239CA3AF" stroke-width="0.5"><line x1="0" y1="0" x2="16" y2="9"/><line x1="0" y1="9" x2="16" y2="0"/></g></svg>`,
+  )
+
+const PLACEHOLDER_ALT = 'Afbeelding niet beschikbaar'
+
 type VariantEntry = {
   format: string
   width: number
@@ -143,9 +151,8 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
     const resolvedFallbackSrc =
       fallbackVariant?.url ?? resolveMediaUrl(media?.url, baseUrl) ?? resolveMediaUrl(fallbackUrl, baseUrl)
 
-    if (!resolvedFallbackSrc) {
-      return null
-    }
+    const usingPlaceholder = !resolvedFallbackSrc
+    const finalSrc = usingPlaceholder ? PLACEHOLDER_SRC : resolvedFallbackSrc
 
     const sources = FORMAT_PREFERENCE.map((format) => {
       const entries = variantsByFormat.get(format)
@@ -167,9 +174,10 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
     const loading = priority ? 'eager' : loadingProp
     const fetchPriority = fetchPriorityProp ?? (priority ? 'high' : undefined)
 
-    const { width: widthProp, height: heightProp, ...restImgProps } = rest as {
+    const { width: widthProp, height: heightProp, style: styleProp, ...restImgProps } = rest as {
       width?: number
       height?: number
+      style?: React.CSSProperties
       [key: string]: unknown
     }
 
@@ -178,15 +186,24 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
 
     const imgProps: React.ImgHTMLAttributes<HTMLImageElement> = {
       ...restImgProps,
-      src: resolvedFallbackSrc,
+      src: finalSrc,
       srcSet: fallbackSrcSet,
       sizes,
       loading,
       fetchPriority,
       width: widthAttr,
       height: heightAttr,
-      alt: altProp ?? media?.alt ?? '',
+      alt: usingPlaceholder ? altProp ?? media?.alt ?? PLACEHOLDER_ALT : altProp ?? media?.alt ?? '',
       className: cn(fill && 'absolute inset-0 h-full w-full', className),
+      style: usingPlaceholder
+        ? {
+            backgroundColor: 'hsl(var(--muted, 210 40% 96%))',
+            color: 'hsl(var(--muted-foreground, 215 16% 47%))',
+            objectFit: 'cover',
+            ...styleProp,
+          }
+        : styleProp,
+      'data-has-placeholder': usingPlaceholder ? 'true' : undefined,
     }
 
     if (!imgProps.width) delete imgProps.width
@@ -206,4 +223,3 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
 )
 
 ResponsiveImage.displayName = 'ResponsiveImage'
-

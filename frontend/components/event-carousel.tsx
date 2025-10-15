@@ -14,7 +14,6 @@ export function EventCarousel() {
   const { heroes, isLoading, error, hasCompleteInfo } = useHomepageHeroes()
   const [activeIndex, setActiveIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const [imagesLoaded, setImagesLoaded] = useState<Set<string>>(new Set())
 
   const getHeroImageUrl = useCallback(
     (image?: PayloadImage | null) =>
@@ -63,16 +62,6 @@ export function EventCarousel() {
     setIsAutoPlaying(false)
   }
 
-  const handleImageLoad = (url?: string) => {
-    if (!url) return
-    setImagesLoaded((prev) => {
-      if (prev.has(url)) return prev
-      const next = new Set(prev)
-      next.add(url)
-      return next
-    })
-  }
-
   // Loading state
   if (isLoading) {
     return (
@@ -92,21 +81,24 @@ export function EventCarousel() {
       {/* Container for outer glow effects - only render for active hero */}
       <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
         {heroes.map((hero, index) => {
-          const isActive = index === activeIndex;
-          if (!isActive) return null;
+          const isActive = index === activeIndex
 
           const backgroundUrl =
             getHeroImageUrl(hero.homeHeroImage) ??
             resolveMediaUrl(hero.homeHeroImage?.url) ??
-            hero.homeHeroImage.url
+            undefined
+
+          const backgroundImage = backgroundUrl
+            ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${backgroundUrl})`
+            : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)'
 
           return (
             <div
               key={`glow-${hero.id}`}
-              className="absolute inset-0 transition-opacity ease-in-out"
-              style={{ 
-                opacity: 1,
-                transitionDuration: '1600ms',
+              className="absolute inset-0 pointer-events-none transition-opacity ease-in-out"
+              style={{
+                opacity: isActive ? 1 : 0,
+                transitionDuration: '1200ms',
               }}
             >
               {/* Horizontally extended glow effect with lower quality for performance */}
@@ -116,7 +108,7 @@ export function EventCarousel() {
                   inset: '0',
                   width: '100%',
                   height: '100%',
-                  backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${backgroundUrl})`,
+                  backgroundImage,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -125,7 +117,7 @@ export function EventCarousel() {
                 }}
               />
             </div>
-          );
+          )
         })}
       </div>
 
@@ -135,36 +127,27 @@ export function EventCarousel() {
           const isActive = index === activeIndex;
           const imageUrl = getHeroImageUrl(hero.homeHeroImage);
           const fallbackImageUrl = imageUrl ?? resolveMediaUrl(hero.homeHeroImage?.url);
-          const isImageLoaded = fallbackImageUrl ? imagesLoaded.has(fallbackImageUrl) : false;
+          const heroAlt = hero.homeHeroImage?.alt ?? hero.title ?? hero.name ?? 'Hero image';
 
           return (
             <div
               key={hero.id}
               className="absolute inset-0"
-              style={{ 
+              style={{
                 opacity: isActive ? 1 : 0,
-                transition: 'opacity 1600ms ease-in-out',
-                visibility: isActive ? 'visible' : 'hidden',
+                transition: 'opacity 1200ms ease-in-out',
+                pointerEvents: isActive ? 'auto' : 'none',
               }}
             >
-              {/* Loading placeholder */}
-              {!isImageLoaded && (
-                <div className="absolute inset-0 bg-gray-100 animate-pulse" />
-              )}
-              
               {/* Hero Image using Next.js Image component */}
               <ResponsiveImage
                 media={hero.homeHeroImage}
-                alt={hero.homeHeroImage.alt || hero.title || 'Hero image'}
+                fallbackUrl={fallbackImageUrl}
+                alt={heroAlt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                 priority={index === 0}
-                onLoad={() => handleImageLoad(fallbackImageUrl)}
-                style={{
-                  opacity: isImageLoaded ? 1 : 0,
-                  transition: 'opacity 300ms ease-in-out',
-                }}
               />
               
               {/* Dark overlay for better contrast */}

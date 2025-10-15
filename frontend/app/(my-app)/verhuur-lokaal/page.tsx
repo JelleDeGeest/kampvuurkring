@@ -90,6 +90,13 @@ export default async function VerhuurLokaalPage() {
       }) ?? resolveMediaUrl(verhuurPageData.banner.url, PAYLOAD_URL)
     : undefined
 
+  const resolvedBannerImageUrl =
+    bannerImageUrl ?? resolveMediaUrl(verhuurPageData?.banner?.url, PAYLOAD_URL)
+
+  const glowBackgroundImage = resolvedBannerImageUrl
+    ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${resolvedBannerImageUrl})`
+    : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)'
+
   const galleryImages = lokaalFotos.map((foto: any) => {
     const media = foto.image as PayloadImage | undefined
     return {
@@ -133,7 +140,7 @@ export default async function VerhuurLokaalPage() {
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${verhuurPageData.banner.url}`})`,
+                    backgroundImage: glowBackgroundImage,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -150,6 +157,7 @@ export default async function VerhuurLokaalPage() {
               <div className="absolute inset-0">
                 <ResponsiveImage
                   media={verhuurPageData.banner}
+                  fallbackUrl={resolvedBannerImageUrl}
                   alt={verhuurPageData.banner.alt || 'Banner afbeelding verhuur lokaal'}
                   fill
                   className="object-cover"

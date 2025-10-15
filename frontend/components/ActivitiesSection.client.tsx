@@ -15,27 +15,29 @@ import { CategoryFilter, categoryTabs, eventIcon } from '@/components/CategoryFi
 import { useActivitiesFilter, Activity } from '@/hooks/useActivitiesFilter'
 import { useCategorySelection, CategoryValue } from '@/hooks/CategorySelectionContext'
 import { useImportantDates, PeriodItem } from '@/hooks/useImportantDates'
+import { ResponsiveImage, type PayloadImage } from '@/components/ResponsiveImage'
 
 const TRANSITION_DURATION = 300
 const INITIAL_FADE_IN_DURATION = 300
 
 // Banner component for image headers
-function ImageBanner({ bannerImage, title }: { bannerImage: any, title: string }) {
-  // Handle both populated media objects and simple IDs
-  const imageUrl = typeof bannerImage === 'object' && bannerImage?.url 
-    ? bannerImage.url 
-    : typeof bannerImage === 'string' 
-    ? bannerImage 
-    : null;
+function ImageBanner({ bannerImage, title }: { bannerImage: any; title: string }) {
+  const media: PayloadImage | undefined =
+    bannerImage && typeof bannerImage === 'object' && 'url' in bannerImage
+      ? (bannerImage as PayloadImage)
+      : undefined
 
-  if (!imageUrl) return null;
+  const fallbackUrl = typeof bannerImage === 'string' ? bannerImage : undefined
 
   return (
-    <div className="relative w-full h-32 overflow-hidden rounded-t-lg">
-      <img 
-        src={imageUrl}
+    <div className="relative w-full h-32 overflow-hidden rounded-t-lg bg-muted">
+      <ResponsiveImage
+        media={media}
+        fallbackUrl={fallbackUrl}
         alt={`Banner voor ${title}`}
-        className="w-full h-full object-cover"
+        fill
+        className="object-cover"
+        pictureClassName="absolute inset-0"
       />
     </div>
   )
@@ -432,7 +434,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                 
                 // Regular division items (activities, weekends, camps)
                 const tabMeta = categoryTabs.find((t) => t.value === act.division)
-                const hasBanner = isSpecialEvent && act.bannerImage;
+                const hasBanner = isSpecialEvent;
                 
                 return (
                   <Card key={act.id} className="border bg-white overflow-hidden">

@@ -184,6 +184,10 @@ export default async function InschrijvenPage() {
     }) ?? resolveMediaUrl(media?.url, PAYLOAD_URL)
 
   const bannerImageUrl = resolveMediaUrlWithFallback(pageData?.banner as PayloadImage | null)
+  const resolvedBannerImageUrl = bannerImageUrl ?? resolveMediaUrl(pageData?.banner?.url, PAYLOAD_URL)
+  const glowBackgroundImage = resolvedBannerImageUrl
+    ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${resolvedBannerImageUrl})`
+    : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)'
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -203,7 +207,7 @@ export default async function InschrijvenPage() {
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${bannerImageUrl ?? `${PAYLOAD_URL}${pageData.banner.url}`})`,
+                    backgroundImage: glowBackgroundImage,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -220,6 +224,7 @@ export default async function InschrijvenPage() {
               <div className="absolute inset-0">
                 <ResponsiveImage
                   media={pageData.banner}
+                  fallbackUrl={resolvedBannerImageUrl}
                   alt={pageData.banner.alt || pageData.title}
                   fill
                   className="object-cover"

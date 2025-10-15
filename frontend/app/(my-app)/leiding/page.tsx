@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
 import Link from "next/link"
+import { resolveMediaUrl } from '@/lib/mediaHelpers'
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
@@ -96,6 +97,15 @@ export default async function LeidingPage() {
     fetchLeidersByTak('groepsleiding')
   ]);
 
+  const resolvedBannerImageUrl = resolveMediaUrl(
+    leidersPageData?.banner?.url,
+    PAYLOAD_URL,
+  )
+
+  const glowBackgroundImage = resolvedBannerImageUrl
+    ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${resolvedBannerImageUrl})`
+    : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)'
+
   return (
     <div className="flex min-h-screen flex-col">
       
@@ -113,7 +123,7 @@ export default async function LeidingPage() {
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${leidersPageData.banner.url})`,
+                    backgroundImage: glowBackgroundImage,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',
@@ -130,6 +140,7 @@ export default async function LeidingPage() {
               <div className="absolute inset-0">
                 <ResponsiveImage
                   media={leidersPageData.banner}
+                  fallbackUrl={resolvedBannerImageUrl}
                   alt={leidersPageData.banner.alt}
                   fill
                   className="object-cover"
