@@ -162,7 +162,10 @@ export default function Gallery({ images }: GalleryProps) {
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2 pointer-events-auto">
+          <div
+            className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2 pointer-events-auto"
+            style={{ zIndex: transitionSlides.length + 10 }}
+          >
             <h3 className="text-white font-medium">{selectedImage.title}</h3>
           </div>
         </div>
