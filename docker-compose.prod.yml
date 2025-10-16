@@ -36,18 +36,12 @@ services:
       - PAYLOAD_SECRET=${PAYLOAD_SECRET}
       - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-https://www.scoutssintjohannes.be}
       - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL:-https://www.scoutssintjohannes.be}
+      - CDN_PUBLIC_URL=${CDN_PUBLIC_URL}
       - PAYLOAD_PUBLIC_DRAFT_SECRET=${PAYLOAD_PUBLIC_DRAFT_SECRET}
       - NEXT_PUBLIC_DRAFT_SECRET=${NEXT_PUBLIC_DRAFT_SECRET}
       - REVALIDATION_KEY=${REVALIDATION_KEY}
       - NEXT_PRIVATE_REVALIDATION_KEY=${NEXT_PRIVATE_REVALIDATION_KEY}
       - HOSTNAME=0.0.0.0
-    volumes:
-      - ./frontend/media:/app/media
-      - ./frontend/media-leiding:/app/media-leiding
-      - ./frontend/banner-images:/app/banner-images
-      - ./frontend/homepage-hero-images:/app/homepage-hero-images
-      - ./frontend/leiders-foto:/app/leiders-foto
-      - ./frontend/random-afbeeldingen:/app/random-afbeeldingen
     env_file:
       - .env.production
     depends_on:
@@ -88,7 +82,7 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      MINIO_DOMAIN: localhost:9000
+      MINIO_DOMAIN: ${MINIO_DOMAIN:-localhost:9000}
     volumes:
       - minio-data:/data
     command: server /data --console-address ":9001"
