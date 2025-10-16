@@ -179,6 +179,37 @@ services:
     networks:
       - app-network
 
+  backup:
+    container_name: backup-dev
+    build:
+      context: ./backups
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      ENABLE_DB_BACKUP: "true"
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+      MINIO_BUCKETS: media-original,media-cdn,banner-images,homepage-hero-images,leiders-foto
+      ENABLE_MINIO_BACKUP: "true"
+      RCLONE_REMOTE: ${RCLONE_REMOTE_DEV:-}
+      BACKUP_CRON: ${BACKUP_CRON_DEV:-0 3 * * *}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      PROJECT_NAME: dev
+      TZ: Europe/Brussels
+    volumes:
+      - ./backups/data:/backups
+      - ./backups/rclone:/config/rclone:ro
+    depends_on:
+      - db
+      - minio
+    networks:
+      - app-network
+    restart: unless-stopped
+
 
 networks:
   app-network:
