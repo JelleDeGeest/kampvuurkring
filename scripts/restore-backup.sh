@@ -231,4 +231,16 @@ fi
 echo "Cleaning up restore artifacts..."
 rm -rf "${UNPACK_DIR}"
 rm -f "${ARCHIVE_PATH}"
+
+# Ensure the correct services are running after restore
+echo "Ensuring correct services are running for ${ENV_NAME}..."
+docker compose -f "${ROOT_DIR}/${COMPOSE_FILE}" up -d minio
+echo "Waiting for minio to be healthy..."
+sleep 5
+until docker compose -f "${ROOT_DIR}/${COMPOSE_FILE}" ps minio --format '{{.Health}}' 2>/dev/null | grep -q "healthy"; do
+  echo "  waiting..."
+  sleep 5
+done
+echo "Services are healthy."
+
 echo "Restore complete."
