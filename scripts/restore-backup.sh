@@ -66,17 +66,14 @@ MINIO_ENDPOINT="${MINIO_ENDPOINT:-http://minio:9000}"
 MINIO_ACCESS_KEY="${MINIO_ACCESS_KEY:-${MINIO_ROOT_USER:-minioadmin}}"
 MINIO_SECRET_KEY="${MINIO_SECRET_KEY:-${MINIO_ROOT_PASSWORD:-minioadmin123}}"
 RESTORE_ROLE="${PG_RESTORE_ROLE:-${POSTGRES_USER:-postgres}}"
-RESTORE_CLEAN="${PG_RESTORE_CLEAN:-false}"
-RESTORE_DATA_ONLY="${PG_RESTORE_DATA_ONLY:-true}"
+RESTORE_CLEAN="${PG_RESTORE_CLEAN:-true}"
+RESTORE_DATA_ONLY="${PG_RESTORE_DATA_ONLY:-false}"
 RESTORE_SCHEMAS_RAW="${PG_RESTORE_SCHEMAS:-public}"
 RESTORE_RESET_SCHEMA="${PG_RESTORE_RESET_SCHEMA:-true}"
 
 RESTORE_FLAGS=()
 SCHEMA_LIST=()
-if [[ "${RESTORE_DATA_ONLY}" == "true" && "${RESTORE_RESET_SCHEMA}" == "true" ]]; then
-  echo "Warning: PG_RESTORE_DATA_ONLY=true and PG_RESTORE_RESET_SCHEMA=true; skipping schema reset." >&2
-  RESTORE_RESET_SCHEMA="false"
-fi
+# Removed the check that disabled schema reset when data-only was true
 if [[ "${RESTORE_CLEAN}" == "true" ]]; then
   RESTORE_FLAGS+=("--clean" "--if-exists")
 fi
@@ -182,6 +179,12 @@ if [[ -n "${DB_DUMP}" ]]; then
       backup \
       -lc "set -euo pipefail; \
         export PGPASSWORD=\"${POSTGRES_PASSWORD}\"; \
+        echo \"Waiting for database to be ready...\"; \
+        until pg_isready -h \"${POSTGRES_HOST:-db}\" -p \"${POSTGRES_PORT:-5432}\" -U \"${POSTGRES_USER:-postgres}\"; do \
+          echo \"Database unavailable - sleeping\"; \
+          sleep 2; \
+        done; \
+        echo \"Database is ready!\"; \
         pg_restore${RESTORE_FLAGS_STR} \
           --no-owner \
           --no-privileges \
