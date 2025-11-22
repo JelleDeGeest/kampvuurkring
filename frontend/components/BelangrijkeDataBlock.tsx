@@ -226,11 +226,12 @@ function Section({
 
                   {/* Add enrollment button if enrollments are enabled and button not hidden */}
                   {it.enrollmentSettings?.enabled &&
-                   it.enrollmentSettings?.enrollmentLink && (
+                   it.enrollmentSettings?.enrollmentLink &&
+                   !it.enrollmentSettings?.hideButton && (
                     <div className="mt-2">
                       <a
                         href={it.enrollmentSettings.enrollmentLink}
-                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none"
+                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                       >
                         Info/Inschrijven
                       </a>
@@ -244,7 +245,7 @@ function Section({
                         href={it.button.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none"
+                        className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                       >
                         {it.button.text}
                       </a>
@@ -253,7 +254,7 @@ function Section({
                 </div>
               </div>
             ) : (
-              <PeriodRow key={it.id} item={it as PeriodItem} expandedItemId={expandedItemId} toggleExpanded={toggleExpanded} />
+              <PeriodRow key={it.id} item={it as PeriodItem} periodType={periodType} expandedItemId={expandedItemId} toggleExpanded={toggleExpanded} />
             ),
           )
         ) : (
@@ -267,15 +268,28 @@ function Section({
 /* ---------- row met icoon voor weekends & kampen ---------- */
 function PeriodRow({
   item,
+  periodType,
   expandedItemId,
   toggleExpanded
 }: {
-  item: PeriodItem
+  item: PeriodItem & { originalId?: string }
+  periodType: 'weekend' | 'kamp' | null
   expandedItemId: string | null
   toggleExpanded: (itemId: string) => void
 }) {
   // Now each item has a single division value
   const meta = categoryTabs.find((t) => t.value === item.division);
+
+  // Generate enrollment link dynamically based on period type and item ID
+  const getEnrollmentLink = () => {
+    const itemId = item.originalId || item.id;
+    if (periodType === 'weekend') {
+      return `/inschrijven/weekends/${itemId}`;
+    } else if (periodType === 'kamp') {
+      return `/inschrijven/kampen/${itemId}`;
+    }
+    return item.enrollmentSettings?.enrollmentLink || '';
+  };
 
   return (
     <div className="flex items-start gap-4 border-l-4 pl-3 py-2 border-primary">
@@ -304,12 +318,12 @@ function PeriodRow({
 
 
         {/* Add enrollment button if enrollments are enabled and button not hidden */}
-        {item.enrollmentSettings?.enabled && 
-         item.enrollmentSettings?.enrollmentLink && (
+        {item.enrollmentSettings?.enabled &&
+         !item.enrollmentSettings?.hideButton && (
           <div className="mt-2">
             <a
-              href={item.enrollmentSettings.enrollmentLink}
-              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              href={getEnrollmentLink()}
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
             >
               Info/Inschrijven
             </a>
@@ -323,7 +337,7 @@ function PeriodRow({
               href={item.button.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
             >
               {item.button.text}
             </a>

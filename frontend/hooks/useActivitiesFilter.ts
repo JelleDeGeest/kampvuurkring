@@ -19,6 +19,7 @@ export interface Activity {
   };
   enrollmentSettings?: {
     enabled?: boolean;
+    hideButton?: boolean;
     enrollmentLink?: string;
     formPage?: string | number;
   };

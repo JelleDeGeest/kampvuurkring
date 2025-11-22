@@ -15,6 +15,7 @@ export interface EventItem {
   }
   enrollmentSettings?: {
     enabled?: boolean;
+    hideButton?: boolean;
     enrollmentLink?: string;
     formPage?: string | number;
   };

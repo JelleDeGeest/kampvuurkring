@@ -398,18 +398,19 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         </div>
                         
                         {/* Add enrollment button if enrollments are enabled and button not hidden */}
-                        {act.enrollmentSettings?.enabled && 
-                         act.enrollmentSettings?.enrollmentLink && (
+                        {act.enrollmentSettings?.enabled &&
+                         act.enrollmentSettings?.enrollmentLink &&
+                         !act.enrollmentSettings?.hideButton && (
                           <div className="mt-3">
                             <a
                               href={act.enrollmentSettings.enrollmentLink}
-                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                             >
                               Info/Inschrijven
                             </a>
                           </div>
                         )}
-                        
+
                         {/* Add button if available (for other types of buttons) */}
                         {(act.button?.text && act.button?.url) && (
                           <div className="mt-3">
@@ -417,7 +418,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                               href={act.button.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                             >
                               {act.button.text}
                             </a>
@@ -427,11 +428,22 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                     </Card>
                   )
                 }
-                
+
                 // Check if this is a weekend or camp
-                const isSpecialEvent = act.id && typeof act.id === 'string' && 
+                const isSpecialEvent = act.id && typeof act.id === 'string' &&
                   (act.id.startsWith('weekend-') || act.id.startsWith('camp-'));
-                
+
+                // Generate enrollment link dynamically for weekends/camps
+                const getEnrollmentLink = () => {
+                  const itemId = act.originalId || act.id;
+                  if (typeof act.id === 'string' && act.id.startsWith('weekend-')) {
+                    return `/inschrijven/weekends/${itemId}`;
+                  } else if (typeof act.id === 'string' && act.id.startsWith('camp-')) {
+                    return `/inschrijven/kampen/${itemId}`;
+                  }
+                  return act.enrollmentSettings?.enrollmentLink || '';
+                };
+
                 // Regular division items (activities, weekends, camps)
                 const tabMeta = categoryTabs.find((t) => t.value === act.division)
                 const hasBanner = isSpecialEvent;
@@ -497,18 +509,18 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                       </div>
                       
                       {/* Add enrollment button if enrollments are enabled and button not hidden */}
-                      {act.enrollmentSettings?.enabled && 
-                       act.enrollmentSettings?.enrollmentLink && (
+                      {act.enrollmentSettings?.enabled &&
+                       !act.enrollmentSettings?.hideButton && (
                         <div className="mt-3">
                           <a
-                            href={act.enrollmentSettings.enrollmentLink}
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            href={getEnrollmentLink()}
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                           >
                             Info/Inschrijven
                           </a>
                         </div>
                       )}
-                      
+
                       {/* Add button if available (for other types of buttons) */}
                       {(act.button?.text && act.button?.url) && (
                         <div className="mt-3">
@@ -516,7 +528,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                             href={act.button.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                           >
                             {act.button.text}
                           </a>
