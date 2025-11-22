@@ -31,12 +31,13 @@ import { FotosPage } from './globals/FotosPage';
 import { ContactPage } from './globals/ContactPage';
 import { VerhuurPage } from './globals/VerhuurPage';
 import { LeidersDivisionBanners } from './globals/LeidersDivisionBanners';
+import { InschrijvenPage } from './globals/InschrijvenPage';
 import { LeidersFoto } from './collections/LeidersFoto';
 import { HomepageHeroImages } from './collections/HomepageHeroImages';
 import { HomepageHeros } from './collections/HomepageHeros';
-import { Events }   from './collections/Events'
+import { Events } from './collections/Events'
 import { Weekends } from './collections/Weekends'
-import { Camps }    from './collections/Camps'
+import { Camps } from './collections/Camps'
 import { Enrollments } from './collections/Enrollments'
 import { Media } from './collections/Media'
 import { BannerImages } from './collections/BannerImages'
@@ -72,6 +73,7 @@ const config = {
     LeidersPage,
     VerhuurPage,
     LeidersDivisionBanners,
+    InschrijvenPage,
   ],
   plugins: ([
     s3Storage({

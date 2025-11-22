@@ -21,14 +21,14 @@ export interface FotosPageGlobal {
 }
 
 export interface PhotoAlbum {
-  id: string
+  id: number
   name: string
   startYear: number
   endYear: number
   tak: 'kapoenen' | 'wouters' | 'jonggivers' | 'givers' | 'jin' | 'jowos' | 'groepsactiviteit'
   link: string
-  location?: string
-  coverImage: PayloadImage
+  location?: string | null
+  coverImage?: PayloadImage | null
 }
 
 interface PhotoAlbumsPageClientProps {

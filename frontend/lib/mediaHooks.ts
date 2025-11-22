@@ -2,6 +2,7 @@ import path from 'path'
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 import { customAlphabet } from 'nanoid'
 
+
 const nanoid = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 21)
 
 // Initialize S3 client for CDN bucket
@@ -69,7 +70,7 @@ export const displayNameField = {
       },
     ],
   },
-} as const
+}
 
 export const autoAltField = {
   name: 'alt',
@@ -99,7 +100,7 @@ export const autoAltField = {
       },
     ],
   },
-} as const
+}
 
 const dimensionPresets = [
   { key: 'sm', width: 480 },
@@ -153,7 +154,7 @@ const normaliseFileName = (
  * Hook executed in beforeOperation to ensure S3 uploads use a unique filename
  * while storing the original name alongside the document data.
  */
-export const prepareUniqueFilename = async ({ args, operation }: BeforeOperationHookArgs) => {
+export const prepareUniqueFilename = async ({ args, operation }: any) => {
   if (!(operation === 'create' || operation === 'update')) {
     return args
   }

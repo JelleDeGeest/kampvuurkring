@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import { cn } from '@/lib/utils'
 import { resolveMediaUrl } from '@/lib/mediaHelpers'
 
@@ -184,7 +184,7 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
     const widthAttr = fill ? undefined : widthProp ?? fallbackVariant?.width ?? media?.width
     const heightAttr = fill ? undefined : heightProp ?? fallbackVariant?.height ?? media?.height
 
-    const imgProps: React.ImgHTMLAttributes<HTMLImageElement> = {
+    const imgProps: any = {
       ...restImgProps,
       src: finalSrc,
       srcSet: fallbackSrcSet,
@@ -197,11 +197,11 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
       className: cn(fill && 'absolute inset-0 h-full w-full', className),
       style: usingPlaceholder
         ? {
-            backgroundColor: 'hsl(var(--muted, 210 40% 96%))',
-            color: 'hsl(var(--muted-foreground, 215 16% 47%))',
-            objectFit: 'cover',
-            ...styleProp,
-          }
+          backgroundColor: 'hsl(var(--muted, 210 40% 96%))',
+          color: 'hsl(var(--muted-foreground, 215 16% 47%))',
+          objectFit: 'cover',
+          ...styleProp,
+        }
         : styleProp,
       'data-has-placeholder': usingPlaceholder ? 'true' : undefined,
     }

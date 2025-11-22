@@ -1,6 +1,6 @@
 import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
 import { notFound } from "next/navigation"
-import type { JSX } from "react"
+
 
 interface Leider {
   id: string
@@ -36,11 +36,11 @@ async function fetchLeider(id: string): Promise<Leider | null> {
       `${PAYLOAD_URL}/api/leiders/${id}?depth=1`,
       { cache: 'no-store' }
     );
-    
+
     if (!res.ok) {
       return null;
     }
-    
+
     const data = await res.json();
     return data;
   } catch (error) {
@@ -56,7 +56,7 @@ async function fetchDivisionBanner(division: string): Promise<LeidersBanner | nu
       { cache: 'no-store' }
     );
     const data = await res.json();
-    
+
     // Map division to the correct field name
     const fieldMap: Record<string, string> = {
       'kapoenen': 'kapoenenBanner',
@@ -65,10 +65,10 @@ async function fetchDivisionBanner(division: string): Promise<LeidersBanner | nu
       'givers': 'giversBanner',
       'jin': 'jinBanner',
     };
-    
+
     const bannerField = fieldMap[division];
     if (!bannerField) return null;
-    
+
     // Return the banner data if it exists
     const banner = data[bannerField] as LeidersBanner | undefined;
     if (!banner) return null;
@@ -82,21 +82,21 @@ async function fetchDivisionBanner(division: string): Promise<LeidersBanner | nu
 
 function getPrimaryDivision(takken: string[]): string | null {
   // Filter out non-Scout divisions
-  const scoutDivisions = takken.filter(tak => 
+  const scoutDivisions = takken.filter(tak =>
     ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin'].includes(tak)
   );
-  
+
   if (scoutDivisions.length === 0) return null;
-  
+
   // Priority order: Kapoenen > Wouters > Jonggivers > Givers > Jin
   const priorityOrder = ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin'];
-  
+
   for (const division of priorityOrder) {
     if (scoutDivisions.includes(division)) {
       return division;
     }
   }
-  
+
   return scoutDivisions[0]; // Fallback to first division
 }
 
@@ -143,9 +143,9 @@ export default async function LeiderPage({
                 </span>
               )}
               <div className="relative h-8 w-8">
-                <div 
+                <div
                   className="absolute inset-0 rounded"
-                  style={{ 
+                  style={{
                     backgroundColor: division.color,
                     maskImage: `url(${division.icon})`,
                     maskSize: 'contain',
@@ -176,13 +176,13 @@ export default async function LeiderPage({
             <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
               <div className="absolute inset-0">
                 {/* Glow effect */}
-                <div 
+                <div
                   style={{
                     position: 'absolute',
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: divisionBanner 
+                    backgroundImage: divisionBanner
                       ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${divisionBanner.url})`
                       : `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)`,
                     backgroundSize: 'cover',
@@ -221,7 +221,7 @@ export default async function LeiderPage({
                   <div className="absolute inset-0 bg-black/15" />
                 </>
               )}
-              
+
               {/* Optional: Add a pattern overlay for texture */}
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-green-900 to-transparent"></div>
@@ -263,7 +263,7 @@ export default async function LeiderPage({
                   <div className="mb-1 text-center md:text-left">
                     {/* Show special name if in Kapoenen or Wouters */}
                     {(leider.takken?.includes('kapoenen') && leider.kapoenenNaam) ||
-                     (leider.takken?.includes('wouters') && leider.wouterNaam) ? (
+                      (leider.takken?.includes('wouters') && leider.wouterNaam) ? (
                       <div className="flex flex-col items-center md:items-start gap-0.5 md:gap-1.5 text-center md:text-left">
                         {/* Desktop: Special name with divider, real name, then divisions */}
                         <div className="hidden md:block w-full">
@@ -315,7 +315,7 @@ export default async function LeiderPage({
                   <div className="mt-1 space-y-1 text-sm text-center md:text-left leading-tight md:leading-normal">
                     {leider.phoneNumber && (
                       <div className="flex justify-center md:justify-start">
-                        <a 
+                        <a
                           href={`tel:${leider.phoneNumber}`}
                           className="text-primary hover:underline"
                         >
@@ -325,7 +325,7 @@ export default async function LeiderPage({
                     )}
                     {leider.email && (
                       <div className="flex justify-center md:justify-start">
-                        <a 
+                        <a
                           href={`mailto:${leider.email}`}
                           className="text-primary hover:underline"
                         >

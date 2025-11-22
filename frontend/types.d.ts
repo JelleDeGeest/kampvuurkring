@@ -119,6 +119,7 @@ export interface Config {
     leidersPage: LeidersPage;
     verhuurPage: VerhuurPage;
     leidersDivisionBanners: LeidersDivisionBanner;
+    inschrijvenPage: InschrijvenPage;
   };
   globalsSelect: {
     infoPage: InfoPageSelect<false> | InfoPageSelect<true>;
@@ -127,6 +128,7 @@ export interface Config {
     leidersPage: LeidersPageSelect<false> | LeidersPageSelect<true>;
     verhuurPage: VerhuurPageSelect<false> | VerhuurPageSelect<true>;
     leidersDivisionBanners: LeidersDivisionBannersSelect<false> | LeidersDivisionBannersSelect<true>;
+    inschrijvenPage: InschrijvenPageSelect<false> | InschrijvenPageSelect<true>;
   };
   locale: null;
   user: User & {
@@ -2570,6 +2572,55 @@ export interface LeidersDivisionBanner {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inschrijvenPage".
+ */
+export interface InschrijvenPage {
+  id: number;
+  title: string;
+  subtitle: string;
+  banner?: (number | null) | Media;
+  ctaButtonText: string;
+  ctaButtonUrl: string;
+  ctaSubtext?: string | null;
+  decorativeImage?: (number | null) | Media;
+  decorativeImage2?: (number | null) | Media;
+  decorativeImage3?: (number | null) | Media;
+  whyJoinTitle?: string | null;
+  whyJoinReasons?:
+    | {
+        icon: 'users' | 'star' | 'heart' | 'mapPin' | 'calendar' | 'sparkles';
+        title: string;
+        description: string;
+        id?: string | null;
+      }[]
+    | null;
+  existingMembersSection?: {
+    title?: string | null;
+    content?: string | null;
+    infoBoxTitle?: string | null;
+    infoBoxContent?: string | null;
+  };
+  divisionsTitle?: string | null;
+  divisionsSubtitle?: string | null;
+  practicalInfoTitle?: string | null;
+  practicalInfo?:
+    | {
+        icon?: ('calendar' | 'mapPin' | 'euro' | 'shirt') | null;
+        title: string;
+        content: string;
+        id?: string | null;
+      }[]
+    | null;
+  finalCtaSection?: {
+    title?: string | null;
+    content?: string | null;
+    buttonText?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "infoPage_select".
  */
 export interface InfoPageSelect<T extends boolean = true> {
@@ -2680,6 +2731,59 @@ export interface LeidersDivisionBannersSelect<T extends boolean = true> {
   jonggiversBanner?: T;
   giversBanner?: T;
   jinBanner?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inschrijvenPage_select".
+ */
+export interface InschrijvenPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  banner?: T;
+  ctaButtonText?: T;
+  ctaButtonUrl?: T;
+  ctaSubtext?: T;
+  decorativeImage?: T;
+  decorativeImage2?: T;
+  decorativeImage3?: T;
+  whyJoinTitle?: T;
+  whyJoinReasons?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  existingMembersSection?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        infoBoxTitle?: T;
+        infoBoxContent?: T;
+      };
+  divisionsTitle?: T;
+  divisionsSubtitle?: T;
+  practicalInfoTitle?: T;
+  practicalInfo?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        content?: T;
+        id?: T;
+      };
+  finalCtaSection?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        buttonText?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

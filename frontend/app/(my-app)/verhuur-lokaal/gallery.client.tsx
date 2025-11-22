@@ -76,7 +76,7 @@ export default function Gallery({ images }: GalleryProps) {
     const nextImage = images[newIndex]
     setSlides((prev) => {
       const currentSlide = prev.find((slide) => slide.state === 'entering')
-      const exitingSlides = currentSlide ? [{ ...currentSlide, state: 'exiting' }] : []
+      const exitingSlides = currentSlide ? [{ ...currentSlide, state: 'exiting' as SlideState }] : []
       return [makeSlide(nextImage, 'entering'), ...exitingSlides]
     })
 
@@ -179,9 +179,8 @@ export default function Gallery({ images }: GalleryProps) {
               <button
                 key={image.id}
                 onClick={() => changeImage(index)}
-                className={`relative w-14 h-14 rounded-md overflow-hidden transition-all duration-200 origin-center ${
-                  isActive ? 'scale-125' : 'opacity-80 hover:opacity-100 hover:scale-105'
-                }`}
+                className={`relative w-14 h-14 rounded-md overflow-hidden transition-all duration-200 origin-center ${isActive ? 'scale-125' : 'opacity-80 hover:opacity-100 hover:scale-105'
+                  }`}
                 aria-label={`Toon ${image.title}`}
                 type="button"
               >
