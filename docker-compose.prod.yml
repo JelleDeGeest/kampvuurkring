@@ -126,7 +126,7 @@ services:
       - app-network
 
   db:
-    container_name: postgres-prod
+    container_name: supabase-db-prod
     image: supabase/postgres:15.1.0.147
     restart: unless-stopped
     ports:
@@ -136,7 +136,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: postgres
     volumes:
-      - ./supabase/volumes/db/production-data:/var/lib/postgresql/data:Z
+      - ./supabase/volumes/db/data:/var/lib/postgresql/data:Z
     networks:
       - app-network
     healthcheck:
@@ -147,7 +147,7 @@ services:
 
   # Supabase Studio for production database management
   postgres-meta:
-    container_name: supabase-meta-prod
+    container_name: supabase-meta
     image: supabase/postgres-meta:v0.80.0
     restart: unless-stopped
     environment:
