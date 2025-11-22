@@ -1,5 +1,6 @@
 // collections/Events.ts
 import { CollectionConfig } from 'payload'
+import { filterPastDatesHook } from './hooks/filterPastDates'
 
 export const Events: CollectionConfig = {
   slug: 'events',
@@ -9,6 +10,9 @@ export const Events: CollectionConfig = {
     group: 'Ratel',
   },
   access: { read: () => true },          // publieke read
+  hooks: {
+    beforeOperation: [filterPastDatesHook],
+  },
   fields: [
     { name: 'title', type: 'text', required: true },
     { name: 'startDate', type: 'date', required: true },

@@ -1,6 +1,7 @@
 // collections/Camps.ts
 import { CollectionConfig } from 'payload'
-import { Weekends } from './Weekends'
+import { filterPastDatesHook } from './hooks/filterPastDates'
+
 export const Camps: CollectionConfig = {
   slug: 'camps',
   labels: { singular: 'Kamp', plural: 'Kampen' },
@@ -268,6 +269,7 @@ export const Camps: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeOperation: [filterPastDatesHook],
     beforeChange: [
       async ({ data, req, operation, originalDoc }) => {
         // Set enrollment link when enrollments are enabled

@@ -113,7 +113,7 @@ export function useActivitiesFilter() {
         console.log('Activities fetch - Draft mode:', isDraftMode)
         
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?sort=startDate${isDraftMode ? '&draft=true' : ''}`,
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?sort=startDate&limit=100${isDraftMode ? '&draft=true' : ''}`,
           { 
             signal: controller.signal, 
             cache: "no-store",
@@ -124,16 +124,10 @@ export function useActivitiesFilter() {
         if (!isMounted) return;
         
         const data = await res.json();
-        const allFetchedActivities = data?.docs ?? [];
-        
-        // Filter to only include upcoming activities (not past ones)
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const fetchedActivities = allFetchedActivities.filter((activity: Activity) => {
-          const compareDate = activity.endDate ? new Date(activity.endDate) : new Date(activity.startDate);
-          return compareDate >= today;
-        });
-        
+        const fetchedActivities = data?.docs ?? [];
+
+        // Past activities are already filtered out by the backend
+
         if (isMounted) {
           setAllActivities(fetchedActivities);
           setInitialFetchDone(true);

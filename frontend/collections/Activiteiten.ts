@@ -1,6 +1,7 @@
 // collections/activiteiten.ts
 import type { CollectionConfig } from 'payload'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { filterPastDatesHook } from './hooks/filterPastDates'
 
 export const Activiteiten: CollectionConfig = {
   slug: 'activiteiten',
@@ -298,6 +299,7 @@ export const Activiteiten: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeOperation: [filterPastDatesHook],
     beforeChange: [
       async ({ data, req, operation, originalDoc }) => {
         // Set enrollment link when enrollments are enabled

@@ -10,10 +10,16 @@ import { useImportantDates, EventItem, PeriodItem } from '@/hooks/useImportantDa
 import PayloadRichText from '@/components/PayloadRichText'
 
 /* ---------- helpers ---------- */
-const formatRange = (s: string, e?: string) =>
-  e
-    ? `${format(new Date(s), 'dd MMMM yyyy', { locale: nl })} – ${format(new Date(e), 'dd MMMM yyyy', { locale: nl })}`
-    : format(new Date(s), 'dd MMMM yyyy', { locale: nl })
+const formatRange = (s: string, e?: string) => {
+  const startDate = format(new Date(s), 'dd MMMM yyyy', { locale: nl })
+  if (!e) return startDate
+
+  const endDate = format(new Date(e), 'dd MMMM yyyy', { locale: nl })
+  // If start and end are the same day, show just one date
+  if (startDate === endDate) return startDate
+
+  return `${startDate} – ${endDate}`
+}
 
 // Helper function to check if rich text content has meaningful text
 const hasActualContent = (richTextContent: any): boolean => {
