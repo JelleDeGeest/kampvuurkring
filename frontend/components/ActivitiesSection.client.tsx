@@ -14,7 +14,7 @@ import PayloadRichText from '@/components/PayloadRichText'
 import { CategoryFilter, categoryTabs, eventIcon } from '@/components/CategoryFilter'
 import { useActivitiesFilter, Activity } from '@/hooks/useActivitiesFilter'
 import { useCategorySelection, CategoryValue } from '@/hooks/CategorySelectionContext'
-import { useImportantDates, PeriodItem } from '@/hooks/useImportantDates'
+import { useImportantDates, PeriodItem } from '@/hooks/ImportantDatesContext'
 import { ResponsiveImage, type PayloadImage } from '@/components/ResponsiveImage'
 
 const TRANSITION_DURATION = 300

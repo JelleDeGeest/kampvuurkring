@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import ActivitiesSection from '@/components/ActivitiesSection.client'
 import BelangrijkeDataBlock from '@/components/BelangrijkeDataBlock'
-import { useImportantDates } from '@/hooks/useImportantDates'
+import { useImportantDates } from '@/hooks/ImportantDatesContext'
 
 type SectionType = 'activities' | 'dates'
 export default function SectionToggle() {

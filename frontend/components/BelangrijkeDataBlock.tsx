@@ -6,7 +6,7 @@ import { nl } from 'date-fns/locale'
 import { Loader2, ChevronRight } from 'lucide-react'
 
 import { categoryTabs, eventIcon } from '@/components/CategoryFilter'
-import { useImportantDates, EventItem, PeriodItem } from '@/hooks/useImportantDates'
+import { useImportantDates, EventItem, PeriodItem } from '@/hooks/ImportantDatesContext'
 import PayloadRichText from '@/components/PayloadRichText'
 
 /* ---------- helpers ---------- */
