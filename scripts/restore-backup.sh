@@ -20,22 +20,19 @@ if ! docker compose version >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Select environment to restore from:"
+# Ask where to restore FROM (backup source)
+echo "Select environment to restore FROM (backup source):"
 echo "  1) dev"
 echo "  2) prod"
-read -rp "Choice [1-2]: " choice
+read -rp "Choice [1-2]: " source_choice
 
-case "${choice}" in
+case "${source_choice}" in
   1)
-    ENV_NAME="dev"
-    ENV_FILE=".env"
-    COMPOSE_FILE="docker-compose.dev.yml"
+    SOURCE_ENV="dev"
     REMOTE_VAR="RCLONE_REMOTE_DEV"
     ;;
   2)
-    ENV_NAME="prod"
-    ENV_FILE=".env.production"
-    COMPOSE_FILE="docker-compose.prod.yml"
+    SOURCE_ENV="prod"
     REMOTE_VAR="RCLONE_REMOTE_PROD"
     ;;
   *)
@@ -44,20 +41,57 @@ case "${choice}" in
     ;;
 esac
 
+# Ask where to restore TO (target environment)
+echo ""
+echo "Select environment to restore TO (target):"
+echo "  1) dev"
+echo "  2) prod"
+read -rp "Choice [1-2]: " target_choice
+
+case "${target_choice}" in
+  1)
+    TARGET_ENV="dev"
+    ENV_FILE=".env"
+    COMPOSE_FILE="docker-compose.dev.yml"
+    ;;
+  2)
+    TARGET_ENV="prod"
+    ENV_FILE=".env.production"
+    COMPOSE_FILE="docker-compose.prod.yml"
+    ;;
+  *)
+    echo "Invalid choice." >&2
+    exit 1
+    ;;
+esac
+
+echo ""
+echo "Will restore FROM ${SOURCE_ENV} backup TO ${TARGET_ENV} environment"
+echo ""
+
+# Load environment file (use .env as fallback for rclone settings)
 ENV_PATH="${ROOT_DIR}/${ENV_FILE}"
-if [[ ! -f "${ENV_PATH}" ]]; then
-  echo "Error: environment file '${ENV_FILE}' not found." >&2
-  exit 1
+MAIN_ENV_PATH="${ROOT_DIR}/.env"
+
+# Load main .env first for rclone settings
+if [[ -f "${MAIN_ENV_PATH}" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "${MAIN_ENV_PATH}"
+  set +a
 fi
 
-set -a
-# shellcheck disable=SC1090
-. "${ENV_PATH}"
-set +a
+# Load target env file if different
+if [[ -f "${ENV_PATH}" && "${ENV_PATH}" != "${MAIN_ENV_PATH}" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  . "${ENV_PATH}"
+  set +a
+fi
 
 REMOTE="${!REMOTE_VAR-}"
 if [[ -z "${REMOTE}" ]]; then
-  echo "Error: ${REMOTE_VAR} is not set in ${ENV_FILE}." >&2
+  echo "Error: ${REMOTE_VAR} is not set in environment." >&2
   exit 1
 fi
 
@@ -233,7 +267,7 @@ rm -rf "${UNPACK_DIR}"
 rm -f "${ARCHIVE_PATH}"
 
 # Ensure the correct services are running after restore
-echo "Ensuring correct services are running for ${ENV_NAME}..."
+echo "Ensuring correct services are running for ${TARGET_ENV}..."
 docker compose -f "${ROOT_DIR}/${COMPOSE_FILE}" up -d minio
 echo "Waiting for minio to be healthy..."
 sleep 5
