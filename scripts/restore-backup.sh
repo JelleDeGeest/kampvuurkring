@@ -225,4 +225,7 @@ if [[ -n "${MINIO_DIR}" ]]; then
   fi
 fi
 
-echo "Restore artifacts kept in ${UNPACK_DIR}. Delete manually when done."
+echo "Cleaning up restore artifacts..."
+rm -rf "${UNPACK_DIR}"
+rm -f "${ARCHIVE_PATH}"
+echo "Restore complete."
