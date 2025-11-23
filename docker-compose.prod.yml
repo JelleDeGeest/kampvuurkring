@@ -45,7 +45,7 @@ services:
       - NEXT_PRIVATE_REVALIDATION_KEY=${NEXT_PRIVATE_REVALIDATION_KEY}
       - HOSTNAME=0.0.0.0
     env_file:
-      - .env.production
+      - .env
     depends_on:
       db:
         condition: service_healthy
@@ -183,7 +183,7 @@ services:
       NEXT_PUBLIC_ENABLE_LOGS: false
       NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
     env_file:
-      - .env.production
+      - .env
     depends_on:
       - postgres-meta
     networks:

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useEffect, useRef, useState } from "react"
+import React, { createContext, useContext, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 
 interface TransitionContextType {
@@ -13,40 +13,7 @@ const TransitionContext = createContext<TransitionContextType | null>(null)
 export function TransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const fadeTimeoutRef = useRef<number | null>(null)
-  const resetTimeoutRef = useRef<number | null>(null)
-
-  useEffect(() => {
-    return () => {
-      if (fadeTimeoutRef.current !== null) {
-        window.clearTimeout(fadeTimeoutRef.current)
-      }
-      if (resetTimeoutRef.current !== null) {
-        window.clearTimeout(resetTimeoutRef.current)
-      }
-    }
-  }, [])
-
-  const resetPageContent = () => {
-    const pageContent = document.querySelector('[data-page-content]') as HTMLElement | null
-    if (pageContent) {
-      pageContent.classList.remove('opacity-0')
-      pageContent.style.opacity = '1'
-      pageContent.style.removeProperty('transition')
-    }
-  }
-
-  const scheduleReset = (delay: number) => {
-    if (resetTimeoutRef.current !== null) {
-      window.clearTimeout(resetTimeoutRef.current)
-    }
-
-    resetTimeoutRef.current = window.setTimeout(() => {
-      resetPageContent()
-      setIsTransitioning(false)
-      resetTimeoutRef.current = null
-    }, delay)
-  }
+  const timeoutRef = useRef<number | null>(null)
 
   const normalizeHref = (href: string) => {
     try {
@@ -64,32 +31,31 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
 
     const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : ''
     if (currentPath && normalizeHref(href) === normalizeHref(currentPath)) {
-      resetPageContent()
       return
     }
 
     setIsTransitioning(true)
-    
-    // Add fade out to current content
+
+    // Clear any pending timeout
+    if (timeoutRef.current !== null) {
+      window.clearTimeout(timeoutRef.current)
+    }
+
+    // Fade out current content
     const pageContent = document.querySelector('[data-page-content]') as HTMLElement
     if (pageContent) {
-      pageContent.style.transition = 'opacity 200ms ease-in-out'
+      pageContent.style.transition = 'opacity 150ms ease-out'
       pageContent.style.opacity = '0'
     }
 
-    if (fadeTimeoutRef.current !== null) {
-      window.clearTimeout(fadeTimeoutRef.current)
-    }
-
-    // Wait for fade out, then navigate
-    fadeTimeoutRef.current = window.setTimeout(() => {
+    // Navigate after fade out completes - don't reset anything, let new page handle fade in
+    timeoutRef.current = window.setTimeout(() => {
       router.push(href)
-      scheduleReset(250)
-      fadeTimeoutRef.current = null
-    }, 200) // Match fade duration
-
-    // Fallback reset in case route push is a no-op (e.g. navigating to current page)
-    scheduleReset(600)
+      // Reset transitioning state after navigation starts
+      // The new page's PageTransition will handle the fade in
+      setTimeout(() => setIsTransitioning(false), 100)
+      timeoutRef.current = null
+    }, 150)
   }
 
   return (
