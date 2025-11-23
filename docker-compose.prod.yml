@@ -27,6 +27,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      args:
+        - NEXT_PUBLIC_CLARITY_PROJECT_ID=${NEXT_PUBLIC_CLARITY_PROJECT_ID}
     # ⚠️ Remove the external 3000 port mapping — Traefik will handle it
     # ports:
     #   - "0.0.0.0:${PORT:-3000}:3000"

@@ -26,6 +26,10 @@ COPY . .
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build arguments for NEXT_PUBLIC_* variables (inlined at build time)
+ARG NEXT_PUBLIC_CLARITY_PROJECT_ID
+ENV NEXT_PUBLIC_CLARITY_PROJECT_ID=${NEXT_PUBLIC_CLARITY_PROJECT_ID}
+
 # Build the application
 RUN npm run build
 

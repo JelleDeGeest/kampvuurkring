@@ -8,6 +8,7 @@ import { CategorySelectionProvider } from "@/hooks/CategorySelectionContext"
 import Header from "@/components/header"
 import PageTransition from "@/components/PageTransition"
 import { TransitionProvider } from "@/components/TransitionProvider"
+import Clarity from "@/components/Clarity"
 
 export default function RootLayout({
   children,
@@ -24,6 +25,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Clarity />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
