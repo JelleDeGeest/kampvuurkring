@@ -1,5 +1,6 @@
 import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
 import { notFound } from "next/navigation"
+import { resolveMediaUrl } from '@/lib/mediaHelpers'
 
 
 interface Leider {
@@ -117,6 +118,12 @@ export default async function LeiderPage({
   const divisionBanner = primaryDivision ? await fetchDivisionBanner(primaryDivision) : null;
   const activeDivisions = (leider.takken || []).filter((tak) => tak !== 'gestopt' && divisionData[tak]);
 
+  // Resolve banner URL for glow effect
+  const resolvedBannerUrl = resolveMediaUrl(divisionBanner?.url, PAYLOAD_URL);
+  const glowBackgroundImage = resolvedBannerUrl
+    ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${resolvedBannerUrl})`
+    : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)';
+
   const renderDivisionBadges = (className = '', showDivider = true) => {
     if (activeDivisions.length === 0) return null;
 
@@ -182,9 +189,7 @@ export default async function LeiderPage({
                     inset: '0',
                     width: '100%',
                     height: '100%',
-                    backgroundImage: divisionBanner
-                      ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${PAYLOAD_URL}${divisionBanner.url})`
-                      : `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)`,
+                    backgroundImage: glowBackgroundImage,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     filter: 'blur(50px) saturate(350%) opacity(35%)',

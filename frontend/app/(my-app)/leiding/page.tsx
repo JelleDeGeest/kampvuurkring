@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { ResponsiveImage, type PayloadImage } from "@/components/ResponsiveImage"
-import Link from "next/link"
 import { resolveMediaUrl } from '@/lib/mediaHelpers'
+import LeiderCard from "./LeiderCard.client"
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
@@ -23,31 +23,6 @@ interface LeidersPageGlobal {
 
 const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
-// Helper component to display leader names based on their tak
-function LeiderNameDisplay({ leider, tak }: { leider: Leider; tak: string }) {
-  const displayName = tak === 'kapoenen' && leider.kapoenenNaam 
-    ? leider.kapoenenNaam 
-    : tak === 'wouters' && leider.wouterNaam 
-    ? leider.wouterNaam 
-    : null;
-
-  if (displayName) {
-    return (
-      <>
-        <h3 className="font-bold text-lg group-hover:text-primary transition-colors duration-200">{displayName}</h3>
-        <p className="text-sm text-gray-600">{leider.name}</p>
-        <p className="text-xs text-gray-500">{leider.totem}</p>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <h3 className="font-semibold group-hover:text-primary transition-colors duration-200">{leider.name}</h3>
-      <p className="text-sm text-gray-600">{leider.totem}</p>
-    </>
-  );
-}
 
 async function fetchLeidersByTak(tak: string) {
   try {
@@ -199,26 +174,7 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {kapoenenLeiders.map((leider: Leider) => (
-                <Link key={`kapoenen-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
-                    {leider.image?.url ? (
-                      <ResponsiveImage
-                        media={leider.image}
-                        alt={leider.name}
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 768px) 45vw, 160px"
-                        className="object-cover group-hover:brightness-110 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-                  </div>
-                  <div className="mt-2 text-center">
-                    <LeiderNameDisplay leider={leider} tak="kapoenen" />
-                  </div>
-                </Link>
+                <LeiderCard key={`kapoenen-${leider.id}`} leider={leider} tak="kapoenen" />
               ))}
             </div>
           </div>
@@ -240,26 +196,7 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {woutersLeiders.map((leider: Leider) => (
-                <Link key={`wouters-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
-                    {leider.image?.url ? (
-                      <ResponsiveImage
-                        media={leider.image}
-                        alt={leider.name}
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 768px) 45vw, 160px"
-                        className="object-cover group-hover:brightness-110 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-                  </div>
-                  <div className="mt-2 text-center">
-                    <LeiderNameDisplay leider={leider} tak="wouters" />
-                  </div>
-                </Link>
+                <LeiderCard key={`wouters-${leider.id}`} leider={leider} tak="wouters" />
               ))}
             </div>
           </div>
@@ -281,26 +218,7 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {jonggiversLeiders.map((leider: Leider) => (
-                <Link key={`jonggivers-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
-                    {leider.image?.url ? (
-                      <ResponsiveImage
-                        media={leider.image}
-                        alt={leider.name}
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 768px) 45vw, 160px"
-                        className="object-cover group-hover:brightness-110 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-                  </div>
-                  <div className="mt-2 text-center">
-                    <LeiderNameDisplay leider={leider} tak="other" />
-                  </div>
-                </Link>
+                <LeiderCard key={`jonggivers-${leider.id}`} leider={leider} tak="other" />
               ))}
             </div>
           </div>
@@ -322,26 +240,7 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {giversLeiders.map((leider: Leider) => (
-                <Link key={`givers-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
-                    {leider.image?.url ? (
-                      <ResponsiveImage
-                        media={leider.image}
-                        alt={leider.name}
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 768px) 45vw, 160px"
-                        className="object-cover group-hover:brightness-110 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-                  </div>
-                  <div className="mt-2 text-center">
-                    <LeiderNameDisplay leider={leider} tak="other" />
-                  </div>
-                </Link>
+                <LeiderCard key={`givers-${leider.id}`} leider={leider} tak="other" />
               ))}
             </div>
           </div>
@@ -363,26 +262,7 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {jinLeiders.map((leider: Leider) => (
-                <Link key={`jin-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
-                    {leider.image?.url ? (
-                      <ResponsiveImage
-                        media={leider.image}
-                        alt={leider.name}
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 768px) 45vw, 160px"
-                        className="object-cover group-hover:brightness-110 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-                  </div>
-                  <div className="mt-2 text-center">
-                    <LeiderNameDisplay leider={leider} tak="other" />
-                  </div>
-                </Link>
+                <LeiderCard key={`jin-${leider.id}`} leider={leider} tak="other" />
               ))}
             </div>
           </div>
@@ -404,26 +284,7 @@ export default async function LeidingPage() {
             </div>
             <div className="flex-1 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 p-6 bg-white">
               {groepsLeiders.map((leider: Leider) => (
-                <Link key={`groepsleiding-${leider.id}`} href={`/leiding/${leider.id}`} className="group flex flex-col hover:transform hover:scale-105 transition-all duration-200 cursor-pointer">
-                  <div className="aspect-square w-full bg-gray-200 relative overflow-hidden rounded-lg max-w-[160px] mx-auto shadow-md group-hover:shadow-xl transition-shadow duration-200">
-                    {leider.image?.url ? (
-                      <ResponsiveImage
-                        media={leider.image}
-                        alt={leider.name}
-                        width={160}
-                        height={160}
-                        sizes="(max-width: 768px) 45vw, 160px"
-                        className="object-cover group-hover:brightness-110 transition-all duration-200"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gray-300" />
-                    )}
-                    <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-                  </div>
-                  <div className="mt-2 text-center">
-                    <LeiderNameDisplay leider={leider} tak="other" />
-                  </div>
-                </Link>
+                <LeiderCard key={`groepsleiding-${leider.id}`} leider={leider} tak="other" />
               ))}
             </div>
           </div>
