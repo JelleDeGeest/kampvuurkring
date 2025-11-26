@@ -3,11 +3,14 @@
 
 export const filterPastDatesHook = async ({ args, operation, req }: any) => {
   // Only filter on 'read' operations (find, findByID)
-  // Skip filtering for admin panel requests
+  // Skip filtering for admin panel requests or when accessing by specific ID
   const isAdminRequest = req?.url?.includes('/admin') ||
-                         req?.headers?.get?.('referer')?.includes('/admin')
+                         req?.headers?.get?.('referer')?.includes('/admin') ||
+                         req?.user // If user is authenticated, they're likely in admin
 
-  if (operation === 'read' && !isAdminRequest) {
+  const isFindByIdOperation = operation === 'read' && args?.req?.params?.id
+
+  if (operation === 'read' && !isAdminRequest && !isFindByIdOperation) {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 

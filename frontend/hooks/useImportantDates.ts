@@ -34,13 +34,6 @@ interface ImportantDates {
 const base = process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ''
 const qs   = '?limit=100&sort=startDate&depth=2'
 
-const isUpcoming = (start: string, end?: string) => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const compareDate = end ? new Date(end) : new Date(start)
-  return compareDate >= today
-}
-
 // Function to get a division for sorting
 const getPrimaryDivision = (division: string | string[]): string => {
   if (Array.isArray(division) && division.length > 0) {
@@ -149,10 +142,12 @@ export function useImportantDates() {
         }
 
         if (mounted) {
+          // Backend filterPastDatesHook already filters out past dates
+          // No need for additional filtering on the frontend
           setData({
-            events:   (evData?.docs ?? []).filter((e: EventItem) => isUpcoming(e.startDate, e.endDate)),
-            weekends: (weData?.docs ?? []).filter((w: PeriodItem) => isUpcoming(w.startDate, w.endDate)),
-            camps:    (caData?.docs ?? []).filter((c: PeriodItem) => isUpcoming(c.startDate, c.endDate)),
+            events:   (evData?.docs ?? []),
+            weekends: (weData?.docs ?? []),
+            camps:    (caData?.docs ?? []),
           })
           setIsLoading(false)
         }

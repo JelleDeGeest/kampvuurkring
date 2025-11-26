@@ -19,6 +19,7 @@ import Trash2 from 'lucide-react/dist/esm/icons/trash-2'
 import Plus from 'lucide-react/dist/esm/icons/plus'
 import Download from 'lucide-react/dist/esm/icons/download'
 import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle'
+import Info from 'lucide-react/dist/esm/icons/info'
 import { useRef } from 'react'
 
 interface CustomQuestion {
@@ -486,8 +487,8 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
               {/* Instructions */}
               {formPage.paymentSettings.paymentInstructions && (
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-900 flex items-center gap-2 text-sm uppercase tracking-wide">
-                    <span className="text-primary">ℹ️</span> Betaalinstructies
+                  <h4 className="font-semibold text-gray-600 flex items-center gap-2 text-sm uppercase tracking-wide">
+                    <Info className="w-4 h-4" /> Betaalinstructies
                   </h4>
                   <div className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed pl-1">
                     {formPage.paymentSettings.paymentInstructions}
