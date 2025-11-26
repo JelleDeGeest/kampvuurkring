@@ -9,7 +9,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { generateReceiptPDFFromHTML } from '@/lib/generate-receipt-pdf-html'
 import { EnrollmentReceipt } from '@/components/EnrollmentReceipt'
+import Users from 'lucide-react/dist/esm/icons/users'
+import Mail from 'lucide-react/dist/esm/icons/mail'
+import MessageSquare from 'lucide-react/dist/esm/icons/message-square'
+import CreditCard from 'lucide-react/dist/esm/icons/credit-card'
+import CircleHelp from 'lucide-react/dist/esm/icons/circle-help'
+import CircleCheck from 'lucide-react/dist/esm/icons/circle-check'
+import Trash2 from 'lucide-react/dist/esm/icons/trash-2'
+import Plus from 'lucide-react/dist/esm/icons/plus'
 import Download from 'lucide-react/dist/esm/icons/download'
+import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle'
 import { useRef } from 'react'
 
 interface CustomQuestion {
@@ -60,7 +69,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false)
   const [enrollmentData, setEnrollmentData] = useState<any>(null)
   const receiptRef = useRef<HTMLDivElement>(null)
-  
+
   // Initialize with one child
   const [children, setChildren] = useState<ChildData[]>([{
     firstName: '',
@@ -88,9 +97,12 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     }
   }
 
-  const totalPrice = formPage.paymentSettings?.isPaid 
-    ? (formPage.paymentSettings.pricePerChild || 0) * children.length 
+  const totalPrice = formPage.paymentSettings?.isPaid
+    ? (formPage.paymentSettings.pricePerChild || 0) * children.length
     : 0
+  const formattedTotalPrice = totalPrice > 0
+    ? new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(totalPrice)
+    : null
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -105,7 +117,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     }
 
     const formData = new FormData(e.currentTarget)
-    
+
     // Collect data for all children
     const childrenData = children.map((child, index) => ({
       participantInfo: {
@@ -154,7 +166,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
       }
 
       const result = await response.json()
-      
+
       // Store enrollment data for PDF generation
       setEnrollmentData({
         enrollmentId: result.enrollment.id,
@@ -183,9 +195,9 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
   const handleDownloadPDF = async () => {
     if (!enrollmentData || !receiptRef.current) return
-    
+
     const fileName = `inschrijving-${enrollmentData.targetTitle.toLowerCase().replace(/\s+/g, '-')}-${enrollmentData.enrollmentId}.pdf`
-    
+
     try {
       await generateReceiptPDFFromHTML(receiptRef.current, fileName)
     } catch (error) {
@@ -208,31 +220,43 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
         </div>
 
         {/* Visible success message */}
-        <Card className="max-w-2xl mx-auto mt-8">
-          <CardHeader>
-            <CardTitle className="text-primary">Inschrijving verzonden!</CardTitle>
+        <Card className="max-w-2xl mx-auto mt-8 border border-primary/20 shadow-lg">
+          <CardHeader className="border-0 pt-10 text-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center justify-center w-24 h-24 rounded-full bg-primary/10 text-primary shadow-inner">
+                <CircleCheck className="w-16 h-16" />
+              </div>
+              <CardTitle className="text-3xl font-semibold text-primary">Inschrijving verzonden!</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p>{formPage.formSettings?.customMessage || 'Je inschrijving is succesvol geregistreerd!'}</p>
-            
+          <CardContent className="px-10 pb-10 flex flex-col items-center text-center space-y-6">
+            <p className="text-lg text-muted-foreground max-w-xl">
+              {formPage.formSettings?.customMessage || 'Je inschrijving is succesvol geregistreerd!'}
+            </p>
+
             {formPage.paymentSettings?.isPaid && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-800 font-semibold text-sm">
-                  Let op: Inschrijving is pas definitief als de betaling is ontvangen.
+              <div className="w-full max-w-lg rounded-2xl border border-amber-200 bg-amber-50 px-8 py-6 text-left shadow-sm">
+                <div className="flex items-center gap-3 text-lg font-semibold text-amber-800 mb-3">
+                  <AlertTriangle className="w-6 h-6 text-amber-600" />
+                  Let op
+                </div>
+                <p className="text-base leading-relaxed text-amber-900">
+                  Inschrijving is pas definitief zodra de betaling van <span className="font-semibold">{formattedTotalPrice ? ` ${formattedTotalPrice}` : ''}</span> ontvangen is.
                 </p>
+
               </div>
             )}
-            
-            <div className="pt-4">
+
+            <div className="flex flex-col items-center gap-3 w-full">
               <Button
                 onClick={handleDownloadPDF}
                 variant="default"
-                className="w-full sm:w-auto flex items-center gap-2"
+                className="min-w-[220px] flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md"
               >
                 <Download className="h-4 w-4" />
-                Download Bevestiging (PDF)
+                Download Bevestiging
               </Button>
-              <p className="text-sm text-gray-600 mt-2">
+              <p className="text-sm text-muted-foreground">
                 Download en bewaar deze bevestiging voor je administratie.
                 {formPage.paymentSettings?.isPaid && ' De betalingsinformatie vind je in de PDF.'}
               </p>
@@ -246,7 +270,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
   // Check if enrollments are manually closed
   if (formPage.formSettings?.closed) {
     return (
-      <Card className="max-w-2xl mx-auto mt-8">
+      <Card className="max-w-2xl mx-auto mt-8 border-red-200 shadow-md">
         <CardHeader>
           <CardTitle className="text-red-600">Inschrijvingen gesloten</CardTitle>
         </CardHeader>
@@ -262,7 +286,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     const deadline = new Date(formPage.formSettings.enrollmentDeadline)
     if (deadline < new Date()) {
       return (
-        <Card className="max-w-2xl mx-auto mt-8">
+        <Card className="max-w-2xl mx-auto mt-8 border-red-200 shadow-md">
           <CardHeader>
             <CardTitle className="text-red-600">Inschrijvingen gesloten</CardTitle>
           </CardHeader>
@@ -276,18 +300,18 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
   return (
     <div className="space-y-8">
-      {/* PDF Document Preview */}
       {formPage.infoDocument?.url && (
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center">
           <a
             href={formPage.infoDocument.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-3 border border-gray-200 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 hover:from-primary/5 hover:to-primary/10 shadow-sm hover:shadow-md transition-all duration-200 hover:border-primary/50 group"
+            className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 group"
           >
-            <div className="text-2xl group-hover:scale-110 transition-transform duration-200">📄</div>
-            <div className="text-center">
-              <div className="text-sm font-semibold text-gray-700 group-hover:text-primary transition-colors duration-200">Uitnodiging bekijken</div>
+            <div className="text-3xl animate-bounce group-hover:animate-none">📄</div>
+            <div>
+              <div className="font-bold text-lg">Uitnodiging bekijken</div>
+              <div className="text-sm opacity-90">Klik hier voor meer informatie</div>
             </div>
           </a>
         </div>
@@ -295,185 +319,222 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {error && (
-          <div className="bg-red-50 text-red-600 p-4 rounded-md">
+          <div className="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 shadow-sm">
             {error}
           </div>
         )}
 
 
-      {/* Children Information */}
-      {children.map((child, index) => (
-        <Card key={index}>
-          <CardHeader>
-            <CardTitle>
-              {children.length > 1 ? `Kind ${index + 1}` : 'Deelnemer Informatie'}
-              {children.length > 1 && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="sm"
-                  className="ml-4"
-                  onClick={() => removeChild(index)}
-                >
-                  Verwijderen
-                </Button>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`firstName-${index}`}>Voornaam *</Label>
-                <Input 
-                  id={`firstName-${index}`} 
-                  value={child.firstName}
-                  onChange={(e) => updateChild(index, 'firstName', e.target.value)}
-                  required 
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`lastName-${index}`}>Achternaam *</Label>
-                <Input 
-                  id={`lastName-${index}`} 
-                  value={child.lastName}
-                  onChange={(e) => updateChild(index, 'lastName', e.target.value)}
-                  required 
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-
-      {/* Add child button */}
-      <Button 
-        type="button" 
-        variant="outline"
-        onClick={addChild}
-        className="w-full"
-      >
-        + Nog een kind toevoegen
-      </Button>
-
-      {/* Contact Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Contact Informatie</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="email">E-mail adres ouder/voogd *</Label>
-            <Input id="email" name="email" type="email" required />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Custom questions */}
-      {formPage.customQuestions && formPage.customQuestions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Extra Vragen</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {formPage.customQuestions.map((question, index) => (
-              <div key={index} className="space-y-2">
-                <Label htmlFor={`custom_question_${index}`}>
-                  {question.question} {question.required && '*'}
-                </Label>
-                <Textarea
-                  id={`custom_question_${index}`}
-                  name={`custom_question_${index}`}
-                  required={question.required}
-                  placeholder="Typ hier uw antwoord..."
-                  rows={3}
-                />
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Additional Options */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Extra Opmerkingen</CardTitle>
-          <CardDescription>
-            Zijn er nog vragen of opmerkingen? (Bvb: leden moet vroeger vertrekken, innemen medicatie...) Dan zijn wij ervan op de hoogte en kunnen we er rekening mee houden.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label htmlFor="comments">Opmerkingen</Label>
-            <Textarea 
-              id="comments" 
-              name="comments"
-              placeholder="Vul hier eventuele opmerkingen of vragen in..."
-              rows={4}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Payment Information */}
-      {formPage.paymentSettings?.isPaid && (
-        <Card className="border-primary/20">
-          <CardHeader>
-            <CardTitle className="text-primary">Betaling</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-800 font-semibold text-sm">
-                Let op: Inschrijving is pas definitief als de betaling is ontvangen.
-              </p>
-            </div>
-            
-            <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-2">Prijs per kind: €{formPage.paymentSettings.pricePerChild}</p>
-              <p className="font-bold text-lg text-primary">Totaal te betalen ({children.length} {children.length === 1 ? 'kind' : 'kinderen'}): €{totalPrice}</p>
-            </div>
-            
-            {formPage.paymentSettings.paymentInstructions && (
-              <div className="border-l-4 border-primary bg-primary/5 p-4 rounded-r-lg">
-                <h4 className="font-semibold text-primary mb-2">Betaalinstructies:</h4>
-                <div className="text-sm text-foreground whitespace-pre-wrap">
-                  {formPage.paymentSettings.paymentInstructions}
+        {/* Children Information */}
+        {children.map((child, index) => (
+          <Card key={index} className="shadow-md hover:shadow-lg transition-shadow duration-300 border-primary/10">
+            <CardHeader className="bg-primary/5 border-b border-primary/10">
+              <CardTitle className="flex items-center justify-between text-primary">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  {children.length > 1 ? `Kind ${index + 1}` : 'Deelnemer Informatie'}
+                </div>
+                {children.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => removeChild(index)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Verwijderen
+                  </Button>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor={`firstName-${index}`} className="text-gray-700">Voornaam *</Label>
+                  <Input
+                    id={`firstName-${index}`}
+                    value={child.firstName}
+                    onChange={(e) => updateChild(index, 'firstName', e.target.value)}
+                    required
+                    className="bg-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`lastName-${index}`} className="text-gray-700">Achternaam *</Label>
+                  <Input
+                    id={`lastName-${index}`}
+                    value={child.lastName}
+                    onChange={(e) => updateChild(index, 'lastName', e.target.value)}
+                    required
+                    className="bg-white"
+                  />
                 </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        ))}
 
-      {/* Payment Confirmation */}
-      {formPage.paymentSettings?.isPaid && (
-        <Card className="border-primary/30 bg-primary/5">
+        {/* Add child button */}
+        <Button
+          type="button"
+          variant="outline"
+          onClick={addChild}
+          className="w-full border-dashed border-2 py-6 text-primary hover:bg-primary/5 hover:border-primary"
+        >
+          <Plus className="w-5 h-5 mr-2" />
+          Nog een kind toevoegen
+        </Button>
+
+        {/* Contact Information */}
+        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-primary/10">
+          <CardHeader className="bg-primary/5 border-b border-primary/10">
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <Mail className="w-5 h-5" />
+              Contact Informatie
+            </CardTitle>
+          </CardHeader>
           <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <input
-                type="checkbox"
-                id="payment-confirmation"
-                checked={paymentConfirmed}
-                onChange={(e) => setPaymentConfirmed(e.target.checked)}
-                className="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-              />
-              <label htmlFor="payment-confirmation" className="text-sm text-foreground cursor-pointer">
-                <span className="font-semibold">Ik bevestig dat ik de betaling van €{totalPrice} heb uitgevoerd volgens de bovenstaande instructies.</span>
-                <br />
-                <span className="text-xs text-muted-foreground">
-                  Je moet dit vakje aanvinken om je inschrijving te kunnen versturen.
-                </span>
-              </label>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-gray-700">E-mail adres ouder/voogd *</Label>
+              <Input id="email" name="email" type="email" required className="bg-white" />
             </div>
           </CardContent>
         </Card>
-      )}
 
-        <Button 
-          type="submit" 
+        {/* Custom questions */}
+        {formPage.customQuestions && formPage.customQuestions.length > 0 && (
+          <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-primary/10">
+            <CardHeader className="bg-primary/5 border-b border-primary/10">
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <CircleHelp className="w-5 h-5" />
+                Extra Vragen
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              {formPage.customQuestions.map((question, index) => (
+                <div key={index} className="space-y-2">
+                  <Label htmlFor={`custom_question_${index}`} className="text-gray-700">
+                    {question.question} {question.required && '*'}
+                  </Label>
+                  <Textarea
+                    id={`custom_question_${index}`}
+                    name={`custom_question_${index}`}
+                    required={question.required}
+                    placeholder="Typ hier uw antwoord..."
+                    rows={3}
+                    className="bg-white"
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Additional Options */}
+        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-primary/10">
+          <CardHeader className="bg-primary/5 border-b border-primary/10">
+            <CardTitle className="flex items-center gap-2 text-primary">
+              <MessageSquare className="w-5 h-5" />
+              Extra Opmerkingen
+            </CardTitle>
+            <CardDescription>
+              Zijn er nog vragen of opmerkingen? (Bvb: leden moet vroeger vertrekken, innemen medicatie...) Dan zijn wij ervan op de hoogte en kunnen we er rekening mee houden.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="space-y-2">
+              <Label htmlFor="comments" className="text-gray-700">Opmerkingen</Label>
+              <Textarea
+                id="comments"
+                name="comments"
+                placeholder="Vul hier eventuele opmerkingen of vragen in..."
+                rows={4}
+                className="bg-white"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Payment & Confirmation */}
+        {formPage.paymentSettings?.isPaid && (
+          <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-primary/10">
+            <CardHeader className="bg-primary/5 border-b border-primary/10">
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <CreditCard className="w-5 h-5" />
+                Betaling & Bevestiging
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-8 pt-6">
+
+              {/* Price Section - Invoice Style */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Prijs per deelnemer</span>
+                  <span className="font-medium text-gray-900">€{formPage.paymentSettings.pricePerChild}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Aantal deelnemers</span>
+                  <span className="font-medium text-gray-900">{children.length}</span>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b-4 border-primary">
+                  <span className="font-bold text-lg text-primary">Totaal te betalen</span>
+                  <span className="font-bold text-2xl text-primary">€{totalPrice}</span>
+                </div>
+              </div>
+
+              {/* Instructions */}
+              {formPage.paymentSettings.paymentInstructions && (
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900 flex items-center gap-2 text-sm uppercase tracking-wide">
+                    <span className="text-primary">ℹ️</span> Betaalinstructies
+                  </h4>
+                  <div className="text-sm text-gray-600 whitespace-pre-wrap leading-relaxed pl-1">
+                    {formPage.paymentSettings.paymentInstructions}
+                  </div>
+                </div>
+              )}
+
+              {/* Confirmation Action Area */}
+              <div className="bg-primary/5 rounded-xl border border-primary/10 p-6 transition-colors hover:border-primary/20">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-6 items-center">
+                    <input
+                      type="checkbox"
+                      id="payment-confirmation"
+                      checked={paymentConfirmed}
+                      onChange={(e) => setPaymentConfirmed(e.target.checked)}
+                      className="h-5 w-5 rounded border-primary/30 text-primary focus:ring-primary cursor-pointer"
+                    />
+                  </div>
+                  <label htmlFor="payment-confirmation" className="text-sm cursor-pointer select-none">
+                    <span className="font-semibold text-gray-900 block mb-1">
+                      Ik bevestig de betaling van €{totalPrice}
+                    </span>
+                    <span className="text-gray-500 block leading-relaxed">
+                      Ik heb de betaling uitgevoerd volgens de bovenstaande instructies. Dit is vereist om de inschrijving te voltooien.
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        <Button
+          type="submit"
           disabled={isSubmitting || (formPage.paymentSettings?.isPaid && !paymentConfirmed)}
-          className="w-full"
+          className="w-full py-6 text-lg font-bold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.01]"
         >
-          {isSubmitting ? 'Versturen...' : 'Inschrijving Versturen'}
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <span className="animate-spin">⏳</span> Versturen...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              Inschrijving Versturen <CircleCheck className="w-5 h-5" />
+            </span>
+          )}
         </Button>
       </form>
     </div>

@@ -64,48 +64,12 @@ const LokaalFotos: CollectionConfig = {
       required: true,
       options: [
         {
-          label: 'Lokaal Exterieur',
-          value: 'exterieur',
+          label: 'Lokaal',
+          value: 'lokaal',
         },
         {
-          label: 'Slaaplokalen',
-          value: 'slaaplokalen',
-        },
-        {
-          label: 'Keuken',
-          value: 'keuken',
-        },
-        {
-          label: 'Eetzaal / Daglokaal',
-          value: 'eetzaal',
-        },
-        {
-          label: 'Vergaderlokaal',
-          value: 'vergaderlokaal',
-        },
-        {
-          label: 'Sanitair',
-          value: 'sanitair',
-        },
-        {
-          label: 'Buitenruimte',
-          value: 'buitenruimte',
-        },
-        {
-          label: 'Tentengrond',
-          value: 'tentengrond',
-        },
-        {
-          label: 'Speelterrein',
-          value: 'speelterrein',
-        },
-        {
-          label: 'Parking',
-          value: 'parking',
-        },
-        {
-          label: 'Overige',
-          value: 'overige',
+          label: 'Kookgerei',
+          value: 'kookgerei',
         },
       ],
       admin: {

@@ -14,7 +14,8 @@ import Calendar from 'lucide-react/dist/esm/icons/calendar'
 import { getPayloadHMR } from '@payloadcms/next/utilities'
 import ScrollButton from './scroll-button.client'
 import config from '@payload-config'
-import Gallery from './gallery.client'
+import GallerySection from './gallery-section.client'
+import PageBanner from '@/components/PageBanner'
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
@@ -93,10 +94,6 @@ export default async function VerhuurLokaalPage() {
   const resolvedBannerImageUrl =
     bannerImageUrl ?? resolveMediaUrl(verhuurPageData?.banner?.url, PAYLOAD_URL)
 
-  const glowBackgroundImage = resolvedBannerImageUrl
-    ? `linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), url(${resolvedBannerImageUrl})`
-    : 'linear-gradient(0deg, rgba(251, 252, 252, 0.4), rgba(251, 252, 252, 0.2) 70%), linear-gradient(to bottom, #87CEEB, #5F9EA0, #2E8B57)'
-
   const galleryImages = lokaalFotos.map((foto: any) => {
     const media = foto.image as PayloadImage | undefined
     return {
@@ -109,94 +106,47 @@ export default async function VerhuurLokaalPage() {
       category: foto.category,
     }
   })
+
+  // Filter images by category
+  const lokaalImages = galleryImages.filter(img => img.category === 'lokaal')
+  const kookgereiImages = galleryImages.filter(img => img.category === 'kookgerei')
   
   // Fallback images if no CMS data
-  const fallbackImages = [
+  const fallbackLokaalImages = [
     {
-      id: 1,
+      id: 'fallback-lokaal-1',
       media: undefined,
       src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlmYTZiNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdlZW4gZm90b3MgZ2V1cGxvYWQ8L3RleHQ+PC9zdmc+',
       alt: 'Placeholder - geen foto\'s geüpload',
       title: 'Geen foto\'s beschikbaar',
-      category: 'overige',
+      category: 'lokaal',
       description: 'Upload foto\'s via de admin panel om ze hier te zien',
     }
   ]
-  
-  const finalImages = galleryImages.length > 0 ? galleryImages : fallbackImages
+
+  const fallbackKookgereiImages = [
+    {
+      id: 'fallback-kookgerei-1',
+      media: undefined,
+      src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzlmYTZiNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkdlZW4gZm90b3MgZ2V1cGxvYWQ8L3RleHQ+PC9zdmc+',
+      alt: 'Placeholder - geen foto\'s geüpload',
+      title: 'Geen foto\'s beschikbaar',
+      category: 'kookgerei',
+      description: 'Upload foto\'s via de admin panel om ze hier te zien',
+    }
+  ]
+
+  const finalLokaalImages = lokaalImages.length > 0 ? lokaalImages : fallbackLokaalImages
+  const finalKookgereiImages = kookgereiImages.length > 0 ? kookgereiImages : fallbackKookgereiImages
   return (
     <>
-      {/* Banner Section */}
-      {verhuurPageData?.banner ? (
-        <section className="container px-4 lg:px-12 pt-8">
-          <div className="relative w-full h-[150px] md:h-[180px] lg:h-[220px] rounded-2xl overflow-visible">
-            {/* Container for outer glow effect */}
-            <div className="absolute inset-y-[-30px] inset-x-[-100vw] left-0 right-0 pointer-events-none z-0">
-              <div className="absolute inset-0">
-                {/* Glow effect */}
-                <div 
-                  style={{
-                    position: 'absolute',
-                    inset: '0',
-                    width: '100%',
-                    height: '100%',
-                    backgroundImage: glowBackgroundImage,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    filter: 'blur(50px) saturate(350%) opacity(35%)',
-                    transform: 'scale(1.5, 0.9) translateY(-12%)',
-                    transformOrigin: 'center',
-                  }}
-                />
-              </div>
-            </div>
+      <PageBanner
+        banner={verhuurPageData?.banner}
+        title={verhuurPageData?.title || 'Verhuur'}
+        subtitle={verhuurPageData?.subtitle || 'Huur ons scoutslokaal voor jullie activiteiten'}
+        resolvedBannerImageUrl={resolvedBannerImageUrl}
+      />
 
-            {/* Banner content */}
-            <div className="relative h-full w-full rounded-2xl overflow-hidden z-10">
-              {/* Banner image */}
-              <div className="absolute inset-0">
-                <ResponsiveImage
-                  media={verhuurPageData.banner}
-                  fallbackUrl={resolvedBannerImageUrl}
-                  alt={verhuurPageData.banner.alt || 'Banner afbeelding verhuur lokaal'}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                  priority
-                />
-              </div>
-              
-              {/* Dark overlay for better contrast */}
-              <div className="absolute inset-0 bg-black/20" />
-              
-              {/* Banner title */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-2xl">
-                    {verhuurPageData.title}
-                  </h1>
-                  <p className="text-lg md:text-xl drop-shadow-lg">
-                    {verhuurPageData.subtitle}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      ) : (
-        /* Fallback header when no banner is active */
-        <section className="container px-4 lg:px-12 pt-8">
-          <div className="text-center py-12">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary">
-              {verhuurPageData?.title || 'Verhuur'}
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground">
-              {verhuurPageData?.subtitle || 'Huur ons scoutslokaal voor jullie activiteiten'}
-            </p>
-          </div>
-        </section>
-      )}
-      
       <main className="flex-1">
         
         {/* Introduction Section */}
@@ -296,15 +246,12 @@ export default async function VerhuurLokaalPage() {
         </section>
 
         {/* Gallery Section */}
-        <section className="pt-4 pb-8">
-          <div className="container px-4 lg:px-12">
-            <h2 className="text-3xl font-bold text-center mb-6 text-primary">Rondleiding</h2>
-            <p className="text-center text-muted-foreground mb-8">
-              Bekijk onze faciliteiten en krijg een goede indruk van ons lokaal.
-            </p>
-            <Gallery images={finalImages} />
-          </div>
-        </section>
+        <GallerySection
+          title="Rondleiding"
+          description="Bekijk onze faciliteiten en krijg een goede indruk van ons lokaal."
+          images={finalLokaalImages}
+          emptyMessage="Geen lokaal foto's beschikbaar. Upload foto's met categorie 'Lokaal' via de admin panel."
+        />
 
         {/* Facilities Section */}
         <section className="pt-4 pb-8">
@@ -366,6 +313,14 @@ export default async function VerhuurLokaalPage() {
             </div>
           </div>
         </section>
+
+        {/* Kookgerei Gallery Section */}
+        <GallerySection
+          title="Kookgerei"
+          description="Bekijk het beschikbare kookgerei en keukenmaterialen."
+          images={finalKookgereiImages}
+          emptyMessage="Geen kookgerei foto's beschikbaar. Upload foto's met categorie 'Kookgerei' via de admin panel."
+        />
 
         {/* Pricing Section */}
         <section className="pt-4 pb-8">

@@ -9,44 +9,19 @@ import RefreshOnSave from '@/components/RefreshOnSave'
 import PreviewSwitcher from '@/components/PreviewSwitcher'
 import { format } from 'date-fns'
 import { nl } from 'date-fns/locale'
-import { Calendar, MapPin, Users, Euro } from 'lucide-react'
+
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PayloadRichText } from '@/components/PayloadRichText'
 import { EnrollmentPageClient } from '@/components/EnrollmentPageClient'
 import Link from 'next/link'
+import PageBanner from '@/components/PageBanner'
+import { resolveMediaUrl } from '@/lib/mediaHelpers'
 
 // Force dynamic rendering to avoid database connection during build
 export const dynamic = 'force-dynamic'
 
-// Banner component for enrollment pages (smaller than homepage carousel)
-function EnrollmentBanner({ bannerImage, title }: { bannerImage: any, title: string }) {
-  // Handle both populated media objects and simple IDs
-  const imageUrl = typeof bannerImage === 'object' && bannerImage?.url 
-    ? bannerImage.url 
-    : typeof bannerImage === 'string' 
-    ? bannerImage 
-    : null;
-
-  if (!imageUrl) return null;
-
-  return (
-    <div className="relative w-full h-[200px] md:h-[250px] rounded-2xl overflow-hidden mb-8">
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ 
-          backgroundImage: `url(${imageUrl})`,
-        }}
-      />
-      <div className="absolute inset-0 bg-black/20"></div>
-      <div className="absolute bottom-4 left-4 md:left-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
-          {title}
-        </h1>
-      </div>
-    </div>
-  )
-}
+const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000';
 
 interface Props {
   params: Promise<{
@@ -65,12 +40,12 @@ export default async function EnrollmentPage({ params }: Props) {
   const resolvedParams = await params
   const { isEnabled: inDraftMode } = await draftMode()
   const payload = await getPayloadClient()
-  
+
   // Validate type
   if (!['activiteiten', 'weekends', 'kampen'].includes(resolvedParams.type)) {
     return notFound()
   }
-  
+
   // Map URL type to collection name
   const collectionMap = {
     'activiteiten': 'activiteiten',
@@ -78,7 +53,7 @@ export default async function EnrollmentPage({ params }: Props) {
     'kampen': 'camps'
   }
   const collectionName = collectionMap[resolvedParams.type]
-  
+
   // Fetch the target item
   const result = await payload.find({
     collection: collectionName as any,
@@ -96,10 +71,10 @@ export default async function EnrollmentPage({ params }: Props) {
   }
 
   const item = result.docs[0]
-  
+
   // Check if this is a weekend or camp that might have a banner
   const hasBanner = (resolvedParams.type === 'weekends' || resolvedParams.type === 'kampen') && item.bannerImage;
-  
+
   // Check if enrollments are enabled
   if (!item.enrollmentSettings?.enabled) {
     return notFound()
@@ -180,6 +155,21 @@ export default async function EnrollmentPage({ params }: Props) {
     customQuestions: item.enrollmentSettings.customQuestions || [],
   }
 
+  // Resolve banner image URL
+  const resolvedBannerImageUrl = item.bannerImage
+    ? resolveMediaUrl(
+      typeof item.bannerImage === 'object' && item.bannerImage?.url
+        ? item.bannerImage.url
+        : typeof item.bannerImage === 'string'
+          ? item.bannerImage
+          : undefined,
+      PAYLOAD_URL
+    )
+    : undefined
+
+  // Create subtitle based on type
+  const bannerSubtitle = `${typeLabels[resolvedParams.type]}${item.division ? ` - ${Array.isArray(item.division) ? item.division.join(', ') : item.division}` : ''}`
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <PreviewControls />
@@ -189,40 +179,33 @@ export default async function EnrollmentPage({ params }: Props) {
           <PreviewSwitcher />
         </>
       )}
-      
+
+      {/* Banner for weekends/camps */}
+      {hasBanner && (
+        <PageBanner
+          banner={item.bannerImage}
+          title={item.title}
+          subtitle={bannerSubtitle}
+          resolvedBannerImageUrl={resolvedBannerImageUrl}
+        />
+      )}
+
       <main className="flex-1">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
-          {/* Banner Display for weekends/camps */}
-          {hasBanner && (
-            <EnrollmentBanner bannerImage={item.bannerImage} title={item.title} />
+          {/* Only show title if no banner */}
+          {!hasBanner && (
+            <h1 className="text-4xl font-bold text-primary mb-6 text-center">{formPage.title}</h1>
           )}
-          
-          <div className="text-center mb-6">
-            {/* Only show title if no banner */}
-            {!hasBanner && (
-              <h1 className="text-4xl font-bold text-primary mb-4">{formPage.title}</h1>
-            )}
-            
-            {/* Target Information - inline display */}
-            <div className="flex flex-wrap justify-center gap-6 text-lg">
-              <div>
-                <span className="font-semibold">Type:</span> {typeLabels[resolvedParams.type]}
-              </div>
-              <div>
-                <span className="font-semibold">Titel:</span> {item.title}
-              </div>
-              {item.division && (
-                <div>
-                  <span className="font-semibold">Tak:</span> {Array.isArray(item.division) ? item.division.join(', ') : item.division}
-                </div>
-              )}
-            </div>
+
+          {/* Info Document Button - Centered */}
+
+          <div className="relative mb-24">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-3xl -z-10 rounded-3xl" />
+            <DynamicForm formPage={formPage} />
           </div>
-          
-          <DynamicForm formPage={formPage} />
         </div>
       </main>
-      
+
       <Footer />
     </div>
   )

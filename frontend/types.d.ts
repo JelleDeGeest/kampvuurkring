@@ -1052,18 +1052,7 @@ export interface LokaalFoto {
   /**
    * Kies de categorie waar deze foto bij hoort
    */
-  category:
-    | 'exterieur'
-    | 'slaaplokalen'
-    | 'keuken'
-    | 'eetzaal'
-    | 'vergaderlokaal'
-    | 'sanitair'
-    | 'buitenruimte'
-    | 'tentengrond'
-    | 'speelterrein'
-    | 'parking'
-    | 'overige';
+  category: 'lokaal' | 'kookgerei';
   description?: string | null;
   /**
    * Lagere nummers komen eerst in de gallery (0, 1, 2, ...)

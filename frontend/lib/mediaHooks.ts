@@ -280,10 +280,11 @@ const deleteObjectFromCDN = async (key: string) => {
 }
 
 /**
- * Hook to copy uploaded image and all generated variants to CDN bucket
+ * Hook to copy uploaded files and all generated variants to CDN bucket
+ * Now handles both images and other file types (PDFs, documents, etc.)
  */
 export const copyCDN = async ({ doc, previousDoc, operation }) => {
-  if (!(operation === 'create' || operation === 'update') || !doc.mimeType?.startsWith('image/')) {
+  if (!(operation === 'create' || operation === 'update')) {
     return doc
   }
 
@@ -292,9 +293,11 @@ export const copyCDN = async ({ doc, previousDoc, operation }) => {
   }
 
   try {
+    // Always copy the main file to CDN (images, PDFs, etc.)
     await copyObjectToCDN(doc.filename, doc.mimeType)
 
-    if (doc?.sizes && typeof doc.sizes === 'object') {
+    // For images, also copy all generated variants
+    if (doc.mimeType?.startsWith('image/') && doc?.sizes && typeof doc.sizes === 'object') {
       const entries = Object.values(doc.sizes).filter((variant: any) => Boolean(variant?.filename))
 
       await Promise.all(
