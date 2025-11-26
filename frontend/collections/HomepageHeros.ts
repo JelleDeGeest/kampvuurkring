@@ -90,6 +90,18 @@ export const HomepageHeros: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'expiryDate',
+      type: 'date',
+      required: false,
+      label: 'Expiry Date',
+      admin: {
+        description: 'Optional expiry date. After this date, the hero will not be displayed on the homepage.',
+        date: {
+          pickerAppearance: 'dayOnly',
+        },
+      },
+    },
   ],
   hooks: {
     beforeValidate: [

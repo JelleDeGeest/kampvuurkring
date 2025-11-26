@@ -13,6 +13,7 @@ export interface Hero {
     text?: string;
     link?: string;
   };
+  expiryDate?: string;
 }
 
 export function useHomepageHeroes() {
@@ -45,9 +46,22 @@ export function useHomepageHeroes() {
         const fetchedHeroes = (data?.docs ?? []) as Hero[];
         
         if (isMounted) {
-          // Filter out heroes with presence = 0 and sort by presence (descending)
+          const now = new Date();
+
+          // Filter out heroes with presence = 0, expired heroes, and sort by presence (descending)
           const activeHeroes = fetchedHeroes
-            .filter((hero) => hero.presence > 0)
+            .filter((hero) => {
+              // Filter out heroes with presence = 0
+              if (hero.presence <= 0) return false;
+
+              // Filter out heroes that have expired
+              if (hero.expiryDate) {
+                const expiryDate = new Date(hero.expiryDate);
+                if (expiryDate < now) return false;
+              }
+
+              return true;
+            })
             .sort((a, b) => b.presence - a.presence)
             .map((hero) => {
               // If title is not set, use name as title
@@ -59,7 +73,7 @@ export function useHomepageHeroes() {
               }
               return hero;
             });
-          
+
           setHeroes(activeHeroes);
           setIsLoading(false);
         }

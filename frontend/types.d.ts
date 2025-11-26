@@ -935,6 +935,10 @@ export interface HomepageHero {
      */
     link?: string | null;
   };
+  /**
+   * Optional expiry date. After this date, the hero will not be displayed on the homepage.
+   */
+  expiryDate?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1629,6 +1633,7 @@ export interface HomepageHerosSelect<T extends boolean = true> {
         text?: T;
         link?: T;
       };
+  expiryDate?: T;
   updatedAt?: T;
   createdAt?: T;
 }
