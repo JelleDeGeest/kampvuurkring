@@ -12,7 +12,7 @@ import {
 import { Loader2 } from 'lucide-react'
 import PayloadRichText from '@/components/PayloadRichText'
 import { CategoryFilter, categoryTabs, eventIcon } from '@/components/CategoryFilter'
-import { useActivitiesFilter, Activity } from '@/hooks/useActivitiesFilter'
+import { useActivitiesFilter, Activity, UseActivitiesFilterResult } from '@/hooks/useActivitiesFilter'
 import { useCategorySelection, CategoryValue } from '@/hooks/CategorySelectionContext'
 import { useImportantDates, PeriodItem } from '@/hooks/ImportantDatesContext'
 import { ResponsiveImage, type PayloadImage } from '@/components/ResponsiveImage'
@@ -43,8 +43,7 @@ function ImageBanner({ bannerImage, title }: { bannerImage: any; title: string }
   )
 }
 
-export default function ActivitiesSection() {
-  // ─── Activities filter hooks ───
+export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFilterResult }) {
   const {
     filteredActivities,
     allActivities,
@@ -54,7 +53,7 @@ export default function ActivitiesSection() {
     initialFetchDone,
     isFirstFilter,
     setAllActivities,
-  } = useActivitiesFilter()
+  } = filterData
 
   const { selectedCategories, isInitialized: isCategoriesInitialized } =
     useCategorySelection()
@@ -112,7 +111,7 @@ export default function ActivitiesSection() {
       }, 50)
     }
   }, [isLoadingActivities, initialLoadComplete, initialFetchDone])
-  
+
   // Fallback to ensure loading completes even if no activities
   useEffect(() => {
     if (!isLoadingActivities && !initialLoadComplete && !initialFetchDone) {
@@ -141,13 +140,13 @@ export default function ActivitiesSection() {
   const getContentStyle = () =>
     isInitialPageLoad.current
       ? {
-          opacity: initialFadeIn ? 1 : 0,
-          transition: `opacity ${INITIAL_FADE_IN_DURATION}ms ease-in-out`,
-        }
+        opacity: initialFadeIn ? 1 : 0,
+        transition: `opacity ${INITIAL_FADE_IN_DURATION}ms ease-in-out`,
+      }
       : {
-          opacity: fadeState === 'in' ? 1 : 0,
-          transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
-        }
+        opacity: fadeState === 'in' ? 1 : 0,
+        transition: `opacity ${TRANSITION_DURATION}ms ease-in-out`,
+      }
 
   // No‐activities message condition - simplified
   const showNoActivitiesMessage =
@@ -161,23 +160,23 @@ export default function ActivitiesSection() {
 
   // Track if we've already added the special items to avoid duplicates
   const [specialItemsAdded, setSpecialItemsAdded] = useState(false)
-  
+
   // Process special items when activity data and important dates are both loaded
   useEffect(() => {
     // Only run this once when both data sources are ready
     if (!importantDates || !initialFetchDone || specialItemsAdded) return
-    
+
     try {
       // Create activity-like objects from events, weekends and camps
       const eventItems: Activity[] =
         importantDates.events.map((e) => ({
-          id:        `event-${e.startDate}-${e.id}`,
-          title:     e.title,
+          id: `event-${e.startDate}-${e.id}`,
+          title: e.title,
           startDate: e.startDate,
-          endDate:   e.endDate || e.startDate,
-          division:  'event',
+          endDate: e.endDate || e.startDate,
+          division: 'event',
           description: e.description || { root: { children: [] } },
-          button:    e.button
+          button: e.button
         }))
 
       // For weekends with multiple divisions, create separate items for each
@@ -187,29 +186,29 @@ export default function ActivitiesSection() {
           // Create a separate activity for each division
           w.division.forEach((div, index) => {
             weekendItems.push({
-              id:         `weekend-${w.startDate}-${div}-${index}`,
+              id: `weekend-${w.startDate}-${div}-${index}`,
               originalId: w.id, // Keep the original database ID
-              title:      w.title,
-              startDate:  w.startDate,
-              endDate:    w.endDate || w.startDate,
-              division:   div, // Single division for this card
+              title: w.title,
+              startDate: w.startDate,
+              endDate: w.endDate || w.startDate,
+              division: div, // Single division for this card
               description: w.description || { root: { children: [] } },
               bannerImage: w.bannerImage,
-              button:     w.button,
+              button: w.button,
               enrollmentSettings: w.enrollmentSettings
             });
           });
         } else {
           // Single division, just add it directly
           weekendItems.push({
-            id:         `weekend-${w.startDate}-${w.division}`,
+            id: `weekend-${w.startDate}-${w.division}`,
             originalId: w.id, // Keep the original database ID
-            title:      w.title,
-            startDate:  w.startDate,
-            endDate:    w.endDate || w.startDate,
-            division:   w.division,
+            title: w.title,
+            startDate: w.startDate,
+            endDate: w.endDate || w.startDate,
+            division: w.division,
             description: w.description || { root: { children: [] } },
-            button:     w.button,
+            button: w.button,
             enrollmentSettings: w.enrollmentSettings
           });
         }
@@ -222,29 +221,29 @@ export default function ActivitiesSection() {
           // Create a separate activity for each division
           c.division.forEach((div, index) => {
             campItems.push({
-              id:         `camp-${c.startDate}-${div}-${index}`,
+              id: `camp-${c.startDate}-${div}-${index}`,
               originalId: c.id, // Keep the original database ID
-              title:      c.title,
-              startDate:  c.startDate,
-              endDate:    c.endDate || c.startDate,
-              division:   div, // Single division for this card
+              title: c.title,
+              startDate: c.startDate,
+              endDate: c.endDate || c.startDate,
+              division: div, // Single division for this card
               description: c.description || { root: { children: [] } },
               bannerImage: c.bannerImage,
-              button:     c.button,
+              button: c.button,
               enrollmentSettings: c.enrollmentSettings
             });
           });
         } else {
           // Single division, just add it directly
           campItems.push({
-            id:         `camp-${c.startDate}-${c.division}`,
+            id: `camp-${c.startDate}-${c.division}`,
             originalId: c.id, // Keep the original database ID
-            title:      c.title,
-            startDate:  c.startDate,
-            endDate:    c.endDate || c.startDate,
-            division:   c.division,
+            title: c.title,
+            startDate: c.startDate,
+            endDate: c.endDate || c.startDate,
+            division: c.division,
             description: c.description || { root: { children: [] } },
-            button:     c.button,
+            button: c.button,
             enrollmentSettings: c.enrollmentSettings
           });
         }
@@ -268,7 +267,7 @@ export default function ActivitiesSection() {
           originalId: activity.id // Keep the original database ID
         }];
       });
-      
+
       // Combine all activities
       const mergedActivities = [
         ...processedActivities,
@@ -276,21 +275,21 @@ export default function ActivitiesSection() {
         ...weekendItems,
         ...campItems
       ]
-      
+
       // Update the activities in the filter system
       setAllActivities(mergedActivities)
       setSpecialItemsAdded(true)
-      
+
       // Reapply the current filter
       filterActivities(selectedCategories)
-      
+
     } catch (err) {
       console.error('Error processing special items:', err)
     }
   }, [importantDates, initialFetchDone, specialItemsAdded, allActivities, filterActivities, selectedCategories, setAllActivities])
 
   return (
-    <div className="w-full lg:w-2/3">
+    <div className="w-full">
       <CategoryFilter />
 
       {/* loader for activities */}
@@ -323,7 +322,7 @@ export default function ActivitiesSection() {
 function DateGroups({ acts }: { acts: Activity[] }) {
   const groups = acts.reduce<Record<string, Activity[]>>((g, a) => {
     const key = format(new Date(a.startDate), 'yyyy-MM-dd')
-    ;(g[key] ||= []).push(a)
+      ; (g[key] ||= []).push(a)
     return g
   }, {})
 
@@ -337,11 +336,11 @@ function DateGroups({ acts }: { acts: Activity[] }) {
       const divisionB = Array.isArray(b.division) ? b.division[0] : b.division
       const indexA = sectionOrder.indexOf(divisionA)
       const indexB = sectionOrder.indexOf(divisionB)
-      
+
       // If division not found, put it at the end
       const orderA = indexA === -1 ? 999 : indexA
       const orderB = indexB === -1 ? 999 : indexB
-      
+
       return orderA - orderB
     })
   }
@@ -379,7 +378,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                             <div className="flex flex-col justify-center">
                               <span className="text-sm text-muted-foreground leading-tight">
                                 {format(new Date(act.startDate), "d MMM yyyy", { locale: nl })}
-                                {act.endDate && act.endDate !== act.startDate && 
+                                {act.endDate && act.endDate !== act.startDate &&
                                   ` - ${format(new Date(act.endDate), "d MMM yyyy", { locale: nl })}`}
                               </span>
                               <CardTitle className="text-lg font-bold leading-tight text-gray-700">
@@ -396,20 +395,20 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         <div className="text-muted-foreground leading-relaxed">
                           <PayloadRichText content={act.description} />
                         </div>
-                        
+
                         {/* Add enrollment button if enrollments are enabled and button not hidden */}
                         {act.enrollmentSettings?.enabled &&
-                         act.enrollmentSettings?.enrollmentLink &&
-                         !act.enrollmentSettings?.hideButton && (
-                          <div className="mt-3">
-                            <a
-                              href={act.enrollmentSettings.enrollmentLink}
-                              className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
-                            >
-                              Info/Inschrijven
-                            </a>
-                          </div>
-                        )}
+                          act.enrollmentSettings?.enrollmentLink &&
+                          !act.enrollmentSettings?.hideButton && (
+                            <div className="mt-3">
+                              <a
+                                href={act.enrollmentSettings.enrollmentLink}
+                                className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
+                              >
+                                Info/Inschrijven
+                              </a>
+                            </div>
+                          )}
 
                         {/* Add button if available (for other types of buttons) */}
                         {(act.button?.text && act.button?.url) && (
@@ -447,7 +446,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                 // Regular division items (activities, weekends, camps)
                 const tabMeta = categoryTabs.find((t) => t.value === act.division)
                 const hasBanner = isSpecialEvent;
-                
+
                 return (
                   <Card key={act.id} className="border bg-white overflow-hidden">
                     {/* Render image banner for weekends and camps if they have one */}
@@ -507,19 +506,19 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                       <div className="text-muted-foreground leading-relaxed">
                         <PayloadRichText content={act.description} />
                       </div>
-                      
+
                       {/* Add enrollment button if enrollments are enabled and button not hidden */}
                       {act.enrollmentSettings?.enabled &&
-                       !act.enrollmentSettings?.hideButton && (
-                        <div className="mt-3">
-                          <a
-                            href={getEnrollmentLink()}
-                            className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
-                          >
-                            Info/Inschrijven
-                          </a>
-                        </div>
-                      )}
+                        !act.enrollmentSettings?.hideButton && (
+                          <div className="mt-3">
+                            <a
+                              href={getEnrollmentLink()}
+                              className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
+                            >
+                              Info/Inschrijven
+                            </a>
+                          </div>
+                        )}
 
                       {/* Add button if available (for other types of buttons) */}
                       {(act.button?.text && act.button?.url) && (
@@ -543,4 +542,9 @@ function DateGroups({ acts }: { acts: Activity[] }) {
         ))}
     </div>
   )
+}
+
+export default function ActivitiesSection() {
+  const filterData = useActivitiesFilter()
+  return <ActivitiesContent filterData={filterData} />
 }

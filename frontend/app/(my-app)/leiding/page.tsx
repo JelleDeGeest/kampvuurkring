@@ -29,7 +29,7 @@ async function fetchLeidersByTak(tak: string) {
   try {
     const res = await fetch(
       // NOTE the added &depth=1
-      `${PAYLOAD_URL}/api/leiders?where[takken][in]=${tak}&depth=1`,
+      `${PAYLOAD_URL}/api/leiders?where[takken][in]=${tak}&where[takken][not_equals]=gestopt&depth=1`,
       { cache: 'no-store' }
     );
     const data = await res.json();

@@ -32,7 +32,14 @@ interface ImportantDates {
 }
 
 const base = process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ''
-const qs   = '?limit=100&sort=startDate&depth=2'
+// Removed static qs constant in favor of dynamic query generation
+
+const isUpcoming = (start: string, end?: string) => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const compareDate = end ? new Date(end) : new Date(start)
+  return compareDate >= today
+}
 
 // Function to get a division for sorting
 const getPrimaryDivision = (division: string | string[]): string => {
@@ -55,16 +62,29 @@ export function useImportantDates() {
     const fetchAll = async () => {
       try {
         setIsLoading(true)
-        
-        const draftParam = isDraftMode ? '&draft=true' : ''
-        console.log('Important dates fetch - Draft mode:', isDraftMode)
-        
+
+        const now = new Date().toISOString()
+        const queryParams = new URLSearchParams({
+          limit: '100',
+          sort: 'startDate',
+          depth: '2',
+          'where[or][0][endDate][greater_than]': now,
+          'where[or][1][and][0][endDate][exists]': 'false',
+          'where[or][1][and][1][startDate][greater_than]': now,
+        })
+
+        if (isDraftMode) {
+          queryParams.append('draft', 'true')
+        }
+
+        const queryString = `?${queryParams.toString()}`
+
         // Fetch data with better error handling
         let evResponse, weResponse, caResponse;
-        
+
         try {
-          evResponse = await fetch(`${base}/api/events${qs}${draftParam}`, { 
-            signal: controller.signal, 
+          evResponse = await fetch(`${base}/api/events${queryString}`, {
+            signal: controller.signal,
             cache: 'no-store',
             credentials: 'include' // Include cookies for draft mode
           });
@@ -73,10 +93,10 @@ export function useImportantDates() {
           console.error('Failed to fetch events:', err);
           throw new Error('Events request failed');
         }
-        
+
         try {
-          weResponse = await fetch(`${base}/api/weekends${qs}${draftParam}`, { 
-            signal: controller.signal, 
+          weResponse = await fetch(`${base}/api/weekends${queryString}`, {
+            signal: controller.signal,
             cache: 'no-store',
             credentials: 'include' // Include cookies for draft mode
           });
@@ -85,10 +105,10 @@ export function useImportantDates() {
           console.error('Failed to fetch weekends:', err);
           throw new Error('Weekends request failed');
         }
-        
+
         try {
-          caResponse = await fetch(`${base}/api/camps${qs}${draftParam}`, { 
-            signal: controller.signal, 
+          caResponse = await fetch(`${base}/api/camps${queryString}`, {
+            signal: controller.signal,
             cache: 'no-store',
             credentials: 'include' // Include cookies for draft mode
           });
@@ -99,7 +119,7 @@ export function useImportantDates() {
         }
 
         if (!mounted) return
-        
+
         // Check responses
         if (!evResponse.ok) {
           console.error(`Events API error: ${evResponse.status} ${evResponse.statusText}`);
@@ -116,7 +136,7 @@ export function useImportantDates() {
 
         // Parse JSON
         let evData, weData, caData;
-        
+
         try {
           evData = await evResponse.json();
         } catch (err) {
@@ -124,7 +144,7 @@ export function useImportantDates() {
           console.error('Failed to parse events JSON:', err);
           throw new Error('Events data is invalid');
         }
-        
+
         try {
           weData = await weResponse.json();
         } catch (err) {
@@ -132,7 +152,7 @@ export function useImportantDates() {
           console.error('Failed to parse weekends JSON:', err);
           throw new Error('Weekends data is invalid');
         }
-        
+
         try {
           caData = await caResponse.json();
         } catch (err) {
@@ -142,12 +162,11 @@ export function useImportantDates() {
         }
 
         if (mounted) {
-          // Backend filterPastDatesHook already filters out past dates
-          // No need for additional filtering on the frontend
+          // Data is now filtered on the backend
           setData({
-            events:   (evData?.docs ?? []),
-            weekends: (weData?.docs ?? []),
-            camps:    (caData?.docs ?? []),
+            events: evData?.docs ?? [],
+            weekends: weData?.docs ?? [],
+            camps: caData?.docs ?? [],
           })
           setIsLoading(false)
         }

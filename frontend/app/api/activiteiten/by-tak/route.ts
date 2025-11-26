@@ -5,19 +5,22 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const tak = searchParams.get('tak')
-    
+
     if (!tak) {
       return NextResponse.json({ error: 'Tak parameter is required' }, { status: 400 })
     }
 
     const payload = await getPayloadClient()
-    
+
     // Fetch activities where division contains the specified tak
     const result = await payload.find({
       collection: 'activiteiten',
       where: {
         division: {
           contains: tak,
+        },
+        endDate: {
+          greater_than: new Date().toISOString(),
         },
       },
       sort: 'startDate',

@@ -27,28 +27,38 @@ export function ActivitiesByTak({ tak }: ActivitiesByTakProps) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    const controller = new AbortController()
+
     const fetchActivities = async () => {
       try {
         setLoading(true)
         setError(null)
-        
-        const response = await fetch(`/api/activiteiten/by-tak?tak=${tak}`)
-        
+
+        const response = await fetch(`/api/activiteiten/by-tak?tak=${tak}`, {
+          signal: controller.signal
+        })
+
         if (!response.ok) {
           throw new Error('Failed to fetch activities')
         }
-        
+
         const data = await response.json()
         setActivities(data.docs || [])
-      } catch (err) {
-        console.error('Error fetching activities:', err)
-        setError('Er is een fout opgetreden bij het laden van de activiteiten')
+      } catch (err: any) {
+        if (err.name !== 'AbortError') {
+          console.error('Error fetching activities:', err)
+          setError('Er is een fout opgetreden bij het laden van de activiteiten')
+        }
       } finally {
         setLoading(false)
       }
     }
 
     fetchActivities()
+
+    return () => {
+      controller.abort()
+    }
   }, [tak])
 
   if (loading) {
@@ -88,18 +98,18 @@ export function ActivitiesByTak({ tak }: ActivitiesByTakProps) {
       {activities.map((activity) => (
         <Card key={activity.id} className="p-6 hover:shadow-lg transition-shadow">
           <h3 className="text-xl font-semibold mb-2">{activity.title}</h3>
-          
+
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
               <span>
                 {format(new Date(activity.startDate), 'd MMMM yyyy', { locale: nl })}
-                {activity.endDate !== activity.startDate && 
+                {activity.endDate !== activity.startDate &&
                   ` - ${format(new Date(activity.endDate), 'd MMMM yyyy', { locale: nl })}`
                 }
               </span>
             </div>
-            
+
             <div className="flex items-center gap-1">
               <MapPin className="h-4 w-4" />
               <span className="capitalize">{tak}</span>
@@ -125,18 +135,17 @@ export function TakActivitiesExample() {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Activiteiten per Tak</h1>
-      
+
       {/* Tak selector */}
       <div className="flex gap-2 mb-6">
         {(['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin'] as const).map((tak) => (
           <button
             key={tak}
             onClick={() => setSelectedTak(tak)}
-            className={`px-4 py-2 rounded-lg capitalize transition-colors ${
-              selectedTak === tak 
-                ? 'bg-primary text-white' 
+            className={`px-4 py-2 rounded-lg capitalize transition-colors ${selectedTak === tak
+                ? 'bg-primary text-white'
                 : 'bg-gray-100 hover:bg-gray-200'
-            }`}
+              }`}
           >
             {tak}
           </button>

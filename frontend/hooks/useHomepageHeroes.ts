@@ -24,45 +24,43 @@ export function useHomepageHeroes() {
   useEffect(() => {
     const controller = new AbortController();
     let isMounted = true;
-    
+
     const fetchHeroes = async () => {
       if (!isMounted) return;
-      
+
       try {
         setIsLoading(true);
-        
+
+        const now = new Date().toISOString();
+        const queryParams = new URLSearchParams({
+          sort: '-presence', // Sort by presence descending
+          depth: '1',
+          'where[presence][greater_than]': '0',
+          'where[or][0][expiryDate][greater_than]': now,
+          'where[or][1][expiryDate][exists]': 'false',
+        });
+
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/homepage-heros?sort=presence&depth=1`,
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/homepage-heros?${queryParams.toString()}`,
           { signal: controller.signal, cache: "no-store" }
         );
-        
+
         if (!isMounted) return;
-        
+
         if (!res.ok) {
           throw new Error(`Failed to fetch heroes: ${res.status}`);
         }
-        
+
         const data = await res.json();
         const fetchedHeroes = (data?.docs ?? []) as Hero[];
-        
+
         if (isMounted) {
           const now = new Date();
 
-          // Filter out heroes with presence = 0, expired heroes, and sort by presence (descending)
+          // Data is already filtered and sorted by backend
           const activeHeroes = fetchedHeroes
-            .filter((hero) => {
-              // Filter out heroes with presence = 0
-              if (hero.presence <= 0) return false;
-
-              // Filter out heroes that have expired
-              if (hero.expiryDate) {
-                const expiryDate = new Date(hero.expiryDate);
-                if (expiryDate < now) return false;
-              }
-
-              return true;
-            })
-            .sort((a, b) => b.presence - a.presence)
+            // .filter(...) // Removed frontend filtering
+            // .sort(...) // Removed frontend sorting as backend does it (sort=-presence)
             .map((hero) => {
               // If title is not set, use name as title
               if (!hero.title) {
@@ -85,9 +83,9 @@ export function useHomepageHeroes() {
         }
       }
     };
-    
+
     fetchHeroes();
-    
+
     return () => {
       isMounted = false;
       controller.abort();
@@ -99,10 +97,10 @@ export function useHomepageHeroes() {
     isLoading,
     error,
     // Check if hero has all required fields for info box
-    hasCompleteInfo: (hero: Hero) => 
-      Boolean(hero.title || hero.name) && 
-      Boolean(hero.description) && 
-      Boolean(hero.button?.text) && 
+    hasCompleteInfo: (hero: Hero) =>
+      Boolean(hero.title || hero.name) &&
+      Boolean(hero.description) &&
+      Boolean(hero.button?.text) &&
       Boolean(hero.button?.link)
   };
 } 

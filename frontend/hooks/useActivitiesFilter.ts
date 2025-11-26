@@ -29,7 +29,18 @@ export interface Activity {
 const FADE_OUT_DURATION = 250; // ms
 const FADE_IN_DURATION = 300; // ms
 
-export function useActivitiesFilter() {
+export interface UseActivitiesFilterResult {
+  allActivities: Activity[];
+  setAllActivities: React.Dispatch<React.SetStateAction<Activity[]>>;
+  filteredActivities: Activity[];
+  isLoading: boolean;
+  fadeState: 'in' | 'out';
+  filterActivities: (categories: CategoryValue[]) => void;
+  initialFetchDone: boolean;
+  isFirstFilter: boolean;
+}
+
+export function useActivitiesFilter(): UseActivitiesFilterResult {
   const [allActivities, setAllActivities] = useState<Activity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,59 +48,61 @@ export function useActivitiesFilter() {
   const [activeFilters, setActiveFilters] = useState<CategoryValue[]>([]);
   const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [isFirstFilter, setIsFirstFilter] = useState(true);
+
   const { isDraftMode } = useDraftMode();
+
 
   // Filter activities based on selected categories
   // Make this a stable callback with useCallback to avoid dependency issues
   const filterActivities = useCallback((categories: CategoryValue[]) => {
     setActiveFilters(categories);
-    
+
     if (allActivities.length === 0) {
       setIsLoading(false);
       return;
     }
-    
+
     // Handle initial filtering differently than subsequent filtering
     if (isFirstFilter) {
       // For the first filter operation after loading, don't use fade transition
       // Just apply the filter and update the state immediately
       let filtered = allActivities;
-      
+
       if (!categories.includes(ALL_CATEGORIES)) {
-        filtered = allActivities.filter(activity => 
-          categories.includes(activity.division as CategoryValue) || 
-          (Array.isArray(activity.division) && activity.division.some(div => categories.includes(div as CategoryValue))) || 
+        filtered = allActivities.filter(activity =>
+          categories.includes(activity.division as CategoryValue) ||
+          (Array.isArray(activity.division) && activity.division.some(div => categories.includes(div as CategoryValue))) ||
           activity.division === 'event'
         );
       }
-      
+
       setFilteredActivities(filtered);
       setIsLoading(false);
       setIsFirstFilter(false);
-      
+
       // Make sure we're in the "in" state for initial display (no animation)
       setFadeState('in');
     } else {
       // For subsequent filters, use the fade transition
       // First fade out completely
       setFadeState('out');
-      
+
       // Wait until the fade-out animation is FULLY complete
       setTimeout(() => {
         // Only apply the filter after content is fully faded out
         let filtered = allActivities;
-        
+
         if (!categories.includes(ALL_CATEGORIES)) {
-          filtered = allActivities.filter(activity => 
-            categories.includes(activity.division as CategoryValue) || 
-            (Array.isArray(activity.division) && activity.division.some(div => categories.includes(div as CategoryValue))) || 
+          filtered = allActivities.filter(activity =>
+            categories.includes(activity.division as CategoryValue) ||
+            (Array.isArray(activity.division) && activity.division.some(div => categories.includes(div as CategoryValue))) ||
             activity.division === 'event'
           );
         }
-        
+
         // Update filtered activities
         setFilteredActivities(filtered);
-        
+
         // Then fade back in after a brief delay to ensure the DOM has updated
         setTimeout(() => {
           setFadeState('in');
@@ -99,31 +112,43 @@ export function useActivitiesFilter() {
   }, [allActivities, isFirstFilter]);
 
   // Fetch all activities on first render
+  // Fetch all activities on first render
   useEffect(() => {
     if (initialFetchDone) return; // Only run this effect once
-    
+
     const controller = new AbortController();
     let isMounted = true;
-    
+
     const fetchActivities = async () => {
       if (!isMounted) return;
-      
+
       try {
         setIsLoading(true);
-        
+
         console.log('Activities fetch - Draft mode:', isDraftMode)
-        
+
+        const now = new Date().toISOString();
+        const queryParams = new URLSearchParams({
+          sort: 'startDate',
+          limit: '100',
+          'where[endDate][greater_than]': now,
+        });
+
+        if (isDraftMode) {
+          queryParams.append('draft', 'true');
+        }
+
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?sort=startDate&limit=100${isDraftMode ? '&draft=true' : ''}`,
-          { 
-            signal: controller.signal, 
+          `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?${queryParams.toString()}`,
+          {
+            signal: controller.signal,
             cache: "no-store",
             credentials: 'include' // Include cookies for draft mode
           }
         );
-        
+
         if (!isMounted) return;
-        
+
         const data = await res.json();
         const fetchedActivities = data?.docs ?? [];
 
@@ -132,7 +157,7 @@ export function useActivitiesFilter() {
         if (isMounted) {
           setAllActivities(fetchedActivities);
           setInitialFetchDone(true);
-          
+
           // If there are no activities, immediately set loading to false
           if (fetchedActivities.length === 0) {
             setIsLoading(false);
@@ -147,9 +172,9 @@ export function useActivitiesFilter() {
         }
       }
     };
-    
+
     fetchActivities();
-    
+
     return () => {
       isMounted = false;
       controller.abort();

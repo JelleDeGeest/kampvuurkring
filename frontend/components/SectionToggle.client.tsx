@@ -2,13 +2,17 @@
 
 import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import ActivitiesSection from '@/components/ActivitiesSection.client'
+import { ActivitiesContent } from '@/components/ActivitiesSection.client'
+import { useActivitiesFilter } from '@/hooks/useActivitiesFilter'
 import BelangrijkeDataBlock from '@/components/BelangrijkeDataBlock'
 import { useImportantDates } from '@/hooks/ImportantDatesContext'
 
 type SectionType = 'activities' | 'dates'
 export default function SectionToggle() {
   const [activeSection, setActiveSection] = useState<SectionType>('activities')
+
+  // Fetch activities data once at the top level
+  const filterData = useActivitiesFilter()
 
   // Touch/swipe state
   const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -59,18 +63,19 @@ export default function SectionToggle() {
     return activeSection === 'dates' ? 'translate-x-full' : 'translate-x-0'
   }
 
-  const getActivitiesTransform = () => {
-    return activeSection === 'dates' ? '-translate-x-full' : 'translate-x-0'
+  // Use left positioning instead of transform to avoid resize animations
+  const getActivitiesPosition = () => {
+    return activeSection === 'dates' ? '-left-full' : 'left-0'
   }
 
-  const getDatesTransform = () => {
-    return activeSection === 'dates' ? 'translate-x-0' : 'translate-x-full'
+  const getDatesPosition = () => {
+    return activeSection === 'dates' ? 'left-0' : 'left-full'
   }
 
   return (
     <div className="w-full">
       {/* Toggle buttons - only show on small screens */}
-      <div className="lg:hidden mb-4 relative flex rounded-full p-1 bg-gray-100 w-[85%] sm:w-[70%] md:w-[50%] mx-auto">
+      <div className="md:hidden mb-4 relative flex rounded-full p-1 bg-gray-100 w-[85%] sm:w-[70%] md:w-[50%] mx-auto">
         {/* Sliding background indicator */}
         <div
           className={`absolute top-1 bottom-1 w-1/2 bg-primary rounded-full shadow-sm transition-transform duration-300 ease-in-out ${getSliderTransform()}`}
@@ -78,21 +83,19 @@ export default function SectionToggle() {
 
         {/* Button content */}
         <button
-          className={`relative flex-1 text-sm py-2 px-4 rounded-full transition-colors duration-300 font-medium ${
-            activeSection === 'activities'
-              ? 'text-white z-10'
-              : 'text-gray-600 hover:text-gray-800 z-10'
-          }`}
+          className={`relative flex-1 text-sm py-2 px-4 rounded-full transition-colors duration-300 font-medium ${activeSection === 'activities'
+            ? 'text-white z-10'
+            : 'text-gray-600 hover:text-gray-800 z-10'
+            }`}
           onClick={() => handleSectionChange('activities')}
         >
           Activiteiten
         </button>
         <button
-          className={`relative flex-1 text-sm py-2 px-4 rounded-full transition-colors duration-300 font-medium ${
-            activeSection === 'dates'
-              ? 'text-white z-10'
-              : 'text-gray-600 hover:text-gray-800 z-10'
-          }`}
+          className={`relative flex-1 text-sm py-2 px-4 rounded-full transition-colors duration-300 font-medium ${activeSection === 'dates'
+            ? 'text-white z-10'
+            : 'text-gray-600 hover:text-gray-800 z-10'
+            }`}
           onClick={() => handleSectionChange('dates')}
         >
           Belangrijke Data
@@ -104,29 +107,21 @@ export default function SectionToggle() {
         </button>
       </div>
 
-      {/* Content sections with swipe support */}
+      {/* Unified content section with responsive layout */}
       <div
-        className="lg:hidden relative overflow-hidden"
+        className="relative overflow-hidden md:overflow-visible md:flex md:gap-6"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
         <div
-          className={`transition-transform duration-300 ease-in-out ${getActivitiesTransform()}`}
+          className={`relative transition-[left] duration-300 ease-in-out md:static md:w-2/3 md:transition-none ${getActivitiesPosition()}`}
         >
-          <ActivitiesSection />
+          <ActivitiesContent filterData={filterData} />
         </div>
         <div
-          className={`absolute top-0 left-0 w-full transition-transform duration-300 ease-in-out ${getDatesTransform()}`}
+          className={`absolute top-0 w-full transition-[left] duration-300 ease-in-out md:static md:w-1/3 md:transition-none ${getDatesPosition()}`}
         >
-          <BelangrijkeDataBlock />
-        </div>
-      </div>
-
-      {/* Large screen layout - show both side by side */}
-      <div className="hidden lg:flex gap-6">
-        <ActivitiesSection />
-        <div className="w-full lg:w-1/3">
           <BelangrijkeDataBlock />
         </div>
       </div>

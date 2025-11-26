@@ -30,24 +30,25 @@ export function useActivitiesByTak({ tak, limit = 10, sort = 'startDate' }: UseA
 
   useEffect(() => {
     const controller = new AbortController()
-    
+
     const fetchActivities = async () => {
       try {
         setLoading(true)
         setError(null)
-        
+
         // Build the query parameters
         const params = new URLSearchParams({
           sort,
           limit: limit.toString(),
           // Using the where query format for Payload CMS REST API
           'where[division][contains]': tak,
+          'where[endDate][greater_than]': new Date().toISOString(),
         })
-        
+
         if (isDraftMode) {
           params.append('draft', 'true')
         }
-        
+
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_PAYLOAD_URL ?? ""}/api/activiteiten?${params.toString()}`,
           {
@@ -56,11 +57,11 @@ export function useActivitiesByTak({ tak, limit = 10, sort = 'startDate' }: UseA
             credentials: 'include', // Include cookies for draft mode
           }
         )
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
-        
+
         const data = await response.json()
         setActivities(data.docs || [])
       } catch (err: any) {
