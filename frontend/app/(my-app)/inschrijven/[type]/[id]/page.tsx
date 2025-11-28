@@ -62,7 +62,7 @@ export default async function EnrollmentPage({ params }: Props) {
         equals: resolvedParams.id,
       },
     },
-    depth: 2, // Increased depth to fetch media relations
+    depth: 3, // Increased depth to ensure full media population
     draft: inDraftMode,
   })
 
@@ -147,11 +147,15 @@ export default async function EnrollmentPage({ params }: Props) {
       pricePerChild: item.enrollmentSettings.pricePerChild,
       paymentInstructions: item.enrollmentSettings.paymentInstructions,
     },
-    infoDocument: item.enrollmentSettings.infoDocument ? {
-      id: item.enrollmentSettings.infoDocument.id,
-      url: item.enrollmentSettings.infoDocument.url,
-      filename: item.enrollmentSettings.infoDocument.filename,
-    } : undefined,
+    infoDocument: item.enrollmentSettings.infoDocument
+      ? (typeof item.enrollmentSettings.infoDocument === 'object'
+          ? {
+              id: item.enrollmentSettings.infoDocument.id,
+              url: resolveMediaUrl(item.enrollmentSettings.infoDocument.url, PAYLOAD_URL),
+              filename: item.enrollmentSettings.infoDocument.filename,
+            }
+          : undefined)
+      : undefined,
     customQuestions: item.enrollmentSettings.customQuestions || [],
   }
 
