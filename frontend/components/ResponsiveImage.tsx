@@ -32,6 +32,8 @@ export type PayloadImageVariant = {
   height?: number
   mimeType?: string
   filename?: string
+  focalX?: number
+  focalY?: number
 }
 
 export type PayloadImage = PayloadImageVariant & {
@@ -202,7 +204,10 @@ export const ResponsiveImage = React.forwardRef<HTMLImageElement, ResponsiveImag
           objectFit: 'cover',
           ...styleProp,
         }
-        : styleProp,
+        : {
+          ...styleProp,
+          objectPosition: media?.focalX && media?.focalY ? `${media.focalX}% ${media.focalY}%` : undefined,
+        },
       'data-has-placeholder': usingPlaceholder ? 'true' : undefined,
     }
 

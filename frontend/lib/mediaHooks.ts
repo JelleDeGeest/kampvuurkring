@@ -288,7 +288,13 @@ export const copyCDN = async ({ doc, previousDoc, operation }) => {
     return doc
   }
 
-  if (operation === 'update' && previousDoc?.filename === doc.filename) {
+  // Skip if this is just a metadata update (filename and focal point haven't changed)
+  if (
+    operation === 'update' &&
+    previousDoc?.filename === doc.filename &&
+    previousDoc?.focalX === doc.focalX &&
+    previousDoc?.focalY === doc.focalY
+  ) {
     return doc
   }
 

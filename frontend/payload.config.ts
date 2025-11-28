@@ -21,6 +21,18 @@ const buildPublicCDNUrl = (filename: string): string | undefined => {
   return undefined
 }
 
+// Server-side URL for fetching files from S3 (uses internal Docker network)
+const buildInternalS3Url = (filename: string, bucket: string): string | undefined => {
+  if (!filename) return undefined
+
+  const endpoint = process.env.S3_ENDPOINT
+  if (endpoint) {
+    return `${endpoint.replace(/\/$/, '')}/${bucket}/${filename}`
+  }
+
+  return undefined
+}
+
 // Import your collections and globals
 // If these imports fail, you'll need to create these files
 import { Activiteiten } from './collections/Activiteiten';
@@ -48,6 +60,7 @@ import LokaalFotos from './collections/LokaalFotos'
 import { Users } from './collections/Users'
 
 const config = {
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
   collections: [
     Activiteiten,
     Events,
@@ -87,29 +100,42 @@ const config = {
         },
         forcePathStyle: true,
       },
+      disableLocalStorage: true,
       collections: {
         'media': {
           disablePayloadAccessControl: true,
+          disableLocalStorage: true,
+          prefix: '',
           generateFileURL: ({ filename }) => buildPublicCDNUrl(filename),
         },
         'banner-images': {
           disablePayloadAccessControl: true,
+          disableLocalStorage: true,
+          prefix: '',
           generateFileURL: ({ filename }) => buildPublicCDNUrl(filename),
         },
         'leiders-banners': {
           disablePayloadAccessControl: true,
+          disableLocalStorage: true,
+          prefix: '',
           generateFileURL: ({ filename }) => buildPublicCDNUrl(filename),
         },
         'homepage-hero-images': {
           disablePayloadAccessControl: true,
+          disableLocalStorage: true,
+          prefix: '',
           generateFileURL: ({ filename }) => buildPublicCDNUrl(filename),
         },
         'leiders-foto': {
           disablePayloadAccessControl: true,
+          disableLocalStorage: true,
+          prefix: '',
           generateFileURL: ({ filename }) => buildPublicCDNUrl(filename),
         },
         'lokaal-media': {
           disablePayloadAccessControl: true,
+          disableLocalStorage: true,
+          prefix: '',
           generateFileURL: ({ filename }) => buildPublicCDNUrl(filename),
         },
       },

@@ -4,7 +4,7 @@ import getPayloadClient from '@/lib/getPayload'
 import { LexicalRenderer } from '@/components/LexicalRenderer'
 import PreviewControls from '@/components/PreviewControls'
 import { DynamicForm } from '@/components/DynamicForm'
-import Footer from '@/app/(my-app)/components/Footer'
+
 import RefreshOnSave from '@/components/RefreshOnSave'
 import PreviewSwitcher from '@/components/PreviewSwitcher'
 import { format } from 'date-fns'
@@ -122,7 +122,7 @@ export default async function EnrollmentPage({ params }: Props) {
               <p className="text-lg">De inschrijvingen voor {item.title} zijn helaas gesloten.</p>
             </div>
           </main>
-          <Footer />
+
         </div>
       )
     }
@@ -206,7 +206,7 @@ export default async function EnrollmentPage({ params }: Props) {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   )
 }

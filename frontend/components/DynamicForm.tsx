@@ -186,6 +186,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
         bannerImage: formPage.target.bannerImage
       })
 
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       setSuccess(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden')

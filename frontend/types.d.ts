@@ -272,6 +272,7 @@ export interface Media {
    */
   originalFilename?: string | null;
   alt?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -513,6 +514,7 @@ export interface BannerImage {
    * Geef de banner een duidelijke naam (bv. "Zomerkamp Bos", "Winterkamp Bergen")
    */
   name?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -738,6 +740,7 @@ export interface LeidersFoto {
    * The original name of the uploaded file
    */
   originalFilename?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -956,6 +959,7 @@ export interface HomepageHeroImage {
    * The original name of the uploaded file
    */
   originalFilename?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1086,6 +1090,7 @@ export interface LokaalMedia {
    */
   originalFilename?: string | null;
   alt?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1189,6 +1194,7 @@ export interface LeidersBanner {
    * Geef de banner een duidelijke naam (bv. "Kapoenen Winter 2024", "Wouters Zomer")
    */
   name?: string | null;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1659,6 +1665,7 @@ export interface MediaSelect<T extends boolean = true> {
   displayName?: T;
   originalFilename?: T;
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1773,6 +1780,7 @@ export interface BannerImagesSelect<T extends boolean = true> {
   originalFilename?: T;
   alt?: T;
   name?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1887,6 +1895,7 @@ export interface LeidersBannersSelect<T extends boolean = true> {
   originalFilename?: T;
   alt?: T;
   name?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2000,6 +2009,7 @@ export interface LeidersBannersSelect<T extends boolean = true> {
 export interface HomepageHeroImagesSelect<T extends boolean = true> {
   displayName?: T;
   originalFilename?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2113,6 +2123,7 @@ export interface HomepageHeroImagesSelect<T extends boolean = true> {
 export interface LeidersFotoSelect<T extends boolean = true> {
   displayName?: T;
   originalFilename?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2227,6 +2238,7 @@ export interface LokaalMediaSelect<T extends boolean = true> {
   displayName?: T;
   originalFilename?: T;
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

@@ -10,7 +10,7 @@ services:
       - "--api.insecure=true"
     ports:
       - "80:80"
-      - "8080:8080"  # Traefik dashboard
+      - "8080:8080" # Traefik dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
@@ -23,13 +23,15 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"  # Direct access for development
+      - "3000:3000" # Direct access for development
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
       - PAYLOAD_DROP_DATABASE=false
       - PAYLOAD_MIGRATE_EXISTING_TABLES=true
-      - CDN_PUBLIC_URL=http://localhost:9000/media-cdn
+      - PAYLOAD_MIGRATE_EXISTING_TABLES=true
+      - CDN_PUBLIC_URL=/media-cdn
+      - S3_ENDPOINT=http://minio:9000
     volumes:
       - ./frontend:/usr/src/app
       - ./frontend/media:/usr/src/app/media
@@ -41,7 +43,7 @@ services:
     env_file:
       - .env
     entrypoint: []
-    command: ["npm", "run", "dev"]
+    command: [ "npm", "run", "dev" ]
     depends_on:
       - db
       - traefik
@@ -59,8 +61,8 @@ services:
     image: minio/minio:latest
     container_name: minio-dev
     ports:
-      - "9000:9000"   # MinIO API
-      - "9001:9001"   # MinIO Console
+      - "9000:9000" # MinIO API
+      - "9001:9001" # MinIO Console
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin123
@@ -71,7 +73,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -84,31 +86,7 @@ services:
       minio:
         condition: service_healthy
     entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://minio:9000 minioadmin minioadmin123 &&
-      mc rb local/images-cdn --force || true &&
-      mc rb local/images-original --force || true &&
-      mc rb local/media --force || true &&
-      mc rb local/banner-images --force || true &&
-      mc rb local/leiders-banners --force || true &&
-      mc rb local/homepage-heros --force || true &&
-      mc rb local/homepage-hero-images --force || true &&
-      mc rb local/leiders-foto --force || true &&
-      mc rb local/lokaal-fotos --force || true &&
-      mc rb local/random-afbeelding --force || true &&
-      mc rb local/random-afbeeldingen --force || true &&
-      mc rb local/media-leiding --force || true &&
-      mc rb local/random --force || true &&
-      mc rb local/andere-banner --force || true &&
-      mc rb local/takken-banner --force || true &&
-      mc rb local/homepage-banner --force || true &&
-      mc rb local/leiding --force || true &&
-      mc rb local/lokaal --force || true &&
-      mc mb local/media-original --ignore-existing &&
-      mc mb local/media-cdn --ignore-existing &&
-      mc anonymous set public local/media-cdn &&
-      echo 'MinIO buckets created and configured!'
-      "
+      /bin/sh -c " mc alias set local http://minio:9000 minioadmin minioadmin123 && mc rb local/images-cdn --force || true && mc rb local/images-original --force || true && mc rb local/media --force || true && mc rb local/banner-images --force || true && mc rb local/leiders-banners --force || true && mc rb local/homepage-heros --force || true && mc rb local/homepage-hero-images --force || true && mc rb local/leiders-foto --force || true && mc rb local/lokaal-fotos --force || true && mc rb local/random-afbeelding --force || true && mc rb local/random-afbeeldingen --force || true && mc rb local/media-leiding --force || true && mc rb local/random --force || true && mc rb local/andere-banner --force || true && mc rb local/takken-banner --force || true && mc rb local/homepage-banner --force || true && mc rb local/leiding --force || true && mc rb local/lokaal --force || true && mc mb local/media-original --ignore-existing && mc mb local/media-cdn --ignore-existing && mc anonymous set public local/media-cdn && echo 'MinIO buckets created and configured!' "
     networks:
       - app-network
 
@@ -117,7 +95,7 @@ services:
     image: nginx:alpine
     container_name: media-server-dev
     ports:
-      - "8081:80"  # Direct access for testing
+      - "8081:80" # Direct access for testing
     volumes:
       - ./frontend/media:/usr/share/nginx/html/media:ro
       - ./frontend/banner-images:/usr/share/nginx/html/banner-images:ro
@@ -209,7 +187,6 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-
 
 networks:
   app-network:

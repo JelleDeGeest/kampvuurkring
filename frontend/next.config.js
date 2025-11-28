@@ -31,6 +31,12 @@ const nextConfig = {
         pathname: '/**',
       },
       {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '9000',
+        pathname: '/**',
+      },
+      {
         protocol: 'https',
         hostname: 'www.scoutssintjohannes.be',
         pathname: '/**',
@@ -53,6 +59,14 @@ const nextConfig = {
       '@payload-config': path.join(__dirname, 'payload.config.ts')
     };
     return config;
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/media-cdn/:path*',
+        destination: 'http://minio:9000/media-cdn/:path*',
+      },
+    ]
   },
 };
 
