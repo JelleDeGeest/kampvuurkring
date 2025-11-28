@@ -63,13 +63,10 @@ export default function SectionToggle() {
     return activeSection === 'dates' ? 'translate-x-full' : 'translate-x-0'
   }
 
-  // Use left positioning instead of transform to avoid resize animations
-  const getActivitiesPosition = () => {
-    return activeSection === 'dates' ? '-left-full' : 'left-0'
-  }
-
-  const getDatesPosition = () => {
-    return activeSection === 'dates' ? 'left-0' : 'left-full'
+  // Use transform for GPU-accelerated smooth animations on the container
+  // Since container is 200% wide, we need to translate by 50% of container (= 100% of viewport)
+  const getContentTransform = () => {
+    return activeSection === 'dates' ? '-translate-x-1/2' : 'translate-x-0'
   }
 
   return (
@@ -109,20 +106,21 @@ export default function SectionToggle() {
 
       {/* Unified content section with responsive layout */}
       <div
-        className="relative overflow-hidden md:overflow-visible md:flex md:gap-6"
+        className="relative overflow-hidden md:overflow-visible"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
+        {/* Mobile: Sliding container with GPU-accelerated transforms */}
         <div
-          className={`relative transition-[left] duration-300 ease-in-out md:static md:w-2/3 md:transition-none ${getActivitiesPosition()}`}
+          className={`flex md:gap-6 w-[200%] md:w-auto transition-transform duration-300 ease-in-out will-change-transform md:transition-none md:transform-none ${getContentTransform()}`}
         >
-          <ActivitiesContent filterData={filterData} />
-        </div>
-        <div
-          className={`absolute top-0 w-full transition-[left] duration-300 ease-in-out md:static md:w-1/3 md:transition-none ${getDatesPosition()}`}
-        >
-          <BelangrijkeDataBlock />
+          <div className="w-1/2 md:w-2/3 flex-shrink-0 md:flex-shrink" style={{ contain: 'layout' }}>
+            <ActivitiesContent filterData={filterData} />
+          </div>
+          <div className="w-1/2 md:w-1/3 flex-shrink-0 md:flex-shrink" style={{ contain: 'layout' }}>
+            <BelangrijkeDataBlock />
+          </div>
         </div>
       </div>
     </div>
