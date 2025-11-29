@@ -187,7 +187,7 @@ export default async function VerhuurLokaalPage() {
                 <div className="bg-white rounded-lg overflow-hidden">
                   <div className="h-[371px] relative w-full">
                     <iframe
-                      src="https://maps.google.com/maps?q=Tybaertstraat+1,+9170+Sint-Gillis-Waas,+Belgium&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                      src="https://maps.google.com/maps?q=51.21849969969767,4.112728389763174&t=&z=15&ie=UTF8&iwloc=&output=embed"
                       className="absolute inset-0 w-full h-full"
                       style={{ border: 0, minHeight: '371px' }}
                       allowFullScreen
