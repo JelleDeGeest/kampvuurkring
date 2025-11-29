@@ -111,8 +111,24 @@ export default function Gallery({ images }: GalleryProps) {
   }, [slides, images, currentIndex, makeSlide])
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-      <div className="xl:col-span-3">
+    <>
+      {/* Preload all large images invisibly to avoid animation jank */}
+      <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
+        {images.map((image) => (
+          <ResponsiveImage
+            key={`preload-${image.id}`}
+            media={image.media}
+            fallbackUrl={image.src}
+            alt=""
+            width={1920}
+            height={1080}
+            sizes="(min-width: 1280px) 75vw, 100vw"
+          />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <div className="xl:col-span-3">
         <div className="group relative w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden bg-gray-100">
           {transitionSlides.map((slide, idx) => {
             const isActive = slide.state === 'entering'
@@ -206,6 +222,7 @@ export default function Gallery({ images }: GalleryProps) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
