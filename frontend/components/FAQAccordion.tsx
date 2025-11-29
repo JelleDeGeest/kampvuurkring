@@ -171,7 +171,8 @@ export default function FAQAccordion({ items, categories: initialCategories, cla
                                             initial={{ height: 0, opacity: 0 }}
                                             animate={{ height: "auto", opacity: 1 }}
                                             exit={{ height: 0, opacity: 0 }}
-                                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                                            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                                            style={{ overflow: 'hidden' }}
                                         >
                                             <div className="px-6 pb-6 pt-6 bg-white">
                                                 <div className="prose prose-sm max-w-none text-gray-600">
