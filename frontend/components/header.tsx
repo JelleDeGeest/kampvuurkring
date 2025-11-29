@@ -32,6 +32,7 @@ export default function Header() {
             <TransitionLink href="/leiding" className="transition-colors hover:text-primary">Leiding</TransitionLink>
             <TransitionLink href="/fotos" className="transition-colors hover:text-primary">Foto's</TransitionLink>
             <TransitionLink href="/verhuur-lokaal" className="transition-colors hover:text-primary">Verhuur Lokaal</TransitionLink>
+            <TransitionLink href="/faq" className="transition-colors hover:text-primary">FAQ</TransitionLink>
             <TransitionLink href="/contact" className="transition-colors hover:text-primary">Contact</TransitionLink>
           </nav>
         </div>
@@ -104,6 +105,13 @@ export default function Header() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Verhuur Lokaal
+              </TransitionLink>
+              <TransitionLink
+                href="/faq"
+                className="text-sm font-medium transition-colors hover:text-primary py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                FAQ
               </TransitionLink>
               <TransitionLink
                 href="/contact"

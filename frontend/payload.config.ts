@@ -58,6 +58,9 @@ import { LokaalMedia } from './collections/LokaalMedia'
 import PhotoAlbums from './collections/PhotoAlbums'
 import LokaalFotos from './collections/LokaalFotos'
 import { Users } from './collections/Users'
+import { FAQCategories } from './collections/FAQCategories'
+import { FAQs } from './collections/FAQs'
+import { FAQPage } from './globals/FAQPage'
 
 const config = {
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
@@ -78,6 +81,8 @@ const config = {
     LeidersFoto,
     LokaalMedia,
     Users,
+    FAQs,
+    FAQCategories,
   ],
   globals: [
     InfoPage,
@@ -87,6 +92,7 @@ const config = {
     VerhuurPage,
     LeidersDivisionBanners,
     InschrijvenPage,
+    FAQPage,
   ],
   plugins: ([
     s3Storage({
@@ -145,7 +151,8 @@ const config = {
     pool: {
       connectionString: process.env.DATABASE_URI,
     },
-    push: true,
+    push: false,
+    migrationDir: 'migrations',
   }),
   secret: process.env.PAYLOAD_SECRET || 'YOUR_SECRET_KEY',
   editor: lexicalEditor({}) as any,

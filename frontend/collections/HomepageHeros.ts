@@ -23,7 +23,7 @@ export const HomepageHeros: CollectionConfig = {
       required: true,
       label: 'Presence',
       admin: {
-        description: 'Used for ordering/priority (lower numbers appear first)',
+        description: 'Used for ordering/priority (higher numbers appear first)',
       },
     },
     {

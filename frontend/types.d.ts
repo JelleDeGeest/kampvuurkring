@@ -83,6 +83,8 @@ export interface Config {
     'leiders-foto': LeidersFoto;
     'lokaal-media': LokaalMedia;
     users: User;
+    faqs: Faq;
+    'faq-categories': FaqCategory;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -105,6 +107,8 @@ export interface Config {
     'leiders-foto': LeidersFotoSelect<false> | LeidersFotoSelect<true>;
     'lokaal-media': LokaalMediaSelect<false> | LokaalMediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    faqs: FaqsSelect<false> | FaqsSelect<true>;
+    'faq-categories': FaqCategoriesSelect<false> | FaqCategoriesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -120,6 +124,7 @@ export interface Config {
     verhuurPage: VerhuurPage;
     leidersDivisionBanners: LeidersDivisionBanner;
     inschrijvenPage: InschrijvenPage;
+    'faq-page': FaqPage;
   };
   globalsSelect: {
     infoPage: InfoPageSelect<false> | InfoPageSelect<true>;
@@ -129,6 +134,7 @@ export interface Config {
     verhuurPage: VerhuurPageSelect<false> | VerhuurPageSelect<true>;
     leidersDivisionBanners: LeidersDivisionBannersSelect<false> | LeidersDivisionBannersSelect<true>;
     inschrijvenPage: InschrijvenPageSelect<false> | InschrijvenPageSelect<true>;
+    'faq-page': FaqPageSelect<false> | FaqPageSelect<true>;
   };
   locale: null;
   user: User & {
@@ -916,7 +922,7 @@ export interface HomepageHero {
   id: number;
   name: string;
   /**
-   * Used for ordering/priority (lower numbers appear first)
+   * Used for ordering/priority (higher numbers appear first)
    */
   presence: number;
   homeHeroImage?: (number | null) | HomepageHeroImage;
@@ -1310,6 +1316,51 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category: number | FaqCategory;
+  /**
+   * Volgorde van de vragen (laag naar hoog)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-categories".
+ */
+export interface FaqCategory {
+  id: number;
+  title: string;
+  slug: string;
+  /**
+   * Volgorde van de categorieën
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -1378,6 +1429,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'faqs';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'faq-categories';
+        value: number | FaqCategory;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2369,6 +2428,29 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqs_select".
+ */
+export interface FaqsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-categories_select".
+ */
+export interface FaqCategoriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -2627,6 +2709,18 @@ export interface InschrijvenPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page".
+ */
+export interface FaqPage {
+  id: number;
+  title: string;
+  subtitle?: string | null;
+  bannerImage?: (number | null) | Media;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "infoPage_select".
  */
 export interface InfoPageSelect<T extends boolean = true> {
@@ -2790,6 +2884,18 @@ export interface InschrijvenPageSelect<T extends boolean = true> {
         content?: T;
         buttonText?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq-page_select".
+ */
+export interface FaqPageSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  bannerImage?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
