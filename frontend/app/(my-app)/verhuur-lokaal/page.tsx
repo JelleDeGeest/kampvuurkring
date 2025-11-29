@@ -36,12 +36,12 @@ export const metadata: Metadata = {
 async function getVerhuurPageData(): Promise<VerhuurPageGlobal | null> {
   try {
     const payload = await getPayloadHMR({ config })
-    
+
     const result = await payload.findGlobal({
       slug: 'verhuurPage',
       depth: 1,
     })
-    
+
     return result as VerhuurPageGlobal
   } catch (error) {
     // During build time, database might not be available
@@ -56,7 +56,7 @@ async function getVerhuurPageData(): Promise<VerhuurPageGlobal | null> {
 async function getLokaalFotos(): Promise<any[]> {
   try {
     const payload = await getPayloadHMR({ config })
-    
+
     const result = await payload.find({
       collection: 'lokaal-fotos',
       depth: 2,
@@ -68,7 +68,7 @@ async function getLokaalFotos(): Promise<any[]> {
       sort: 'order',
       limit: 50,
     })
-    
+
     return result.docs || []
   } catch (error) {
     console.warn('Could not fetch lokaal fotos, using empty array')
@@ -79,16 +79,16 @@ async function getLokaalFotos(): Promise<any[]> {
 export default async function VerhuurLokaalPage() {
   const verhuurPageData = await getVerhuurPageData()
   const lokaalFotos = await getLokaalFotos()
-  
+
   // Transform CMS data to gallery format
   const PAYLOAD_URL = process.env.NEXT_PUBLIC_SERVER_URL || process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000'
 
   const bannerImageUrl = verhuurPageData?.banner
     ? selectMediaVariantUrl(verhuurPageData.banner, {
-        sizePreference: ['lg', 'md', 'sm'],
-        formatPreference: ['avif', 'webp', 'jpeg', 'jpg'],
-        baseUrl: PAYLOAD_URL,
-      }) ?? resolveMediaUrl(verhuurPageData.banner.url, PAYLOAD_URL)
+      sizePreference: ['lg', 'md', 'sm'],
+      formatPreference: ['avif', 'webp', 'jpeg', 'jpg'],
+      baseUrl: PAYLOAD_URL,
+    }) ?? resolveMediaUrl(verhuurPageData.banner.url, PAYLOAD_URL)
     : undefined
 
   const resolvedBannerImageUrl =
@@ -110,7 +110,7 @@ export default async function VerhuurLokaalPage() {
   // Filter images by category
   const lokaalImages = galleryImages.filter(img => img.category === 'lokaal')
   const kookgereiImages = galleryImages.filter(img => img.category === 'kookgerei')
-  
+
   // Fallback images if no CMS data
   const fallbackLokaalImages = [
     {
@@ -148,14 +148,14 @@ export default async function VerhuurLokaalPage() {
       />
 
       <main className="flex-1">
-        
+
         {/* Introduction Section */}
         <section className="pt-4 pb-4">
           <div className="container px-4 lg:px-12">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl font-bold mb-6 text-primary">Verhuur scoutslokaal</h2>
               <div className="text-lg text-muted-foreground leading-relaxed mb-6">
-                Ons scoutslokaal is beschikbaar voor verhuur aan andere groepen en is perfect voor jeugdkampen/weekends. 
+                Ons scoutslokaal is beschikbaar voor verhuur aan andere groepen en is perfect voor jeugdkampen/weekends.
                 Met ruime binnenruimte en een groot buitenterrein bieden we een veelzijdige locatie aan.
               </div>
               {/* CTA Button */}
@@ -171,7 +171,7 @@ export default async function VerhuurLokaalPage() {
         {/* Location and Info Section */}
         <section className="pt-4 pb-8">
           <div className="container px-4 lg:px-12">
-            
+
             <div className="grid gap-8 lg:grid-cols-2">
               {/* Left Half - Location & Map */}
               <div className="space-y-6 order-2 lg:order-1">
@@ -202,42 +202,42 @@ export default async function VerhuurLokaalPage() {
               <div className="bg-white rounded-lg p-6 h-[475px] order-1 lg:order-2">
                 <div className="space-y-6">
 
-                {/* Activiteiten in de omgeving Section */}
-                <div>
-                  <h3 className="text-2xl font-semibold text-primary mb-1">Omgeving</h3>
-                  <div className="text-muted-foreground space-y-4">
-                    <div>
-                      <p className="font-semibold mb-2 text-foreground">Ontspanning:</p>
-                      <ul className="space-y-1 text-sm">
-                        <li>• Gemeentelijke sportvelden (100m): voetbal, basket, speeltuin, bmx</li>
-                        <li>• Speelterreinen in Vendelierstraat, Tweehagen, Houtvoortstraat</li>
-                        <li>• Skateterrein Houtvoort complex</li>
-                        <li>• <a href="http://www.reynaertland.nl" className="text-primary hover:underline">Reynaertland Hulst</a> - zwembad (max 10 km)</li>
-                        <li>• <a href="https://oost-vlaanderen.be/ontspannen/recreatiedomeinen/de-ster.html" className="text-primary hover:underline">Provinciaal domein "De Ster"</a> (max 10 km)</li>
-                        <li>• <a href="https://www.lago.be/beveren" className="text-primary hover:underline">Zwembad "De meerminnen"</a> (max 11 km)</li>
-                        <li>• Stropersbos (5 km via fiets- en wandelpad)</li>
-                      </ul>
+                  {/* Activiteiten in de omgeving Section */}
+                  <div>
+                    <h3 className="text-2xl font-semibold text-primary mb-1">Omgeving</h3>
+                    <div className="text-muted-foreground space-y-4">
+                      <div>
+                        <p className="font-semibold mb-2 text-foreground">Ontspanning:</p>
+                        <ul className="space-y-1 text-sm">
+                          <li>• Gemeentelijke sportvelden (100m): voetbal, basket, speeltuin, bmx</li>
+                          <li>• Speelterreinen in Vendelierstraat, Tweehagen, Houtvoortstraat</li>
+                          <li>• Skateterrein Houtvoort complex</li>
+                          <li>• <a href="http://www.reynaertland.nl" className="text-primary hover:underline">Reynaertland Hulst</a> - zwembad (max 10 km)</li>
+                          <li>• <a href="https://oost-vlaanderen.be/ontspannen/recreatiedomeinen/de-ster.html" className="text-primary hover:underline">Provinciaal domein "De Ster"</a> (max 10 km)</li>
+                          <li>• <a href="https://www.lago.be/beveren" className="text-primary hover:underline">Zwembad "De meerminnen"</a> (max 11 km)</li>
+                          <li>• Stropersbos (5 km via fiets- en wandelpad)</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Meer informatie Section */}
-                <div>
-                  <h3 className="text-2xl font-semibold text-primary mb-1">Meer informatie</h3>
-                  <div className="text-muted-foreground space-y-2">
-                    <p className="text-sm">Dienst Toerisme/Cultuur (recht tegenover het lokaal): GC De Route, Stationstraat 201 bus 1</p>
-                    <p className="text-sm">Kampvuur dient vooraf aangevraagd te worden via de gemeente.</p>
-                    <div className="space-y-2">
-                      <p className="font-semibold text-foreground">Contact:</p>
-                      <a href="mailto:deroute@sint-gillis-waas.be" className="text-primary hover:underline flex items-center text-sm">
-                        <Mail className="mr-2 h-4 w-4" />deroute@sint-gillis-waas.be
-                      </a>
-                      <a href="tel:03 229 02 00" className="text-primary hover:underline flex items-center text-sm">
-                        <Phone className="mr-2 h-4 w-4" />03 229 02 00
-                      </a>
+                  {/* Meer informatie Section */}
+                  <div>
+                    <h3 className="text-2xl font-semibold text-primary mb-1">Meer informatie</h3>
+                    <div className="text-muted-foreground space-y-2">
+                      <p className="text-sm">Dienst Toerisme/Cultuur (recht tegenover het lokaal): GC De Route, Stationstraat 201 bus 1</p>
+                      <p className="text-sm">Kampvuur dient vooraf aangevraagd te worden via de gemeente.</p>
+                      <div className="space-y-2">
+                        <p className="font-semibold text-foreground">Contact:</p>
+                        <a href="mailto:deroute@sint-gillis-waas.be" className="text-primary hover:underline flex items-center text-sm">
+                          <Mail className="mr-2 h-4 w-4" />deroute@sint-gillis-waas.be
+                        </a>
+                        <a href="tel:03 229 02 00" className="text-primary hover:underline flex items-center text-sm">
+                          <Phone className="mr-2 h-4 w-4" />03 229 02 00
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
 
                 </div>
               </div>
@@ -268,21 +268,21 @@ export default async function VerhuurLokaalPage() {
                   </div>
                   <p className="text-sm text-muted-foreground">Er zijn 3 lokalen die je kan gebruiken om te slapen, je moet wel zelf matjes of veldbedden voorzien.</p>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-semibold flex items-center"><ChefHat className="mr-2 h-5 w-5 text-primary" />Keuken</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">Kookvuur met 6 grote pitten, oven, dubbele lavabo, werkblad en koelkast. Kookmateriaal en eetgerief voor max. 60 personen voorzien.</p>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-semibold flex items-center"><UtensilsCrossed className="mr-2 h-5 w-5 text-primary" />Eetzaal / daglokaal</h4>
                   </div>
                   <p className="text-sm text-muted-foreground">Grote zaal voor maaltijden en dagactiviteiten.</p>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-semibold flex items-center"><Users className="mr-2 h-5 w-5 text-primary" />Leidingslokaal</h4>
@@ -300,7 +300,7 @@ export default async function VerhuurLokaalPage() {
                     <p><strong>Badkamer:</strong> 1 grote lavabo, 3 douches (38°)</p>
                   </div>
                 </div>
-                
+
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <h4 className="font-semibold flex items-center"><Tent className="mr-2 h-5 w-5 text-primary" />Buitenruimte</h4>
@@ -327,7 +327,7 @@ export default async function VerhuurLokaalPage() {
           <div className="container px-4 lg:px-12">
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h2 className="text-3xl font-bold text-center mb-6 text-primary">Prijzen en waarborg</h2>
-              
+
               <div className="max-w-2xl mx-auto space-y-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-lg mb-3 text-foreground">Tarieven</h3>
@@ -342,7 +342,7 @@ export default async function VerhuurLokaalPage() {
                     </li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h3 className="font-semibold text-lg mb-3 text-foreground">Waarborg</h3>
                   <ul className="space-y-2 text-muted-foreground">
@@ -370,9 +370,9 @@ export default async function VerhuurLokaalPage() {
               {/* Warning banner */}
               <div className="flex justify-center mb-3">
                 <div className="bg-red-100 px-4 py-2 rounded-full inline-block">
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-center">
                     <div className="text-red-800">
-                      <p className="font-semibold">🚫 Opgelet: we verhuren niet aan leidingsweekends</p>
+                      <p className="font-semibold text-center">🚫 Opgelet: we verhuren niet aan leidingsweekends</p>
                     </div>
                   </div>
                 </div>
@@ -388,7 +388,7 @@ export default async function VerhuurLokaalPage() {
                     <Phone className="mr-2 h-4 w-4" />03/770.74.29
                   </a>
                 </div>
-                
+
                 <p className="text-center text-muted-foreground">
                   Controleer hieronder onze beschikbaarheid en mail naar bovenstaand adres om je verhuur aan te vragen.
                 </p>
