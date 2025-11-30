@@ -1,6 +1,6 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { sql } from 'drizzle-orm'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db, payload, req }: any): Promise<void> {
     await db.execute(sql`
     ALTER TABLE "payload_locked_documents_rels" ADD COLUMN IF NOT EXISTS "faqs_id" integer;
     
@@ -14,7 +14,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db, payload, req }: any): Promise<void> {
     await db.execute(sql`
     ALTER TABLE "payload_locked_documents_rels" DROP COLUMN IF EXISTS "faqs_id";
   `)

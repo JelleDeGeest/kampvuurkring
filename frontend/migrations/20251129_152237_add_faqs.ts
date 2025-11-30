@@ -1,6 +1,6 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { sql } from 'drizzle-orm'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db, payload, req }: any): Promise<void> {
 	await db.execute(sql`
     DO $$ BEGIN
       CREATE TYPE "public"."enum_faqs_category" AS ENUM('algemeen', 'inschrijvingen', 'kampen', 'verhuur', 'financieel');
@@ -23,7 +23,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db, payload, req }: any): Promise<void> {
 	await db.execute(sql`
     DROP TABLE "faqs" CASCADE;
     DROP TYPE "public"."enum_faqs_category";

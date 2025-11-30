@@ -1,6 +1,6 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
+import { sql } from 'drizzle-orm'
 
-export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
+export async function up({ db, payload, req }: any): Promise<void> {
   await db.execute(sql`
     -- Create FAQ Page Global Table
     CREATE TABLE IF NOT EXISTS "faq_page" (
@@ -72,7 +72,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   `)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function down({ db, payload, req }: any): Promise<void> {
   await db.execute(sql`
     -- Recreate Enum Type
     CREATE TYPE "public"."enum_faqs_category" AS ENUM('algemeen', 'inschrijvingen', 'kampen', 'verhuur', 'financieel');
