@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down'
 import Search from 'lucide-react/dist/esm/icons/search'
 import X from 'lucide-react/dist/esm/icons/x'
 import { cn } from '@/lib/utils'
 import { PayloadRichText } from './PayloadRichText'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useSearchParams } from 'next/navigation'
 
 interface FAQItem {
     id: string
@@ -25,6 +26,7 @@ export default function FAQAccordion({ items, categories: initialCategories, cla
     const [openItem, setOpenItem] = useState<string | null>(null)
     const [searchQuery, setSearchQuery] = useState('')
     const [selectedCategory, setSelectedCategory] = useState<string>('All')
+    const searchParams = useSearchParams()
 
     // Use categories passed from props
     const categories = useMemo(() => {
@@ -47,6 +49,44 @@ export default function FAQAccordion({ items, categories: initialCategories, cla
             return matchesSearch && matchesCategory
         })
     }, [items, searchQuery, selectedCategory])
+
+    // Handle scrollTo query param
+    useEffect(() => {
+        const scrollToId = searchParams.get('scrollTo')
+        if (scrollToId) {
+            // Wait for render
+            setTimeout(() => {
+                const element = document.getElementById(`faq-${scrollToId}`)
+                if (element) {
+                    const yOffset = -100; // Offset for header
+                    const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+                    // Scroll to item
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+
+                    // If already open, just highlight. If closed, open then highlight.
+                    if (openItem === scrollToId) {
+                        // Highlight animation
+                        element.classList.add('ring-2', 'ring-primary', 'ring-offset-2')
+                        setTimeout(() => {
+                            element.classList.remove('ring-2', 'ring-primary', 'ring-offset-2')
+                        }, 2000)
+                    } else {
+                        // Open item and highlight after scroll (approximate time for smooth scroll)
+                        setTimeout(() => {
+                            setOpenItem(scrollToId)
+
+                            // Highlight animation
+                            element.classList.add('ring-2', 'ring-primary', 'ring-offset-2')
+                            setTimeout(() => {
+                                element.classList.remove('ring-2', 'ring-primary', 'ring-offset-2')
+                            }, 2000)
+                        }, 500)
+                    }
+                }
+            }, 100)
+        }
+    }, [searchParams, items, openItem])
 
     const toggleItem = (id: string) => {
         setOpenItem(openItem === id ? null : id)
@@ -121,13 +161,14 @@ export default function FAQAccordion({ items, categories: initialCategories, cla
                     {filteredItems.length > 0 ? (
                         filteredItems.map((item) => (
                             <motion.div
+                                id={`faq-${item.id}`}
                                 layout="position"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 transition={{ duration: 0.2 }}
                                 key={item.id}
-                                className="bg-white rounded-xl shadow-md border border-primary/10 overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
                             >
                                 {/* Header */}
                                 <button

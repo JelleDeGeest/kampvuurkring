@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 // Categories we support
 const CATEGORIES = ['kapoenen', 'wouters', 'jonggivers', 'givers', 'jin'] as const;
@@ -26,21 +27,32 @@ export function CategorySelectionProvider({ children }: { children: ReactNode })
   // Initialize with default state to avoid hydration mismatch
   const [selectedCategories, setSelectedCategories] = useState<CategoryValue[]>([ALL_CATEGORIES]);
   const [isInitialized, setIsInitialized] = useState(false);
-  
-  // Load from localStorage after initial mount
+
+  const searchParams = useSearchParams();
+
+  // Load from localStorage or URL after initial mount
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
+    // 1. Check URL parameters first (highest priority)
+    const categoryParam = searchParams.get('category');
+    if (categoryParam) {
+      const paramValue = categoryParam.toLowerCase();
+      if (CATEGORIES.includes(paramValue as any)) {
+        setSelectedCategories([paramValue as CategoryValue]);
+        setIsInitialized(true);
+        return;
+      }
+    }
+
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           // Validate categories
-          const validCategories = parsed.filter((cat): cat is CategoryValue => 
+          const validCategories = parsed.filter((cat): cat is CategoryValue =>
             cat === ALL_CATEGORIES || CATEGORIES.includes(cat as any)
           );
-          
+
           if (validCategories.length > 0) {
             setSelectedCategories(validCategories);
           }
@@ -52,19 +64,19 @@ export function CategorySelectionProvider({ children }: { children: ReactNode })
       console.error('Failed to load category preferences:', error);
       setIsInitialized(true);
     }
-  }, []);
-  
+  }, [searchParams]);
+
   // Save to localStorage when selection changes
   useEffect(() => {
     if (typeof window === 'undefined' || !isInitialized) return;
-    
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedCategories));
     } catch (error) {
       console.error('Failed to save category preferences:', error);
     }
   }, [selectedCategories, isInitialized]);
-  
+
   // Toggle category selection
   const toggleCategory = (category: CategoryValue) => {
     if (category === ALL_CATEGORIES) {
@@ -83,7 +95,7 @@ export function CategorySelectionProvider({ children }: { children: ReactNode })
       });
     }
   };
-  
+
   // Check if a category is currently selected
   const isCategorySelected = (category: CategoryValue): boolean => {
     if (category === ALL_CATEGORIES) {
@@ -91,7 +103,7 @@ export function CategorySelectionProvider({ children }: { children: ReactNode })
     }
     return selectedCategories.includes(category);
   };
-  
+
   // Context value
   const value = {
     selectedCategories,
@@ -99,7 +111,7 @@ export function CategorySelectionProvider({ children }: { children: ReactNode })
     isCategorySelected,
     isInitialized,
   };
-  
+
   return (
     <CategorySelectionContext.Provider value={value}>
       {children}

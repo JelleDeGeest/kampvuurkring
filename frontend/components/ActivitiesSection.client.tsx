@@ -9,11 +9,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Calendar } from 'lucide-react'
 import PayloadRichText from '@/components/PayloadRichText'
 import { CategoryFilter, categoryTabs, eventIcon } from '@/components/CategoryFilter'
 import { useActivitiesFilter, Activity, UseActivitiesFilterResult } from '@/hooks/useActivitiesFilter'
 import { useCategorySelection, CategoryValue } from '@/hooks/CategorySelectionContext'
+import { useSearchParams } from 'next/navigation'
 import { useImportantDates, PeriodItem } from '@/hooks/ImportantDatesContext'
 import { ResponsiveImage, type PayloadImage } from '@/components/ResponsiveImage'
 
@@ -44,6 +45,7 @@ function ImageBanner({ bannerImage, title }: { bannerImage: any; title: string }
 }
 
 export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFilterResult }) {
+  const searchParams = useSearchParams()
   const {
     filteredActivities,
     allActivities,
@@ -136,6 +138,31 @@ export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFil
     }
   }, [initialFadeIn])
 
+  // 5️⃣ Auto-scroll to scrollTo param after loading
+  useEffect(() => {
+    if (initialLoadComplete && !isLoadingActivities) {
+      const scrollToId = searchParams.get('scrollTo')
+      if (scrollToId) {
+        // Small timeout to ensure DOM is ready and layout is stable
+        setTimeout(() => {
+          const element = document.getElementById(scrollToId)
+          if (element) {
+            // Use window.scrollTo for better control over smooth behavior
+            const yOffset = -100; // Offset for header
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+
+            // Optional: Add a highlight effect
+            element.classList.add('ring-2', 'ring-primary', 'ring-offset-2')
+            setTimeout(() => {
+              element.classList.remove('ring-2', 'ring-primary', 'ring-offset-2')
+            }, 2000)
+          }
+        }, 500)
+      }
+    }
+  }, [initialLoadComplete, isLoadingActivities, searchParams])
+
   // Style helper for fade
   const getContentStyle = () =>
     isInitialPageLoad.current
@@ -201,7 +228,7 @@ export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFil
         } else {
           // Single division, just add it directly
           weekendItems.push({
-            id: `weekend-${w.startDate}-${w.division}`,
+            id: `weekend-${w.startDate}-${w.division}-0`, // Added -0 to match actions.ts
             originalId: w.id, // Keep the original database ID
             title: w.title,
             startDate: w.startDate,
@@ -236,7 +263,7 @@ export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFil
         } else {
           // Single division, just add it directly
           campItems.push({
-            id: `camp-${c.startDate}-${c.division}`,
+            id: `camp-${c.startDate}-${c.division}-0`, // Added -0 to match actions.ts
             originalId: c.id, // Keep the original database ID
             title: c.title,
             startDate: c.startDate,
@@ -262,8 +289,14 @@ export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFil
           }));
         }
         // If it's a single division, return as is
+        // BUT we need to match the ID format we assumed in actions.ts: `${id}-${div}-0`
+        // Since single division is still an array in Payload (hasMany: true), 
+        // it should have been caught by Array.isArray check above if the type definition is correct.
+        // However, if for some reason it comes as a string or we want to be safe:
+        const div = Array.isArray(activity.division) ? activity.division[0] : activity.division;
         return [{
           ...activity,
+          id: `${activity.id}-${div}-0`, // Force ID format
           originalId: activity.id // Keep the original database ID
         }];
       });
@@ -322,7 +355,8 @@ export function ActivitiesContent({ filterData }: { filterData: UseActivitiesFil
 function DateGroups({ acts }: { acts: Activity[] }) {
   const groups = acts.reduce<Record<string, Activity[]>>((g, a) => {
     const key = format(new Date(a.startDate), 'yyyy-MM-dd')
-      ; (g[key] ||= []).push(a)
+    if (!g[key]) g[key] = []
+    g[key].push(a)
     return g
   }, {})
 
@@ -359,7 +393,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                 // Special handling for events (non-division items)
                 if (act.division === 'event') {
                   return (
-                    <Card key={act.id} className="border bg-white">
+                    <Card id={act.id} key={act.id} className="border bg-white scroll-mt-24">
                       <CardHeader className="pb-1 pt-4 px-4">
                         <div className="flex justify-between items-start">
                           <div className="flex items-center gap-3">
@@ -448,56 +482,55 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                 const hasBanner = isSpecialEvent;
 
                 return (
-                  <Card key={act.id} className="border bg-white overflow-hidden">
-                    {/* Render image banner for weekends and camps if they have one */}
-                    {hasBanner && (
-                      <ImageBanner bannerImage={act.bannerImage} title={act.title} />
+                  <Card id={act.id} key={act.id} className="border bg-white overflow-hidden scroll-mt-24">
+                    {/* Banner Image */}
+                    {hasBanner && act.bannerImage && (
+                      <div className="relative h-32 w-full overflow-hidden">
+                        <ResponsiveImage
+                          media={act.bannerImage}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/20" />
+                      </div>
                     )}
-                    <CardHeader className={`pb-0 px-3 ${hasBanner ? 'pt-2' : 'pt-3'}`}>
+
+                    <CardHeader className={`pb-1 px-4 ${hasBanner ? 'pt-4' : 'pt-4'}`}>
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
-                          <div
-                            className="p-0.5 border rounded flex items-center justify-center"
-                            style={{
-                              backgroundColor: `${tabMeta?.color}20`,
-                              borderColor: tabMeta?.color,
-                            }}
-                          >
-                            {tabMeta?.icon && (
+                          {tabMeta ? (
+                            <div
+                              className="p-0.5 border rounded flex items-center justify-center"
+                              style={{
+                                backgroundColor: `${tabMeta.color}20`,
+                                borderColor: tabMeta.color,
+                              }}
+                            >
                               <tabMeta.icon
                                 className="h-7 w-7"
                                 style={{ color: tabMeta.color }}
                               />
-                            )}
-                          </div>
+                            </div>
+                          ) : isSpecialEvent ? (
+                            <div className="p-0.5 border rounded flex items-center justify-center bg-gray-100 border-gray-300">
+                              <Calendar className="h-7 w-7 text-gray-600" />
+                            </div>
+                          ) : null}
+
                           <div className="flex flex-col justify-center">
-                            <span className="text-sm leading-tight">
-                              {isSpecialEvent ? (
-                                <span className="text-muted-foreground">
-                                  {format(new Date(act.startDate), "d MMM yyyy", { locale: nl })}
-                                  {act.endDate && act.endDate !== act.startDate &&
-                                    ` - ${format(new Date(act.endDate), "d MMM yyyy", { locale: nl })}`}
-                                </span>
-                              ) : act.geenScouts ? (
-                                <span className="text-red-600 font-semibold">Geen Scouts</span>
-                              ) : (
-                                <span className="text-muted-foreground">
-                                  {format(new Date(act.startDate), "HH:mm")} –{' '}
-                                  {act.endDate &&
-                                    format(new Date(act.endDate), "HH:mm")}
-                                </span>
-                              )}
+                            <span className="text-sm text-muted-foreground leading-tight">
+                              {format(new Date(act.startDate), "d MMM yyyy", { locale: nl })}
+                              {act.endDate && act.endDate !== act.startDate &&
+                                ` - ${format(new Date(act.endDate), "d MMM yyyy", { locale: nl })}`}
                             </span>
                             <CardTitle className="text-lg font-bold leading-tight text-gray-700">
                               {act.title}
                             </CardTitle>
                           </div>
                         </div>
-                        {act.division && (
-                          <span className="text-sm font-normal text-gray-500 capitalize">
-                            {tabMeta?.name || act.division}
-                            {isSpecialEvent && act.id?.startsWith('weekend-') && ' - Weekend'}
-                            {isSpecialEvent && act.id?.startsWith('camp-') && ' - Kamp'}
+                        {tabMeta && (
+                          <span className="text-sm font-normal text-gray-500">
+                            {tabMeta.name}
                           </span>
                         )}
                       </div>
@@ -507,7 +540,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                         <PayloadRichText content={act.description} />
                       </div>
 
-                      {/* Add enrollment button if enrollments are enabled and button not hidden */}
+                      {/* Enrollment Button */}
                       {act.enrollmentSettings?.enabled &&
                         !act.enrollmentSettings?.hideButton && (
                           <div className="mt-3">
@@ -515,12 +548,12 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                               href={getEnrollmentLink()}
                               className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md shadow text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
                             >
-                              Info/Inschrijven
+                              Inschrijven
                             </a>
                           </div>
                         )}
 
-                      {/* Add button if available (for other types of buttons) */}
+                      {/* Custom Button */}
                       {(act.button?.text && act.button?.url) && (
                         <div className="mt-3">
                           <a
@@ -539,8 +572,9 @@ function DateGroups({ acts }: { acts: Activity[] }) {
               })}
             </div>
           </div>
-        ))}
-    </div>
+        ))
+      }
+    </div >
   )
 }
 

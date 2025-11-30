@@ -9,6 +9,7 @@ import Header from "@/components/header"
 import PageTransition from "@/components/PageTransition"
 import { TransitionProvider } from "@/components/TransitionProvider"
 import Clarity from "@/components/Clarity"
+import ChatSearch from "@/components/ChatSearch"
 
 export default function RootLayout({
   children,
@@ -47,6 +48,7 @@ export default function RootLayout({
             </CategorySelectionProvider>
           </TransitionProvider>
         </ThemeProvider>
+        <ChatSearch />
       </body>
     </html>
   )

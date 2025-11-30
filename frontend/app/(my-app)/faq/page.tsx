@@ -1,5 +1,6 @@
 import PageBanner from '@/components/PageBanner'
 import FAQAccordion from '@/components/FAQAccordion'
+import { Suspense } from 'react'
 
 // Force dynamic rendering to ensure fresh data
 import { resolveMediaUrl } from '@/lib/mediaHelpers'
@@ -39,7 +40,10 @@ export default async function FAQPage() {
         collection: 'faq-categories',
         sort: 'order',
     })
-    const categories = categoriesResult.docs
+    const categories = categoriesResult.docs.map(cat => ({
+        ...cat,
+        id: String(cat.id)
+    }))
 
     // Fetch FAQs with depth to get category details
     const faqsResult = await payload.find({
@@ -49,7 +53,10 @@ export default async function FAQPage() {
         limit: 100,
     })
 
-    const faqs = faqsResult.docs
+    const faqs = faqsResult.docs.map(faq => ({
+        ...faq,
+        id: String(faq.id)
+    }))
 
     // Resolve banner image URL
     const resolvedBannerImageUrl = faqPage.bannerImage
@@ -68,7 +75,7 @@ export default async function FAQPage() {
             <PageBanner
                 title={faqPage.title}
                 subtitle={faqPage.subtitle}
-                banner={faqPage.bannerImage}
+                banner={faqPage.bannerImage as any}
                 resolvedBannerImageUrl={resolvedBannerImageUrl}
             />
 
@@ -76,7 +83,9 @@ export default async function FAQPage() {
                 <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-8 pb-16 md:pb-24">
                     <div className="max-w-4xl mx-auto relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-3xl -z-10 rounded-3xl" />
-                        <FAQAccordion items={faqs} categories={categories} />
+                        <Suspense fallback={<div>Laden...</div>}>
+                            <FAQAccordion items={faqs} categories={categories} />
+                        </Suspense>
                     </div>
                 </div>
             </main>
