@@ -186,6 +186,7 @@ export default function ChatSearch() {
                                                                     key={index}
                                                                     href={result.url}
                                                                     scroll={!isSamePage}
+                                                                    onClick={() => setIsOpen(false)}
                                                                     className="flex gap-3 group"
                                                                 >
                                                                     <div className="w-8 h-8 flex-shrink-0" /> {/* Spacer */}

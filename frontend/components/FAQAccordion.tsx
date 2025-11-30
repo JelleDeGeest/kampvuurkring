@@ -157,90 +157,80 @@ export default function FAQAccordion({ items, categories: initialCategories, cla
 
             {/* FAQ List */}
             <div className="space-y-6">
-                <AnimatePresence mode='popLayout'>
-                    {filteredItems.length > 0 ? (
-                        filteredItems.map((item) => (
-                            <motion.div
-                                id={`faq-${item.id}`}
-                                layout="position"
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.2 }}
-                                key={item.id}
-                                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                {filteredItems.length > 0 ? (
+                    filteredItems.map((item) => (
+                        <div
+                            id={`faq-${item.id}`}
+                            key={item.id}
+                            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                        >
+                            {/* Header */}
+                            <button
+                                onClick={() => toggleItem(item.id)}
+                                className={cn(
+                                    "w-full p-6 text-left transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer group",
+                                    "bg-primary/5 border-b border-primary/10 hover:bg-primary/10"
+                                )}
                             >
-                                {/* Header */}
-                                <button
-                                    onClick={() => toggleItem(item.id)}
-                                    className={cn(
-                                        "w-full p-6 text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer group",
-                                        "bg-primary/5 border-b border-primary/10 hover:bg-primary/10"
-                                    )}
-                                >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="flex-1">
-                                            <h3
-                                                className="text-lg font-bold text-primary transition-colors duration-200"
-                                            >
-                                                {item.question}
-                                            </h3>
-                                            {item.category && (
-                                                <span className="inline-block mt-2 text-xs font-medium px-2.5 py-0.5 rounded-full bg-white text-primary border border-primary/20 capitalize shadow-sm">
-                                                    {typeof item.category === 'object' ? (item.category as any).title : ''}
-                                                </span>
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex-1">
+                                        <h3
+                                            className="text-lg font-bold text-primary transition-colors duration-200"
+                                        >
+                                            {item.question}
+                                        </h3>
+                                        {item.category && (
+                                            <span className="inline-block mt-2 text-xs font-medium px-2.5 py-0.5 rounded-full bg-white text-primary border border-primary/20 capitalize shadow-sm">
+                                                {typeof item.category === 'object' ? (item.category as any).title : ''}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex-shrink-0 pt-1">
+                                        <div
+                                            className={cn(
+                                                "transition-transform duration-200 ease-in-out",
+                                                openItem === item.id ? "rotate-180" : "rotate-0"
                                             )}
-                                        </div>
-                                        <div className="flex-shrink-0 pt-1">
-                                            <motion.div
-                                                animate={{ rotate: openItem === item.id ? 180 : 0 }}
-                                                transition={{ duration: 0.2 }}
-                                            >
-                                                <ChevronDown className={cn(
-                                                    "h-5 w-5 text-primary/60 transition-colors duration-200 group-hover:text-primary",
-                                                    openItem === item.id && "text-primary"
-                                                )} />
-                                            </motion.div>
+                                        >
+                                            <ChevronDown className={cn(
+                                                "h-5 w-5 text-primary/60 transition-colors duration-200 group-hover:text-primary",
+                                                openItem === item.id && "text-primary"
+                                            )} />
                                         </div>
                                     </div>
-                                </button>
-
-                                {/* Content */}
-                                <AnimatePresence>
-                                    {openItem === item.id && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{ height: "auto", opacity: 1 }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-                                            style={{ overflow: 'hidden' }}
-                                        >
-                                            <div className="px-6 pb-6 pt-6 bg-white">
-                                                <div className="prose prose-sm max-w-none text-gray-600">
-                                                    <PayloadRichText content={item.answer} />
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </motion.div>
-                        ))
-                    ) : (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-200 shadow-sm"
-                        >
-                            <p className="text-gray-500 mb-2">Geen vragen gevonden voor je zoekopdracht.</p>
-                            <button
-                                onClick={clearSearch}
-                                className="text-primary hover:underline font-medium"
-                            >
-                                Filters wissen
+                                </div>
                             </button>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+
+                            {/* Content */}
+                            <div
+                                className={cn(
+                                    "grid transition-[grid-template-rows,opacity] duration-300 ease-in-out",
+                                    openItem === item.id ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                                )}
+                            >
+                                <div className="overflow-hidden">
+                                    <div className="px-6 pb-6 pt-6 bg-white">
+                                        <div className="prose prose-sm max-w-none text-gray-600">
+                                            <PayloadRichText content={item.answer} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div
+                        className="text-center py-12 bg-white rounded-xl border border-dashed border-gray-200 shadow-sm animate-in fade-in duration-300"
+                    >
+                        <p className="text-gray-500 mb-2">Geen vragen gevonden voor je zoekopdracht.</p>
+                        <button
+                            onClick={clearSearch}
+                            className="text-primary hover:underline font-medium"
+                        >
+                            Filters wissen
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     )
