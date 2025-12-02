@@ -1,6 +1,5 @@
 import PageBanner from '@/components/PageBanner'
 import FAQAccordion from '@/components/FAQAccordion'
-import { Suspense } from 'react'
 
 // Force dynamic rendering to ensure fresh data
 import { resolveMediaUrl } from '@/lib/mediaHelpers'
@@ -83,9 +82,7 @@ export default async function FAQPage() {
                 <div className="container w-full px-4 sm:px-6 md:px-8 lg:px-12 pt-8 pb-16 md:pb-24">
                     <div className="max-w-4xl mx-auto relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-3xl -z-10 rounded-3xl" />
-                        <Suspense fallback={<div>Laden...</div>}>
-                            <FAQAccordion items={faqs} categories={categories} />
-                        </Suspense>
+                        <FAQAccordion items={faqs} categories={categories} />
                     </div>
                 </div>
             </main>
