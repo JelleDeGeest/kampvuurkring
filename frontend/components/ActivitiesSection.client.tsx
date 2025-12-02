@@ -410,10 +410,42 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                               />
                             </div>
                             <div className="flex flex-col justify-center">
-                              <span className="text-sm text-muted-foreground leading-tight">
-                                {format(new Date(act.startDate), "d MMM yyyy", { locale: nl })}
-                                {act.endDate && act.endDate !== act.startDate &&
-                                  ` - ${format(new Date(act.endDate), "d MMM yyyy", { locale: nl })}`}
+                              <span className="text-sm font-bold text-gray-500 leading-tight">
+                                {(() => {
+                                  const start = new Date(act.startDate)
+                                  const end = act.endDate ? new Date(act.endDate) : null
+                                  const isSameDay = end ? format(start, 'yyyy-MM-dd') === format(end, 'yyyy-MM-dd') : true
+                                  const showTime = false // Events: no hour display requested
+
+                                  if (isSameDay) {
+                                    return (
+                                      <>
+                                        {showTime ? (
+                                          <>
+                                            {format(start, 'HH:mm')}
+                                            {end && ` - ${format(end, 'HH:mm')}`}
+                                          </>
+                                        ) : (
+                                          format(start, 'd MMM yyyy', { locale: nl })
+                                        )}
+                                      </>
+                                    )
+                                  } else {
+                                    return (
+                                      <>
+                                        {format(start, 'd MMM yyyy', { locale: nl })}
+                                        {showTime && ` ${format(start, 'HH:mm')}`}
+                                        {end && (
+                                          <>
+                                            {' - '}
+                                            {format(end, 'd MMM yyyy', { locale: nl })}
+                                            {showTime && ` ${format(end, 'HH:mm')}`}
+                                          </>
+                                        )}
+                                      </>
+                                    )
+                                  }
+                                })()}
                               </span>
                               <CardTitle className="text-lg font-bold leading-tight text-gray-700">
                                 {act.title}
@@ -518,10 +550,42 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                           ) : null}
 
                           <div className="flex flex-col justify-center">
-                            <span className="text-sm text-muted-foreground leading-tight">
-                              {format(new Date(act.startDate), "d MMM yyyy", { locale: nl })}
-                              {act.endDate && act.endDate !== act.startDate &&
-                                ` - ${format(new Date(act.endDate), "d MMM yyyy", { locale: nl })}`}
+                            <span className="text-sm font-bold text-gray-500 leading-tight">
+                              {(() => {
+                                const start = new Date(act.startDate)
+                                const end = act.endDate ? new Date(act.endDate) : null
+                                const isSameDay = end ? format(start, 'yyyy-MM-dd') === format(end, 'yyyy-MM-dd') : true
+                                const showTime = !isSpecialEvent // Show time for regular activities
+
+                                if (isSameDay) {
+                                  return (
+                                    <>
+                                      {showTime ? (
+                                        <>
+                                          {format(start, 'HH:mm')}
+                                          {end && ` - ${format(end, 'HH:mm')}`}
+                                        </>
+                                      ) : (
+                                        format(start, 'd MMM yyyy', { locale: nl })
+                                      )}
+                                    </>
+                                  )
+                                } else {
+                                  return (
+                                    <>
+                                      {format(start, 'd MMM yyyy', { locale: nl })}
+                                      {showTime && ` ${format(start, 'HH:mm')}`}
+                                      {end && (
+                                        <>
+                                          {' - '}
+                                          {format(end, 'd MMM yyyy', { locale: nl })}
+                                          {showTime && ` ${format(end, 'HH:mm')}`}
+                                        </>
+                                      )}
+                                    </>
+                                  )
+                                }
+                              })()}
                             </span>
                             <CardTitle className="text-lg font-bold leading-tight text-gray-700">
                               {act.title}
