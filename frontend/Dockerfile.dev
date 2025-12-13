@@ -7,11 +7,10 @@ FROM node:18-bullseye-slim
 # 2. Build dependencies (native addons) & cleanup
 # ──────────────────────────────────────────────────────────────
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        python3 \
-        git \
-        dumb-init \
+    apt-get install -y --no-install-recommends --fix-missing \
+    build-essential \
+    dumb-init \
+    chromium \
     && rm -rf /var/lib/apt/lists/*
 
 # ──────────────────────────────────────────────────────────────
@@ -19,6 +18,9 @@ RUN apt-get update && \
 # ──────────────────────────────────────────────────────────────
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 ENV NODE_ENV=development
+# Puppeteer config
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # ──────────────────────────────────────────────────────────────
 # 4. Install Node deps with npm (pulls sharp's prebuilt ARM64 binary)

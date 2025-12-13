@@ -36,18 +36,18 @@ export const Camps: CollectionConfig = {
       ],
     },
   },
-  access: { 
+  access: {
     read: () => true,
     create: () => true,
     update: () => true,
     delete: () => true,
   },
   fields: [
-    { 
-      name: 'title', 
+    {
+      name: 'title',
       label: 'Titel',
-      type: 'text', 
-      required: true 
+      type: 'text',
+      required: true
     },
     {
       name: 'division',
@@ -57,16 +57,16 @@ export const Camps: CollectionConfig = {
       required: true,
       options: [
         { label: 'Kapoenen', value: 'kapoenen' },
-        { label: 'Wouters',  value: 'wouters'  },
+        { label: 'Wouters', value: 'wouters' },
         { label: 'Jonggivers', value: 'jonggivers' },
         { label: 'Givers', value: 'givers' },
         { label: 'Jin', value: 'jin' },
       ],
     },
-    { 
-      name: 'startDate', 
+    {
+      name: 'startDate',
       label: 'Start Datum',
-      type: 'date', 
+      type: 'date',
       required: true,
       admin: {
         date: {
@@ -234,7 +234,7 @@ export const Camps: CollectionConfig = {
             condition: (data, siblingData) => siblingData?.enabled,
             description: 'Dit bericht wordt getoond nadat het formulier is verstuurd',
           },
-          defaultValue: 'Bedankt voor je inschrijving! We nemen zo snel mogelijk contact met je op.',
+          defaultValue: 'Bedankt voor je inschrijving! U ontvangt een bevestiging per e-mail of kunt deze downloaden via de onderstaande knop.',
         },
         {
           name: 'isPaid',
@@ -291,7 +291,7 @@ export const Camps: CollectionConfig = {
         // Update enrollment link with actual ID after creation
         if (doc.enrollmentSettings?.enabled && operation === 'create' && doc.enrollmentSettings.enrollmentLink === 'Wordt gegenereerd na opslaan...') {
           const payload = req.payload
-          
+
           // Add a small delay to ensure document is fully committed
           setTimeout(async () => {
             try {

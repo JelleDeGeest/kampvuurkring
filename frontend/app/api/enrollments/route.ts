@@ -108,9 +108,14 @@ export async function POST(request: NextRequest) {
       data: enrollmentData,
     })
 
+
+    // We used to send email here, but now we do it in a separate confirmation step
+    // to allow uploading the client-generated PDF.
+
+
     return NextResponse.json(
-      { 
-        success: true, 
+      {
+        success: true,
         enrollment: enrollment,
         message: targetItem.enrollmentSettings?.customMessage || 'Inschrijving succesvol ontvangen'
       },

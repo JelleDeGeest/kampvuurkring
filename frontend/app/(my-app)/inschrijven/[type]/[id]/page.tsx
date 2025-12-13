@@ -137,7 +137,9 @@ export default async function EnrollmentPage({ params }: Props) {
     target: item,
     formSettings: {
       allowMultipleChildren: true, // Always allow multiple children
-      customMessage: item.enrollmentSettings.customMessage || 'Bedankt voor je inschrijving! We nemen zo snel mogelijk contact met je op.',
+      customMessage: (item.enrollmentSettings?.customMessage && item.enrollmentSettings.customMessage !== 'Bedankt voor je inschrijving! We nemen zo snel mogelijk contact met je op.')
+        ? item.enrollmentSettings.customMessage
+        : 'Bedankt voor je inschrijving! U ontvangt een bevestiging per e-mail of kunt deze downloaden via de onderstaande knop.',
       enrollmentDeadline: item.enrollmentSettings.enrollmentDeadline,
       closed: item.enrollmentSettings.closed,
       closedMessage: item.enrollmentSettings.closedMessage,
@@ -149,12 +151,12 @@ export default async function EnrollmentPage({ params }: Props) {
     },
     infoDocument: item.enrollmentSettings.infoDocument
       ? (typeof item.enrollmentSettings.infoDocument === 'object'
-          ? {
-              id: item.enrollmentSettings.infoDocument.id,
-              url: resolveMediaUrl(item.enrollmentSettings.infoDocument.url, PAYLOAD_URL),
-              filename: item.enrollmentSettings.infoDocument.filename,
-            }
-          : undefined)
+        ? {
+          id: item.enrollmentSettings.infoDocument.id,
+          url: resolveMediaUrl(item.enrollmentSettings.infoDocument.url, PAYLOAD_URL),
+          filename: item.enrollmentSettings.infoDocument.filename,
+        }
+        : undefined)
       : undefined,
     customQuestions: item.enrollmentSettings.customQuestions || [],
   }

@@ -6,7 +6,7 @@ export const Activiteiten: CollectionConfig = {
   slug: 'activiteiten',
   labels: {
     singular: 'Activiteit',
-    plural:   'Activiteiten',
+    plural: 'Activiteiten',
   },
   versions: {
     drafts: {
@@ -44,7 +44,7 @@ export const Activiteiten: CollectionConfig = {
     },
   },
   access: {
-    read:   () => true,
+    read: () => true,
     create: () => true,
     update: () => true,
     delete: () => true,
@@ -63,11 +63,11 @@ export const Activiteiten: CollectionConfig = {
       hasMany: true,
       required: true,
       options: [
-        { label: 'Kapoenen',   value: 'kapoenen' },
-        { label: 'Wouters',    value: 'wouters' },
+        { label: 'Kapoenen', value: 'kapoenen' },
+        { label: 'Wouters', value: 'wouters' },
         { label: 'Jonggivers', value: 'jonggivers' },
-        { label: 'Givers',     value: 'givers' },
-        { label: 'Jin',        value: 'jin' },
+        { label: 'Givers', value: 'givers' },
+        { label: 'Jin', value: 'jin' },
       ],
     },
     {
@@ -263,7 +263,7 @@ export const Activiteiten: CollectionConfig = {
             condition: (data, siblingData) => siblingData?.enabled,
             description: 'Dit bericht wordt getoond nadat het formulier is verstuurd',
           },
-          defaultValue: 'Bedankt voor je inschrijving! We nemen zo snel mogelijk contact met je op.',
+          defaultValue: 'Bedankt voor je inschrijving! U ontvangt een bevestiging per e-mail of kunt deze downloaden via de onderstaande knop.',
         },
         // Payment settings
         {
@@ -321,7 +321,7 @@ export const Activiteiten: CollectionConfig = {
         // Update enrollment link with actual ID after creation
         if (doc.enrollmentSettings?.enabled && operation === 'create' && doc.enrollmentSettings.enrollmentLink === 'Wordt gegenereerd na opslaan...') {
           const payload = req.payload
-          
+
           // Add a small delay to ensure document is fully committed
           setTimeout(async () => {
             try {

@@ -237,32 +237,18 @@ export async function searchContent(query: string): Promise<SearchResult[]> {
     }
 }
 
-import nodemailer from 'nodemailer'
+import { sendEmail } from '@/lib/email'
 
 export async function submitQuestion(question: string, email: string): Promise<{ success: boolean, message?: string }> {
     if (!question || !email) {
         return { success: false, message: 'Vul alle velden in.' }
     }
 
-    try {
-        console.log('Configuring SMTP with host:', process.env.SMTP_HOST || '(not set, defaulting to localhost)')
-
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT || '587'),
-            secure: process.env.SMTP_SECURE === 'true',
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        })
-
-        await transporter.sendMail({
-            from: process.env.SMTP_FROM || '"Scouts Sint-Johannes" <no-reply@scoutssintjohannes.be>',
-            to: 'groepsleiding@scoutssintjohannes.be',
-            replyTo: email,
-            subject: 'Nieuwe vraag via website zoekfunctie',
-            text: `
+    const { success, error } = await sendEmail({
+        to: 'groepsleiding@scoutssintjohannes.be',
+        replyTo: email,
+        subject: 'Nieuwe vraag via website zoekfunctie',
+        text: `
 Er is een nieuwe vraag gesteld via de website:
 
 Vraag:
@@ -271,19 +257,17 @@ ${question}
 Email van vragensteller:
 ${email}
             `,
-            html: `
+        html: `
 <h3>Er is een nieuwe vraag gesteld via de website:</h3>
 <p><strong>Vraag:</strong><br>${question.replace(/\n/g, '<br>')}</p>
 <p><strong>Email van vragensteller:</strong><br><a href="mailto:${email}">${email}</a></p>
             `,
-        })
+    })
 
-        return { success: true }
-    } catch (error) {
-        console.error('Email send error:', error)
-        // We return success true even if email fails to not discourage the user, 
-        // but in a real app you might want to handle this differently or log it to DB as backup.
-        // For now, we'll assume if SMTP isn't set up, we just log it.
-        return { success: true }
+    if (!success) {
+        // We log it but return success true as established pattern
+        console.error('Email send error in submitQuestion:', error)
     }
+
+    return { success: true }
 }

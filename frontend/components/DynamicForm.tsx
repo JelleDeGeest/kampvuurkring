@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,7 +20,7 @@ import Plus from 'lucide-react/dist/esm/icons/plus'
 import Download from 'lucide-react/dist/esm/icons/download'
 import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle'
 import Info from 'lucide-react/dist/esm/icons/info'
-import { useRef } from 'react'
+
 
 interface CustomQuestion {
   question: string
@@ -105,6 +105,9 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     ? new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(totalPrice)
     : null
 
+  const [pdfGenerated, setPdfGenerated] = useState(false)
+
+  // Initial form submission - create enrollment record
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -168,7 +171,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
       const result = await response.json()
 
-      // Store enrollment data for PDF generation
+      // Store enrollment data which will trigger the PDF generation in useEffect
       setEnrollmentData({
         enrollmentId: result.enrollment.id,
         targetTitle: formPage.target.title,
@@ -188,12 +191,55 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
       window.scrollTo({ top: 0, behavior: 'smooth' })
       setSuccess(true)
+      // Note: isSubmitting remains true while we generate and upload PDF
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Er is een onbekende fout opgetreden')
-    } finally {
       setIsSubmitting(false)
     }
   }
+
+  // Effect to generate and upload PDF once enrollmentData is set and Receipt component is rendered
+
+
+  useEffect(() => {
+    const generateAndSendPDF = async () => {
+      if (!enrollmentData || !receiptRef.current || pdfGenerated) return
+
+      try {
+        // Wait slightly for render to complete
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        const fileName = `inschrijving-${enrollmentData.targetTitle.toLowerCase().replace(/\s+/g, '-')}-${enrollmentData.enrollmentId}.pdf`
+        const pdf = await generateReceiptPDFFromHTML(receiptRef.current, fileName)
+
+        // Convert to Blob for upload
+        const pdfBlob = pdf.output('blob')
+
+        // Upload to confirmation endpoint
+        const formData = new FormData()
+        formData.append('pdf', pdfBlob, fileName)
+
+        await fetch(`/api/enrollments/${enrollmentData.enrollmentId}/confirm`, {
+          method: 'POST',
+          body: formData
+        })
+
+        console.log('Confirmation email sent successfully via client upload')
+        setPdfGenerated(true)
+      } catch (error) {
+        console.error('Error generating/sending PDF:', error)
+        // We don't verify error here as the enrollment itself was successful, 
+        // the user just might not get the email automatically.
+        // They can still download it manually.
+      } finally {
+        setIsSubmitting(false)
+      }
+    }
+
+    if (success && enrollmentData) {
+      generateAndSendPDF()
+    }
+  }, [success, enrollmentData, pdfGenerated])
 
   const handleDownloadPDF = async () => {
     if (!enrollmentData || !receiptRef.current) return
@@ -201,7 +247,8 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     const fileName = `inschrijving-${enrollmentData.targetTitle.toLowerCase().replace(/\s+/g, '-')}-${enrollmentData.enrollmentId}.pdf`
 
     try {
-      await generateReceiptPDFFromHTML(receiptRef.current, fileName)
+      const pdf = await generateReceiptPDFFromHTML(receiptRef.current, fileName)
+      pdf.save(fileName)
     } catch (error) {
       console.error('Error generating PDF:', error)
       setError('Er is een fout opgetreden bij het genereren van de PDF')
@@ -233,7 +280,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
           </CardHeader>
           <CardContent className="px-10 pb-10 flex flex-col items-center text-center space-y-6">
             <p className="text-lg text-muted-foreground max-w-xl">
-              {formPage.formSettings?.customMessage || 'Je inschrijving is succesvol geregistreerd!'}
+              {formPage.formSettings?.customMessage || 'Bedankt voor je inschrijving! U ontvangt een bevestiging per e-mail of kunt deze downloaden via de onderstaande knop.'}
             </p>
 
             {formPage.paymentSettings?.isPaid && (
@@ -258,10 +305,6 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
                 <Download className="h-4 w-4" />
                 Download Bevestiging
               </Button>
-              <p className="text-sm text-muted-foreground">
-                Download en bewaar deze bevestiging voor je administratie.
-                {formPage.paymentSettings?.isPaid && ' De betalingsinformatie vind je in de PDF.'}
-              </p>
             </div>
           </CardContent>
         </Card>
