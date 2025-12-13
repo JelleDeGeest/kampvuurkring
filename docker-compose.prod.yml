@@ -212,8 +212,8 @@ services:
       PROJECT_NAME: prod
       TZ: Europe/Brussels
     volumes:
-      - ./backups/data:/backups
-      - ./backups/rclone:/config/rclone:ro
+      - /mnt/data/backups/data:/backups
+      - /mnt/data/backups/rclone:/config/rclone:ro
     depends_on:
       db:
         condition: service_healthy
