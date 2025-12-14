@@ -40,7 +40,16 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 # Install dumb-init for proper signal handling and wget for healthcheck
-RUN apk add --no-cache dumb-init wget
+# Install Chromium and dependencies for Puppeteer
+RUN apk add --no-cache \
+    dumb-init \
+    wget \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
 
 # Create non-root user
 RUN addgroup -g 1001 nodejs
@@ -51,6 +60,10 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
+
+# Tell Puppeteer to use the system Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Copy necessary files
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public

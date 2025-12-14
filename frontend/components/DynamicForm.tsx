@@ -20,6 +20,7 @@ import Plus from 'lucide-react/dist/esm/icons/plus'
 import Download from 'lucide-react/dist/esm/icons/download'
 import AlertTriangle from 'lucide-react/dist/esm/icons/alert-triangle'
 import Info from 'lucide-react/dist/esm/icons/info'
+import Loader2 from 'lucide-react/dist/esm/icons/loader-2'
 
 
 interface CustomQuestion {
@@ -106,6 +107,7 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
     : null
 
   const [pdfGenerated, setPdfGenerated] = useState(false)
+  const [isDownloadingPDF, setIsDownloadingPDF] = useState(false)
 
   // Initial form submission - create enrollment record
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -246,12 +248,15 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
     const fileName = `inschrijving-${enrollmentData.targetTitle.toLowerCase().replace(/\s+/g, '-')}-${enrollmentData.enrollmentId}.pdf`
 
+    setIsDownloadingPDF(true)
     try {
       const pdf = await generateReceiptPDFFromHTML(receiptRef.current, fileName)
       pdf.save(fileName)
     } catch (error) {
       console.error('Error generating PDF:', error)
       setError('Er is een fout opgetreden bij het genereren van de PDF')
+    } finally {
+      setIsDownloadingPDF(false)
     }
   }
 
@@ -299,11 +304,21 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
             <div className="flex flex-col items-center gap-3 w-full">
               <Button
                 onClick={handleDownloadPDF}
+                disabled={isDownloadingPDF}
                 variant="default"
-                className="min-w-[220px] flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md"
+                className="min-w-[220px] flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                <Download className="h-4 w-4" />
-                Download Bevestiging
+                {isDownloadingPDF ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    PDF Genereren...
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    Download Bevestiging
+                  </>
+                )}
               </Button>
             </div>
           </CardContent>
