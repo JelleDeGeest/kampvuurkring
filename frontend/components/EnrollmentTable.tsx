@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Users from 'lucide-react/dist/esm/icons/users'
 import { StatusSelector } from './StatusSelector'
 import { ClientDate } from './ClientDate'
+import * as XLSX from 'xlsx'
 
 interface EnrollmentTableProps {
   enrollments: any[]
@@ -17,9 +18,9 @@ interface EnrollmentTableProps {
   onStatusUpdate?: (enrollmentId: string, newStatus: string) => void
 }
 
-export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({ 
-  enrollments, 
-  totalResponses, 
+export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
+  enrollments,
+  totalResponses,
   customQuestionsArray,
   activityTitle,
   activityType,
@@ -40,24 +41,24 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
   // Filter enrollments based on search term
   const filteredEnrollments = enrollments.filter((enrollment) => {
     const searchLower = searchTerm.toLowerCase()
-    
+
     // Search in email
     if (enrollment.participantEmail.toLowerCase().includes(searchLower)) return true
-    
+
     // Search in children names
-    if (enrollment.children?.some((child: any) => 
+    if (enrollment.children?.some((child: any) =>
       `${child.participantInfo.firstName} ${child.participantInfo.lastName}`.toLowerCase().includes(searchLower)
     )) return true
-    
+
     // Search in comments
     if (enrollment.additionalOptions?.comments?.toLowerCase().includes(searchLower)) return true
-    
+
     // Search in custom answers
     if (enrollment.additionalOptions?.customAnswers) {
       const answers = Object.values(enrollment.additionalOptions.customAnswers).join(' ')
       if (answers.toLowerCase().includes(searchLower)) return true
     }
-    
+
     return false
   })
 
@@ -73,15 +74,15 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
     }
   }
 
-  const exportToCSV = () => {
+  const exportToExcel = () => {
     try {
       // Create title row with activity name
       const titleRow = activityTitle ? [`Inschrijvingen - ${activityTitle}`] : ['Inschrijvingen Export']
-      
-      // Create CSV headers
+
+      // Create headers
       const headers = [
         '#',
-        'Status', 
+        'Status',
         'Email',
         'Voornaam',
         'Achternaam',
@@ -90,11 +91,11 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
         'Opmerkingen',
         ...customQuestionsArray
       ]
-      
-      // Create CSV rows - one row per child
-      const csvData: string[][] = []
+
+      // Create data rows
+      const dataRows: any[][] = []
       let rowNumber = 1
-      
+
       filteredEnrollments.forEach((enrollment) => {
         if (enrollment.children && enrollment.children.length > 0) {
           // Create a row for each child
@@ -105,98 +106,54 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
               enrollment.participantEmail,
               child.participantInfo.firstName || '',
               child.participantInfo.lastName || '',
-              (() => {
-                const date = new Date(enrollment.createdAt)
-                const day = date.getDate().toString().padStart(2, '0')
-                const month = (date.getMonth() + 1).toString().padStart(2, '0')
-                const year = date.getFullYear()
-                return `${day}/${month}/${year}`
-              })(),
-              (() => {
-                const date = new Date(enrollment.createdAt)
-                const hours = date.getHours().toString().padStart(2, '0')
-                const minutes = date.getMinutes().toString().padStart(2, '0')
-                return `${hours}:${minutes}`
-              })(),
+              new Date(enrollment.createdAt).toLocaleDateString('nl-BE'),
+              new Date(enrollment.createdAt).toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' }),
               enrollment.additionalOptions?.comments || '',
-              ...customQuestionsArray.map(question => 
+              ...customQuestionsArray.map(question =>
                 enrollment.additionalOptions?.customAnswers?.[question] || ''
               )
             ]
-            
-            // Escape commas and quotes in CSV
-            csvData.push(row.map(cell => {
-              const cellStr = String(cell || '')
-              if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
-                return `"${cellStr.replace(/"/g, '""')}"`
-              }
-              return cellStr
-            }))
+            dataRows.push(row)
           })
         } else {
-          // If no children, still create one row with empty name fields
+          // If no children, still create one row
           const row = [
             rowNumber++,
             (enrollmentStatuses[enrollment.id] || enrollment.status) === 'paid' ? 'Betaald' : 'Niet Betaald',
             enrollment.participantEmail,
             '',
             '',
-            (() => {
-              const date = new Date(enrollment.createdAt)
-              const day = date.getDate().toString().padStart(2, '0')
-              const month = (date.getMonth() + 1).toString().padStart(2, '0')
-              const year = date.getFullYear()
-              return `${day}/${month}/${year}`
-            })(),
-            (() => {
-              const date = new Date(enrollment.createdAt)
-              const hours = date.getHours().toString().padStart(2, '0')
-              const minutes = date.getMinutes().toString().padStart(2, '0')
-              return `${hours}:${minutes}`
-            })(),
+            new Date(enrollment.createdAt).toLocaleDateString('nl-BE'),
+            new Date(enrollment.createdAt).toLocaleTimeString('nl-BE', { hour: '2-digit', minute: '2-digit' }),
             enrollment.additionalOptions?.comments || '',
-            ...customQuestionsArray.map(question => 
+            ...customQuestionsArray.map(question =>
               enrollment.additionalOptions?.customAnswers?.[question] || ''
             )
           ]
-          
-          // Escape commas and quotes in CSV
-          csvData.push(row.map(cell => {
-            const cellStr = String(cell || '')
-            if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
-              return `"${cellStr.replace(/"/g, '""')}"`
-            }
-            return cellStr
-          }))
+          dataRows.push(row)
         }
       })
-      
-      // Combine title, empty row, headers and data
-      const csvContent = [titleRow, [], headers, ...csvData]
-        .map(row => row.join(','))
-        .join('\n')
-      
-      // Create and download file with BOM for Excel compatibility
-      const BOM = '\uFEFF'
-      const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' })
-      const link = document.createElement('a')
-      
-      if (link.download !== undefined) {
-        const url = URL.createObjectURL(blob)
-        link.setAttribute('href', url)
-        
-        // Generate filename with activity name and date
-        const date = new Date().toLocaleDateString('nl-BE').replace(/\//g, '-')
-        const safeName = activityTitle ? activityTitle.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').substring(0, 30) : 'export'
-        link.setAttribute('download', `inschrijvingen-${safeName}-${date}.csv`)
-        
-        link.style.visibility = 'hidden'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      }
+
+      // Combine all data
+      const allData = [titleRow, [], headers, ...dataRows]
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new()
+      const ws = XLSX.utils.aoa_to_sheet(allData)
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, "Inschrijvingen")
+
+      // Generate filename
+      const date = new Date().toLocaleDateString('nl-BE').replace(/\//g, '-')
+      const safeName = activityTitle ? activityTitle.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').substring(0, 30) : 'export'
+      const fileName = `inschrijvingen-${safeName}-${date}.xlsx`
+
+      // Download
+      XLSX.writeFile(wb, fileName)
+
     } catch (error) {
-      console.error('Error exporting to CSV:', error)
+      console.error('Error exporting to Excel:', error)
       alert('Er is een fout opgetreden bij het exporteren.')
     }
   }
@@ -213,9 +170,9 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
         padding: '24px',
         borderBottom: '1px solid hsl(108, 35%, 73%)' // --border
       }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '16px'
         }}>
@@ -232,7 +189,7 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
             <Users className="h-4 w-4 mr-2 text-muted-foreground" />
             Inschrijvingen Overzicht ({filteredEnrollments.length} van {totalResponses})
           </h3>
-          
+
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <input
               type="text"
@@ -251,7 +208,7 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
               }}
             />
             <button
-              onClick={exportToCSV}
+              onClick={exportToExcel}
               style={{
                 backgroundColor: 'hsl(108, 35%, 36%)', // --primary (scout green)
                 color: 'white',
@@ -266,12 +223,12 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
               onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'hsl(108, 35%, 32%)'} // darker on hover
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'hsl(108, 35%, 36%)'}
             >
-              📊 Export CSV
+              📊 Export Excel
             </button>
           </div>
         </div>
       </div>
-      
+
       {filteredEnrollments.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '64px 24px' }}>
           {searchTerm ? (
@@ -416,7 +373,7 @@ export const EnrollmentTable: React.FC<EnrollmentTableProps> = ({
                     fontSize: '0.75rem',
                     verticalAlign: 'top'
                   }}>
-                    <StatusSelector 
+                    <StatusSelector
                       enrollmentId={enrollment.id}
                       currentStatus={enrollmentStatuses[enrollment.id] || enrollment.status}
                       onStatusUpdate={handleStatusUpdate}
