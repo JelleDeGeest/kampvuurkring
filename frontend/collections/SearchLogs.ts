@@ -10,6 +10,7 @@ const SearchLogs: CollectionConfig = {
         useAsTitle: 'query',
         defaultColumns: ['query', 'resultsCount', 'timestamp'],
         readonly: true, // Logs are for viewing only
+        group: 'Collecties',
     },
     access: {
         read: ({ req: { user } }) => {
