@@ -33,6 +33,7 @@ export default function ChatSearch() {
     const inputRef = useRef<HTMLInputElement>(null)
     const pathname = usePathname()
     const controls = useAnimation()
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null)
 
     // Jiggle animation
     useEffect(() => {
@@ -75,23 +76,28 @@ export default function ChatSearch() {
         const value = e.target.value
         setQuery(value)
 
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current)
+        }
+
         if (value.length < 2) {
             setResults([])
             setHasSearched(false)
             return
         }
 
-        setIsLoading(true)
-        try {
-            // Debounce could be added here, but for now direct call is fine for low traffic
-            const searchResults = await searchContent(value)
-            setResults(searchResults)
-            setHasSearched(true)
-        } catch (error) {
-            console.error('Search failed', error)
-        } finally {
-            setIsLoading(false)
-        }
+        debounceTimeout.current = setTimeout(async () => {
+            setIsLoading(true)
+            try {
+                const searchResults = await searchContent(value)
+                setResults(searchResults)
+                setHasSearched(true)
+            } catch (error) {
+                console.error('Search failed', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }, 500)
     }
 
     const switchToContact = () => {

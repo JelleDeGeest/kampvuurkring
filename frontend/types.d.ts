@@ -85,6 +85,7 @@ export interface Config {
     users: User;
     faqs: Faq;
     'faq-categories': FaqCategory;
+    'search-logs': SearchLog;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -109,6 +110,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     faqs: FaqsSelect<false> | FaqsSelect<true>;
     'faq-categories': FaqCategoriesSelect<false> | FaqCategoriesSelect<true>;
+    'search-logs': SearchLogsSelect<false> | SearchLogsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -1361,6 +1363,21 @@ export interface FaqCategory {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search-logs".
+ */
+export interface SearchLog {
+  id: number;
+  query: string;
+  timestamp: string;
+  /**
+   * Hoeveel resultaten werden er gevonden?
+   */
+  resultsCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -1437,6 +1454,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'faq-categories';
         value: number | FaqCategory;
+      } | null)
+    | ({
+        relationTo: 'search-logs';
+        value: number | SearchLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2446,6 +2467,17 @@ export interface FaqCategoriesSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search-logs_select".
+ */
+export interface SearchLogsSelect<T extends boolean = true> {
+  query?: T;
+  timestamp?: T;
+  resultsCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }

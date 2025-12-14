@@ -61,6 +61,7 @@ import { Users } from './collections/Users'
 import { FAQCategories } from './collections/FAQCategories'
 import { FAQs } from './collections/FAQs'
 import { FAQPage } from './globals/FAQPage'
+import SearchLogs from './collections/SearchLogs'
 
 const config = {
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
@@ -83,6 +84,7 @@ const config = {
     Users,
     FAQs,
     FAQCategories,
+    SearchLogs,
   ],
   globals: [
     InfoPage,

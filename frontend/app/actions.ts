@@ -222,6 +222,20 @@ export async function searchContent(query: string): Promise<SearchResult[]> {
         const fuse = new Fuse(allItems, options)
         const result = fuse.search(finalQuery)
 
+        // Log the search query
+        try {
+            await payload.create({
+                collection: 'search-logs',
+                data: {
+                    query: query,
+                    resultsCount: result.length,
+                    timestamp: new Date().toISOString(),
+                },
+            })
+        } catch (logError) {
+            console.error('Failed to log search query:', logError)
+        }
+
         // Map back to SearchResult and take top 10
         return result.slice(0, 10).map(({ item }) => ({
             type: item.type,
