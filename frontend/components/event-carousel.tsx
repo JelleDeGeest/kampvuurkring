@@ -28,7 +28,7 @@ export function EventCarousel() {
   // Preload next image
   useEffect(() => {
     if (heroes.length <= 1) return
-    
+
     const nextIndex = (activeIndex + 1) % heroes.length
     const nextHero = heroes[nextIndex]
     const preloadUrl = getHeroImageUrl(nextHero?.homeHeroImage)
@@ -149,10 +149,7 @@ export function EventCarousel() {
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
                 priority={index === 0}
               />
-              
-              {/* Dark overlay for better contrast */}
-              <div className="absolute inset-0 bg-black/15" />
-              
+
               {/* Info Box */}
               {hasCompleteInfo(hero) && (
                 <div className="absolute top-1/2 right-4 md:right-8 lg:right-16 transform -translate-y-1/2 z-20">
@@ -204,11 +201,10 @@ export function EventCarousel() {
                     setActiveIndex(index)
                     setIsAutoPlaying(false)
                   }}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === activeIndex 
-                      ? 'bg-primary w-6' 
+                  className={`w-2 h-2 rounded-full transition-all ${index === activeIndex
+                      ? 'bg-primary w-6'
                       : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
