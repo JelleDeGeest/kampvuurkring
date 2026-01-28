@@ -1,4 +1,4 @@
-import { CollectionConfig } from 'payload/types'
+import { CollectionConfig } from 'payload'
 
 const SearchLogs: CollectionConfig = {
     slug: 'search-logs',
@@ -9,7 +9,6 @@ const SearchLogs: CollectionConfig = {
     admin: {
         useAsTitle: 'query',
         defaultColumns: ['query', 'resultsCount', 'timestamp'],
-        readonly: true, // Logs are for viewing only
         group: 'Collecties',
     },
     access: {

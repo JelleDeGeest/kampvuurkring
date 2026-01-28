@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────
-# STAGE 1: Dependencies
+# STAGE 1: Dependencies (for runtime)
 # ──────────────────────────────────────────────────────────────
 FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
@@ -18,8 +18,11 @@ FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy dependencies from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Copy package files and install ALL dependencies (including dev) for building
+COPY package*.json ./
+RUN npm ci --legacy-peer-deps
+
+# Copy source code
 COPY . .
 
 # Set production environment
