@@ -384,8 +384,8 @@ export default async function VerhuurLokaalPage() {
                   <a href="mailto:Lokaalverhuur@scoutssintjohannes.be" className="text-primary hover:underline flex items-center justify-center">
                     <Mail className="mr-2 h-5 w-5" />Lokaalverhuur@scoutssintjohannes.be
                   </a>
-                  <a href="tel:03/770.74.29" className="text-primary hover:underline flex items-center justify-center">
-                    <Phone className="mr-2 h-4 w-4" />03/770.74.29
+                  <a href="tel:0476620726" className="text-primary hover:underline flex items-center justify-center">
+                    <Phone className="mr-2 h-4 w-4" />0476 62 07 26
                   </a>
                 </div>
 

@@ -26,8 +26,8 @@ export default function Footer() {
                 <div className="p-1.5 bg-primary/10 rounded-full">
                   <Mail size={14} className="text-primary" />
                 </div>
-                <a href="mailto:groeps@scoutssintjohannes.be" className="hover:text-primary transition-colors">
-                  groeps@scoutssintjohannes.be
+                <a href="mailto:groepsleiding@scoutssintjohannes.be" className="hover:text-primary transition-colors">
+                  groepsleiding@scoutssintjohannes.be
                 </a>
               </div>
             </div>
