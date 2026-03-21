@@ -20,7 +20,7 @@ async function getPhotoAlbums(): Promise<PhotoAlbum[]> {
     const result = await payload.find({
       collection: 'photoAlbums',
       limit: 1000,
-      sort: '-year',
+      sort: '-startYear',
       depth: 1,
     })
 
