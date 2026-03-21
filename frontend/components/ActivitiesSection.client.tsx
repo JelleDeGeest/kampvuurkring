@@ -410,43 +410,18 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                               />
                             </div>
                             <div className="flex flex-col justify-center">
-                              <span className="text-sm font-bold text-gray-500 leading-tight">
-                                {(() => {
+                              {(() => {
                                   const start = new Date(act.startDate)
                                   const end = act.endDate ? new Date(act.endDate) : null
                                   const isSameDay = end ? format(start, 'yyyy-MM-dd') === format(end, 'yyyy-MM-dd') : true
-                                  const showTime = false // Events: no hour display requested
-
-                                  if (isSameDay) {
-                                    return (
-                                      <>
-                                        {showTime ? (
-                                          <>
-                                            {format(start, 'HH:mm')}
-                                            {end && ` - ${format(end, 'HH:mm')}`}
-                                          </>
-                                        ) : (
-                                          format(start, 'd MMM yyyy', { locale: nl })
-                                        )}
-                                      </>
-                                    )
-                                  } else {
-                                    return (
-                                      <>
-                                        {format(start, 'd MMM yyyy', { locale: nl })}
-                                        {showTime && ` ${format(start, 'HH:mm')}`}
-                                        {end && (
-                                          <>
-                                            {' - '}
-                                            {format(end, 'd MMM yyyy', { locale: nl })}
-                                            {showTime && ` ${format(end, 'HH:mm')}`}
-                                          </>
-                                        )}
-                                      </>
-                                    )
-                                  }
+                                  if (isSameDay) return null
+                                  return (
+                                    <span className="text-sm font-bold text-gray-500 leading-tight">
+                                      {format(start, 'd MMM yyyy', { locale: nl })}
+                                      {end && ` - ${format(end, 'd MMM yyyy', { locale: nl })}`}
+                                    </span>
+                                  )
                                 })()}
-                              </span>
                               <CardTitle className="text-lg font-bold leading-tight text-gray-700">
                                 {act.title}
                               </CardTitle>
@@ -496,7 +471,7 @@ function DateGroups({ acts }: { acts: Activity[] }) {
 
                 // Check if this is a weekend or camp
                 const isSpecialEvent = act.id && typeof act.id === 'string' &&
-                  (act.id.startsWith('weekend-') || act.id.startsWith('camp-'));
+                  (act.id.startsWith('weekend-') || act.id.startsWith('camp-') || act.id.startsWith('event-'));
 
                 // Generate enrollment link dynamically for weekends/camps
                 const getEnrollmentLink = () => {
@@ -550,43 +525,35 @@ function DateGroups({ acts }: { acts: Activity[] }) {
                           ) : null}
 
                           <div className="flex flex-col justify-center">
-                            <span className="text-sm font-bold text-gray-500 leading-tight">
-                              {(() => {
+                            {!act.geenScouts && (() => {
                                 const start = new Date(act.startDate)
                                 const end = act.endDate ? new Date(act.endDate) : null
                                 const isSameDay = end ? format(start, 'yyyy-MM-dd') === format(end, 'yyyy-MM-dd') : true
-                                const showTime = !isSpecialEvent // Show time for regular activities
-
-                                if (isSameDay) {
-                                  return (
-                                    <>
-                                      {showTime ? (
-                                        <>
-                                          {format(start, 'HH:mm')}
-                                          {end && ` - ${format(end, 'HH:mm')}`}
-                                        </>
-                                      ) : (
-                                        format(start, 'd MMM yyyy', { locale: nl })
-                                      )}
-                                    </>
-                                  )
-                                } else {
-                                  return (
-                                    <>
-                                      {format(start, 'd MMM yyyy', { locale: nl })}
-                                      {showTime && ` ${format(start, 'HH:mm')}`}
-                                      {end && (
-                                        <>
-                                          {' - '}
-                                          {format(end, 'd MMM yyyy', { locale: nl })}
-                                          {showTime && ` ${format(end, 'HH:mm')}`}
-                                        </>
-                                      )}
-                                    </>
-                                  )
-                                }
+                                // For special events with a single day, skip the line — the date is already implied
+                                if (isSpecialEvent && isSameDay) return null
+                                return (
+                                  <span className="text-sm font-bold text-gray-500 leading-tight">
+                                    {isSameDay ? (
+                                      <>
+                                        {format(start, 'HH:mm')}
+                                        {end && ` - ${format(end, 'HH:mm')}`}
+                                      </>
+                                    ) : (
+                                      <>
+                                        {format(start, 'd MMM yyyy', { locale: nl })}
+                                        {!isSpecialEvent && ` ${format(start, 'HH:mm')}`}
+                                        {end && (
+                                          <>
+                                            {' - '}
+                                            {format(end, 'd MMM yyyy', { locale: nl })}
+                                            {!isSpecialEvent && ` ${format(end, 'HH:mm')}`}
+                                          </>
+                                        )}
+                                      </>
+                                    )}
+                                  </span>
+                                )
                               })()}
-                            </span>
                             <CardTitle className="text-lg font-bold leading-tight text-gray-700">
                               {act.title}
                             </CardTitle>
