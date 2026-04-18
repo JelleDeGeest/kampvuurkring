@@ -31,8 +31,9 @@ export const Events: CollectionConfig = {
           name: 'text',
           label: 'Button tekst',
           type: 'text',
+          defaultValue: 'Info/Inschrijven',
           admin: {
-            description: 'Bijvoorbeeld: "Inschrijven", "Meer info", "Aanmelden". ⚠️ Verplicht als URL wordt opgegeven.',
+            description: 'Bijvoorbeeld: "Info/Inschrijven", "Meer info", "Aanmelden". ⚠️ Verplicht als URL wordt opgegeven.',
             condition: (data, siblingData) => {
               // Show warning style if URL is filled but text is empty
               return true;

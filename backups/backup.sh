@@ -10,7 +10,7 @@ STAMP="$(date -u +%Y%m%d_%H%M%S)"
 WORK_DIR="${ROOT_DIR}/work/${STAMP}"
 ARCHIVE_NAME="${PROJECT_NAME:-backup}_${STAMP}.tar.gz"
 ARCHIVE_PATH="${ROOT_DIR}/${ARCHIVE_NAME}"
-RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-14}"
+RETENTION_DAYS="${BACKUP_RETENTION_DAYS:-30}"
 
 mkdir -p "${WORK_DIR}"
 trap 'rm -rf "${WORK_DIR}"' EXIT
@@ -88,7 +88,7 @@ package_backup() {
 
 upload_archive() {
   if [[ -z "${RCLONE_REMOTE:-}" ]]; then
-    log "RCLONE_REMOTE not set; skipping upload"
+    log "RCLONE_REMOTE not set; keeping local archive ${ARCHIVE_PATH}"
     return
   fi
 
@@ -104,11 +104,17 @@ upload_archive() {
 
   log "Uploading archive to ${RCLONE_REMOTE}"
   rclone copy "${ARCHIVE_PATH}" "${RCLONE_REMOTE}" --log-level INFO
+  log "Removing local archive ${ARCHIVE_PATH}"
+  rm -f "${ARCHIVE_PATH}"
 }
 
 prune_archives() {
-  log "Pruning archives older than ${RETENTION_DAYS} days"
-  find "${ROOT_DIR}" -maxdepth 1 -name '*.tar.gz' -mtime +"${RETENTION_DAYS}" -print -delete
+  if [[ -z "${RCLONE_REMOTE:-}" ]]; then
+    log "RCLONE_REMOTE not set; skipping remote prune"
+    return
+  fi
+  log "Pruning remote archives older than ${RETENTION_DAYS} days on ${RCLONE_REMOTE}"
+  rclone delete --min-age "${RETENTION_DAYS}d" "${RCLONE_REMOTE}" --log-level INFO
 }
 
 backup_db

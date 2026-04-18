@@ -360,23 +360,6 @@ export function DynamicForm({ formPage }: DynamicFormProps) {
 
   return (
     <div className="space-y-8">
-      {formPage.infoDocument?.url && (
-        <div className="flex justify-center">
-          <a
-            href={formPage.infoDocument.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 group"
-          >
-            <div className="text-3xl animate-bounce group-hover:animate-none">📄</div>
-            <div>
-              <div className="font-bold text-lg">Uitnodiging bekijken</div>
-              <div className="text-sm opacity-90">Klik hier voor meer informatie</div>
-            </div>
-          </a>
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-8">
         {error && (
           <div className="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 shadow-sm">

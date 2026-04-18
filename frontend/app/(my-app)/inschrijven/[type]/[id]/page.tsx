@@ -80,54 +80,6 @@ export default async function EnrollmentPage({ params }: Props) {
     return notFound()
   }
 
-  // Check if enrollments are manually closed
-  if (item.enrollmentSettings.closed) {
-    return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <PreviewControls />
-        {inDraftMode && (
-          <>
-            <RefreshOnSave />
-            <PreviewSwitcher />
-          </>
-        )}
-        <main className="flex-1">
-          <div className="container mx-auto px-4 py-8">
-            <h1 className="text-4xl font-bold text-primary mb-4">Inschrijvingen gesloten</h1>
-            <p className="text-lg">
-              {item.enrollmentSettings.closedMessage || 'De inschrijvingen voor deze activiteit zijn helaas gesloten.'}
-            </p>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
-  // Check enrollment deadline
-  if (item.enrollmentSettings.enrollmentDeadline) {
-    const deadline = new Date(item.enrollmentSettings.enrollmentDeadline)
-    if (deadline < new Date()) {
-      return (
-        <div className="flex min-h-screen flex-col bg-background">
-          <PreviewControls />
-          {inDraftMode && (
-            <>
-              <RefreshOnSave />
-              <PreviewSwitcher />
-            </>
-          )}
-          <main className="flex-1">
-            <div className="container mx-auto px-4 py-8">
-              <h1 className="text-4xl font-bold text-primary mb-4">Inschrijvingen gesloten</h1>
-              <p className="text-lg">De inschrijvingen voor {item.title} zijn helaas gesloten.</p>
-            </div>
-          </main>
-
-        </div>
-      )
-    }
-  }
-
   // Create form page data from the item
   const formPage = {
     id: item.id,
@@ -204,6 +156,22 @@ export default async function EnrollmentPage({ params }: Props) {
           )}
 
           {/* Info Document Button - Centered */}
+          {formPage.infoDocument?.url && (
+            <div className="flex justify-center mb-8">
+              <a
+                href={formPage.infoDocument.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 group"
+              >
+                <div className="text-3xl animate-bounce group-hover:animate-none">📄</div>
+                <div>
+                  <div className="font-bold text-lg">Uitnodiging bekijken</div>
+                  <div className="text-sm opacity-90">Klik hier voor meer informatie</div>
+                </div>
+              </a>
+            </div>
+          )}
 
           <div className="relative mb-24">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 blur-3xl -z-10 rounded-3xl" />

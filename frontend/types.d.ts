@@ -396,7 +396,7 @@ export interface Event {
    */
   button?: {
     /**
-     * Bijvoorbeeld: "Inschrijven", "Meer info", "Aanmelden". ⚠️ Verplicht als URL wordt opgegeven.
+     * Bijvoorbeeld: "Info/Inschrijven", "Meer info", "Aanmelden". ⚠️ Verplicht als URL wordt opgegeven.
      */
     text?: string | null;
     /**
